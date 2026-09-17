@@ -1,8 +1,10 @@
 const PLAYER_COLORS = ['#6a3f95','#d05f91','#2e8b78','#d18a32','#3975b7','#8d5b45'];
 const DICE = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-const STORAGE_KEY = 'ortopediaGameV02';
+const STORAGE_KEY = 'ortopediaGameV03';
 const BOARD_END = 38; // 37 casillas numeradas + FIN.
 
+// Mapa reconstruido del tablero original del PowerPoint.
+// Las casillas con imagen usan exactamente las tarjetas de reglas del PPT.
 const CELL_RULES = {
   1:{type:'question', deck:3}, 2:{type:'back1'}, 3:{type:'case', deck:1},
   4:{type:'question', deck:2}, 5:{type:'question', deck:1}, 6:{type:'case', deck:2},
@@ -30,83 +32,9 @@ const RULE_META = {
   finish:{icon:'🏆',label:'Fin',title:'Fin',message:'Llegaste al final del camino.'}
 };
 
-const questions = [
-  { id:1, deck:1, text:'La trampa lingual actúa inhibiendo el avance de la lengua durante la deglución.', options:['Verdadero','Falso'], correct:0, explanation:'Verdadero.' },
-  { id:3, deck:1, text:'El arco transpalatino promueve la expansión ósea bilateral del maxilar.', options:['Verdadero','Falso'], correct:1, explanation:'Falso.' },
-  { id:4, deck:1, text:'La máscara facial estimula el crecimiento hacia adelante del maxilar..', options:['Verdadero','Falso'], correct:0, explanation:'Verdadero.' },
-  { id:8, deck:1, text:'¿Qué aparato le coloca el papá dentista a Charlie en Charlie y la fábrica de chocolates (versión 2005)?', options:['Frenillos linguales','Expansor tipo Hyrax','Mascara Facial','Casco de contención dental'], correct:3, explanation:'El papá de Charlie, que es dentista, le pone un extraño casco dental correctivo para alinear sus dientes.' },
-  { id:13, deck:2, text:'¿Cuál es la acción fisiológica principal de la máscara facial?.', options:['Frenado mandibular','Estimulación del crecimiento maxilar','Retención post-tratamiento','Distalar Molares'], correct:1, explanation:'Estimulación del crecimiento maxilar.' },
-  { id:14, deck:2, text:'Completa la frase de Naruto: “Soy Naruto Uzumaki y…”', options:['Soy el mas perrón aquí','Y yo antes era como tu','¡Algún día seré Hokage!','¡Nunca me rendiré, Sasuke!'], correct:2, explanation:'La frase icónica de Naruto es: “Soy Naruto Uzumaki… ¡y algún día seré Hokage!”' },
-  { id:20, deck:2, text:'¿Cuál de estas canciones mexicanas NO es original de José Alfredo Jiménez?', options:['Cielo Rojo','El Rey','Caminos de Guanajuato','Si nos dejan'], correct:0, explanation:'“Cielo Rojo” fue escrita por Juan Záizar, aunque muchas personas la asocian a José Alfredo por el estilo musical.' },
-  { id:24, deck:2, text:'¿Cómo se llama la escuela en la que estudian los personajes de Zoey 101?', options:['Ocean Valley School','Malibu Academy','PCA (Pacific Coast Academy)','Sunshine High'], correct:2, explanation:'La Pacific Coast Academy (PCA) es la escuela ficticia donde se desarrolla la serie Zoey 101, ubicada en California.' },
-  { id:25, deck:3, text:'¿Cada cuánto se activa el disyuntor tipo Haas en un niño de 10 años?', options:['1 vuelta diaria por 30 días','2 vueltas al día por 3 semanas','¼ de vuelta 2 veces al día (0.5 mm diarios) por 10 a 15 días','Cada tercer día por 1 mes'], correct:2, explanation:'En niños, la sutura palatina aún responde bien a disyunción rápida. Se activa 0.25 mm cada 12 h (total 0.5 mm/día).' },
-  { id:27, deck:3, text:'¿Cuál es una diferencia esencial entre ortopedia y ortodoncia?', options:['La ortopedia mueve dientes con fuerzas pesadas','La ortodoncia actúa solo en maxilar','La ortopedia actúa sobre bases óseas durante el crecimiento','La ortodoncia actúa sobre bases óseas durante el crecimiento'], correct:2, explanation:'La ortopedia modifica estructuras óseas en crecimiento. La ortodoncia mueve dientes sobre bases ya formadas.' },
-  { id:30, deck:3, text:'¿Qué automóvil fue conocido como “el vochito” en México y se dejó de producir en 2003?', options:['Volkswagen Sedán','Volkswagen Jetta','Volkswagen Virtus','Volkswagen Vento'], correct:0, explanation:'El Volkswagen Sedán, apodado “vochito”, fue ícono mexicano. Se fabricó en Puebla hasta 2003.' },
-  { id:34, deck:3, text:'¿Quién dirigió la película Titanic de 1997?', options:['Steven Spielberg','Martin Scorsese','James Cameron','Christopher Nolan'], correct:2, explanation:'James Cameron fue el director, guionista y productor de Titanic, una de las películas más taquilleras de la historia.' }
-];
-
-const clinicalCases = [
-  {
-    id:'C1', deck:1,
-    text:'Masculino 13 años. Clase II esquelética, mordida abierta, protrusión lingual, respiración oral, deglución atípica, Clase I molar y canina.',
-    options:['Lip Bumper','Perla de Tucat con anclaje','Trampa lingual y pantalla vestibular','Pistas planas de reprogramación neuromuscular'],
-    grades:['incorrect','good','excellent','incorrect'],
-    feedback:[
-      'Empeora protrusión lingual.',
-      'Funciona como barrera lingual, pero no tiene efecto vestibular ni labial.',
-      'Corrige hábitos orales, deglución atípica y permite cierre anterior fisiológico.',
-      'Control vertical y sagital pero no aborda función lingual.'
-    ]
-  },
-  {
-    id:'C5', deck:2,
-    text:'Femenina 8 años. Clase II esquelética, mordida abierta, desviación línea media, succión digital.',
-    options:['Plano anterior de mordida, con trampa lingual','Rejilla anterior + pistas planas clase II con trampa lingual','Pantalla vestibular + placa activa con tornillo de expansión y trampa lingual incorporada','Placa Hawley removible con trampa lingual y terapia miofuncional'],
-    grades:['incorrect','good','excellent','good'],
-    feedback:[
-      'No esta indicado el plano anterior de mordida en mordidas abiertas.',
-      'Corrige transversal y hábito si está fija.',
-      'Actúa en transversal, hábito y función lingual.',
-      'Alternativa removible eficaz con cooperación.'
-    ]
-  },
-  {
-    id:'C9', deck:3,
-    text:'Femenino 11 años. Clase I esquelética, Clase II dental, retro inclinación incisivos inferiores, succión labial.',
-    options:['Willians','Arco lingual y Perla de Tucat','Lip Bumper inferior','Aparato funcional tipo Bimler B'],
-    grades:['incorrect','good','excellent','good'],
-    feedback:[
-      'Aporta estabilidad, pero no actúa sobre hábitos directamente.',
-      'Alternativa si hay control miofuncional, menos efectiva sin activación muscular.',
-      'Corrige retrusión y succión labial. Ideal en estos casos.',
-      'Si pero Demasiado complejo para este diagnóstico y edad.'
-    ]
-  },
-  {
-    id:'C13', deck:4,
-    text:'Masculino 12 años. Clase III esquelética, Clase III molar, mordida borde a borde, apiñamiento moderado.',
-    options:['Brackets con anclaje ATP superior, con extracciones de premolares superiores y stripping inferior','Mascara Facial con pistas planas para avance del maxilar','ATP y secuencia de Arcos, stripping en arcada inferior','Extracción de premolares inferiores y colocación de ATP superior'],
-    grades:['good','excellent','incorrect','incorrect'],
-    feedback:[
-      'Tratamiento compensatorio o de camuflaje.',
-      'Estimula avance maxilar en Clase III esquelética leve-moderada.',
-      'No aborda causa esquelética ni mordida borde a borde.',
-      'Alternativa si no se desea o no es viable intervención ortopédica.'
-    ]
-  },
-  {
-    id:'C17', deck:5,
-    text:'Femenino 18 años. Clase I esquelética, Clase I dental molar, Clase II canina, mordida cruzada posterior unilateral, perfil recto, deglución atípica, Bolton.',
-    options:['Pistas planas Clase II para avance mandibular y reacomodo de mandíbula','ATP superior con anclaje máximo y extracción de premolares superiores','Pendex para distalar molares sin extracciones, para recuperar clase canina, Secuencia de arcos','ATP superior e Inferior mas secuencia de arcos con Stripping selectivo'],
-    grades:['incorrect','good','excellent','good'],
-    feedback:[
-      'No resuelven transversal ni problema canino real, poco efectivas en este caso.',
-      'Alternativa si hay apiñamiento severo.',
-      'Distalización sin extracciones, controla Clase II canina funcional.',
-      'Buena opción si hay discrepancia de tamaño dentario.'
-    ]
-  }
-];
+// v0.3: el contenido vive en archivos separados para facilitar revisión y mantenimiento.
+const questions = window.QUESTIONS || [];
+const clinicalCases = window.CLINICAL_CASES || [];
 
 let state = null;
 let pendingQuestion = null;
@@ -169,7 +97,7 @@ function buildBoard() {
 function newGame() {
   const count = Number(playerCount.value);
   state = {
-    version:2,
+    version:3,
     players:Array.from({length:count},(_,i)=>({
       name:($(`name-${i}`).value || `Jugador ${i+1}`).trim(),
       position:0,
@@ -305,9 +233,11 @@ function startCase(deck) {
 }
 
 function showQuestion(q) {
-  $('questionCategory').textContent=q.kind==='case'?'Caso clínico':`Preguntas ${q.deck}`;
+  const originSuffix=q.origin==='new'?' · nuevo':'';
+  $('questionCategory').textContent=(q.kind==='case'?'Caso clínico':`Preguntas ${q.deck}`)+originSuffix;
   $('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;
-  $('questionText').textContent=q.text;
+  const mediaNotice=q.mediaPending?'🎵/🎬 Esta pregunta usa multimedia del PowerPoint original; el archivo se integrará en la v0.4.\n\n':'';
+  $('questionText').textContent=mediaNotice+q.text;
   $('feedback').hidden=true;
   $('feedback').innerHTML='';
   $('confirmAnswerBtn').hidden=false;
@@ -350,14 +280,14 @@ function confirmAnswer() {
     } else {
       heading='Correcta · permaneces en tu casilla';
     }
-    detail=pendingQuestion.explanation || '';
+    detail=pendingQuestion.explanation || 'El PowerPoint original no incluye retroalimentación textual para esta pregunta.';
   } else {
     const grade=pendingQuestion.grades[selectedAnswer] || 'incorrect';
     options[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
     if (grade==='excellent') { delta=2; heading='Excelente · avanzas 2 casillas'; }
     else if (grade==='good') { delta=1; heading='Buena · avanzas 1 casilla'; }
     else { delta=-1; heading='Incorrecta · retrocedes 1 casilla'; }
-    detail=pendingQuestion.feedback[selectedAnswer] || '';
+    detail=pendingQuestion.feedback[selectedAnswer] || 'El PowerPoint original no incluye retroalimentación textual para esta opción.';
   }
 
   pendingQuestion.resultDelta=delta;
@@ -425,6 +355,7 @@ function endTurn() {
   state.current=(state.current+1)%state.players.length;
   state.turn+=1;
 
+  // La cárcel hace perder el turno siguiente del jugador afectado.
   let guard=0;
   const skipped=[];
   while (state.players[state.current].skipTurns>0 && guard<state.players.length*3) {
