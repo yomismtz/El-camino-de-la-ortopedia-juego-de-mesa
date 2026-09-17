@@ -1,0 +1,12 @@
+{
+  "name": "El camino de la ortopedia dental",
+  "short_name": "Ortopedia Dental",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#fffaf4",
+  "theme_color": "#5b2c83",
+  "lang": "es-MX",
+  "description": "Juego de mesa educativo de ortopedia dentofacial."
+}
