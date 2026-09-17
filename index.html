@@ -17,6 +17,20 @@
         <h1>El camino de la ortopedia dental</h1>
         <p class="subtitle">Versión digital basada en el juego original de PowerPoint.</p>
 
+        <div class="rules-summary" aria-label="Reglas originales del juego">
+          <h2>Reglas originales</h2>
+          <div class="rules-grid">
+            <div><strong>❓ Pregunta</strong><span>Incorrecta: retrocede 1.</span></div>
+            <div><strong>📩 Caso clínico</strong><span>Excelente +2 · Buena +1 · Incorrecta −1.</span></div>
+            <div><strong>📁 Expediente</strong><span>Retrocede 2.</span></div>
+            <div><strong>⚖️ Cárcel</strong><span>Pierde 1 turno.</span></div>
+            <div><strong>🏖️ Vacaciones</strong><span>Regresa al INICIO.</span></div>
+            <div><strong>✅ Diagnóstico</strong><span>Avanza 1.</span></div>
+            <div><strong>🏁 Tratamiento</strong><span>Avanza 2.</span></div>
+            <div><strong>📅 Cancelación</strong><span>Retrocede 1.</span></div>
+          </div>
+        </div>
+
         <div class="setup-grid">
           <label>
             Número de jugadores
@@ -55,14 +69,15 @@
           <h3>Jugadores</h3>
           <div id="scoreList"></div>
           <div class="legend">
-            <span><i class="dot dental"></i>Ortopedia</span>
-            <span><i class="dot culture"></i>Cultura</span>
+            <span><i class="dot question"></i>Pregunta</span>
             <span><i class="dot case"></i>Caso clínico</span>
+            <span><i class="dot good"></i>Avanza</span>
+            <span><i class="dot bad"></i>Retrocede / penalización</span>
           </div>
         </aside>
 
         <section class="board-panel">
-          <div id="board" class="board" aria-label="Tablero de 37 casillas"></div>
+          <div id="board" class="board" aria-label="Tablero de 37 casillas más la meta"></div>
         </section>
 
         <aside class="control-panel">
@@ -90,6 +105,15 @@
         <button id="continueBtn" type="button" class="secondary" hidden>Continuar</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="eventDialog" class="modal">
+    <div class="modal-card event-card">
+      <div id="eventIcon" class="event-icon">🦷</div>
+      <h2 id="eventTitle">Evento</h2>
+      <p id="eventText"></p>
+      <button id="eventContinueBtn" class="primary">Continuar</button>
+    </div>
   </dialog>
 
   <dialog id="winnerDialog" class="modal">
