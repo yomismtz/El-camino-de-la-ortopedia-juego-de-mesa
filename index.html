@@ -3,19 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#5b2c83" />
+  <meta name="theme-color" content="#1f1740" />
   <title>El camino de la ortopedia dental</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="app-shell">
-    <section id="setup" class="screen active">
-      <div class="hero-card">
-        <div class="tooth-mark" aria-hidden="true">🦷</div>
-        <p class="eyebrow">Juego de mesa educativo</p>
-        <h1>El camino de la ortopedia dental</h1>
-        <p class="subtitle"><strong>v0.4:</strong> 100 preguntas · 60 casos clínicos · reglas originales del PowerPoint.</p>
+    <section id="setup" class="screen active setup-screen">
+      <div class="hero-card game-frame">
+        <img class="original-title" src="assets/visual/title.webp" alt="El camino de la ortopedia dental" />
+        <p class="eyebrow">Juego de mesa educativo · v0.5 multimedia</p>
+        <p class="subtitle"><strong>100 preguntas · 60 casos clínicos</strong> · reglas, personajes y multimedia recuperados del PowerPoint.</p>
 
         <div class="rules-summary" aria-label="Reglas originales del juego">
           <h2>Reglas originales</h2>
@@ -33,7 +32,7 @@
 
         <div class="setup-grid">
           <label>
-            Número de jugadores
+            Número de jugadores / equipos
             <select id="playerCount">
               <option value="2">2 jugadores</option>
               <option value="3">3 jugadores</option>
@@ -46,16 +45,42 @@
         </div>
 
         <div class="actions">
-          <button id="newGameBtn" class="primary">Comenzar partida</button>
+          <button id="chooseCharactersBtn" class="primary">Elegir personajes</button>
           <button id="resumeBtn" class="secondary" hidden>Continuar partida guardada</button>
         </div>
+      </div>
+    </section>
+
+    <section id="characters" class="screen character-screen">
+      <div class="character-shell game-frame">
+        <div class="character-head">
+          <div>
+            <p class="eyebrow">Elige tu personaje</p>
+            <h1 id="pickerTitle">Jugador 1</h1>
+            <p id="pickerHint">Selecciona un personaje para tu ficha.</p>
+          </div>
+          <div class="ready-art" aria-hidden="true">READY!</div>
+        </div>
+        <div id="characterGrid" class="character-grid" aria-label="Personajes disponibles"></div>
+        <div id="pickedSummary" class="picked-summary"></div>
+        <div class="actions">
+          <button id="pickerBackBtn" class="secondary">Volver</button>
+          <button id="pickerNextBtn" class="primary" disabled>Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="loadingScreen" class="screen loading-screen">
+      <div class="loading-card">
+        <img src="assets/visual/loading.gif" alt="Cargando" />
+        <p>Preparando el tablero…</p>
       </div>
     </section>
 
     <section id="game" class="screen">
       <header class="game-header">
         <div>
-          <p class="eyebrow">El camino de la ortopedia dental</p>
+          <img class="mini-title" src="assets/visual/title.webp" alt="El camino de la ortopedia dental" />
           <h2 id="turnLabel">Turno</h2>
         </div>
         <div class="header-actions">
@@ -91,15 +116,23 @@
     </section>
   </main>
 
-  <dialog id="questionDialog" class="modal">
+  <dialog id="questionDialog" class="modal question-modal">
     <form method="dialog" class="modal-card" id="questionForm">
       <div class="modal-head">
         <span id="questionCategory" class="category-pill">Pregunta</span>
         <span id="questionNumber" class="question-number"></span>
       </div>
       <h2 id="questionText"></h2>
+      <div id="questionMedia" class="question-media" hidden></div>
+      <div class="question-tools">
+        <button id="timerBtn" type="button" class="timer-btn">⏱️ Iniciar 30 s</button>
+        <span id="timerDisplay" class="timer-display">30</span>
+      </div>
       <div id="questionOptions" class="options"></div>
-      <div id="feedback" class="feedback" hidden></div>
+      <div id="feedback" class="feedback" hidden>
+        <span id="feedbackIcon" class="feedback-mark" aria-hidden="true"></span>
+        <div id="feedbackText"></div>
+      </div>
       <div class="modal-actions">
         <button id="confirmAnswerBtn" type="button" class="primary">Confirmar respuesta</button>
         <button id="continueBtn" type="button" class="secondary" hidden>Continuar</button>
@@ -107,8 +140,9 @@
     </form>
   </dialog>
 
-  <dialog id="eventDialog" class="modal">
+  <dialog id="eventDialog" class="modal event-modal">
     <div class="modal-card event-card">
+      <div id="eventRuleArt" class="rule-art" hidden></div>
       <div id="eventIcon" class="event-icon">🦷</div>
       <h2 id="eventTitle">Evento</h2>
       <p id="eventText"></p>
