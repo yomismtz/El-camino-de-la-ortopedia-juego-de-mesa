@@ -1,0 +1,1 @@
+window.CLINICAL_CASES = [];
