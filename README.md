@@ -4,69 +4,63 @@ Versión digital del juego de mesa educativo originalmente desarrollado en Power
 
 ## Estado actual
 
-**Versión 0.2 — reglas originales y mapa real del tablero.**
+**Versión 0.3 — banco completo y ampliado.**
 
 Incluye:
 
 - 2 a 6 jugadores locales.
-- 37 casillas numeradas, más INICIO y FIN.
-- Dado animado y movimiento automático de fichas.
-- Turnos automáticos.
-- Mapa de casillas reconstruido desde el PowerPoint original.
-- Reglas originales:
-  - Pregunta incorrecta: retrocede 1 casilla.
-  - Caso clínico excelente: avanza 2.
-  - Caso clínico bueno: avanza 1.
-  - Caso clínico incorrecto: retrocede 1.
-  - “Perdiste el expediente”: retrocede 2.
-  - “Cárcel”: pierde 1 turno.
-  - “Vacaciones”: regresa al INICIO.
-  - “Hiciste un excelente diagnóstico”: avanza 1.
-  - “Concluiste un tratamiento”: avanza 2.
-  - “El paciente canceló una cita”: retrocede 1.
-- Los sobres del tablero conservan su organización original: Preguntas 1, 2 y 3; Casos clínicos 1 a 5.
-- Guardado automático con `localStorage`.
-- PWA básica y funcionamiento offline una vez cargada.
-- Diseño adaptable a computadora, tablet y teléfono.
+- Tablero de 37 casillas numeradas + FIN.
+- Dado animado y movimiento automático.
+- Reglas originales del PowerPoint: preguntas, casos clínicos, avance/retroceso, Cárcel y Vacaciones.
+- **40 preguntas totales**:
+  - preguntas 1–36 migradas del PowerPoint original;
+  - preguntas 37–40 añadidas en v0.3 y marcadas internamente como contenido nuevo.
+- **30 casos clínicos totales**:
+  - C1–C20 migrados del PowerPoint original;
+  - C21–C30 añadidos en v0.3 y marcados internamente como contenido nuevo.
+- 3 sobres de preguntas: 13 / 13 / 14 preguntas.
+- 5 sobres de casos clínicos: 6 casos por sobre.
+- En los casos originales, la clasificación **Excelente / Buena / Incorrecta** fue reconstruida a partir de los disparadores, imágenes y sonidos del propio PPT.
+- Guardado automático de la partida con `localStorage`.
+- PWA básica y caché offline.
 
-## Mapa reconstruido del tablero
+## Fidelidad al PowerPoint
 
-Las casillas especiales fueron identificadas a partir de las imágenes de fondo y los hipervínculos del PowerPoint original. Las casillas de preguntas mantienen el sobre al que apuntaban y las de casos clínicos mantienen el grupo de cuatro casos al que estaban conectadas.
+La migración de las preguntas 1–36 y casos C1–C20 conserva el texto, opciones y retroalimentación del archivo fuente, incluyendo errores ortográficos o inconsistencias que ya existían. No se corrigieron silenciosamente.
 
-## Contenido migrado
+Elementos que conviene revisar antes de usar el banco como evaluación formal:
 
-La mecánica ya está implementada. El banco de contenido todavía es parcial: en la v0.3 se migrarán literalmente las **36 preguntas** y los **20 casos clínicos** del archivo original, junto con sus retroalimentaciones.
+- Pregunta 16: la opción marcada como correcta por la animación no coincide claramente con el texto explicativo.
+- Pregunta 25: la animación del PowerPoint marca como correcta `2 vueltas al día por 3 semanas`, mientras la retroalimentación escrita indica `0.25 mm cada 12 h`.
+- Pregunta 26: la retroalimentación escrita repite la explicación de la pregunta 25.
+- Pregunta 31: la retroalimentación escrita pertenece a la diferencia entre ortopedia y ortodoncia, no a Moctezuma II.
+- Pregunta 36: la explicación original contiene una inconsistencia de redacción.
+- Caso C16: una de las cuatro opciones no tiene retroalimentación textual en el PowerPoint.
+- Preguntas 2, 10 y 35 dependen de audio/video del PowerPoint; la multimedia se integrará en v0.4.
 
-## Cómo probarlo
+## Contenido nuevo de v0.3
 
-No requiere compilación. Abre `index.html` mediante un servidor web local o publica el repositorio con GitHub Pages.
+Las preguntas 37–40 y los casos C21–C30 son material educativo nuevo, separado internamente con `origin: "new"`. Para hábitos, crecimiento, crossbite y selección de tratamiento se tomó como referencia general la guía de la **American Academy of Pediatric Dentistry (AAPD), Management of the Developing Dentition and Occlusion in Pediatric Dentistry, revisión 2024**.
 
-```bash
-python -m http.server 8000
-```
+## Próxima fase — v0.4
 
-Después abre `http://localhost:8000`.
-
-## Próximas fases
-
-1. Migrar las 36 preguntas y los 20 casos clínicos completos.
-2. Integrar las imágenes originales de las tarjetas de reglas.
-3. Extraer e integrar personajes, GIF, audios, canciones y video originales.
-4. Reproducir la selección visual de personaje.
-5. Probar todas las rutas de juego y corregir casos límite.
-6. Preparar el proyecto para Capacitor y Android.
-7. Generar APK/AAB firmado.
+1. Extraer e integrar imágenes, personajes, GIF, audios y video originales del PowerPoint.
+2. Restaurar el audio de las preguntas 2 y 10 y el contenido audiovisual de la pregunta 35.
+3. Usar las tarjetas originales de reglas como ventanas/eventos del juego.
+4. Añadir selección visual de personaje.
+5. Añadir música y efectos con controles independientes.
+6. Revisar clínicamente las preguntas marcadas como inconsistentes sin modificar el original sin aprobación de la autora.
+7. Preparar Capacitor/Android para APK.
 
 ## Estructura
 
 ```text
 index.html            Interfaz principal
 styles.css            Diseño responsive
-app.js                Motor del juego, tablero, reglas y contenido
+app.js                Motor del juego
+questions.js          Banco de 40 preguntas
+cases.js              Inicializador del banco clínico
+cases-deck1.js...     Cinco sobres con 30 casos clínicos
 manifest.webmanifest  Configuración PWA
-sw.js                 Caché offline
+sw.js                  Caché offline
 ```
-
-## Nota
-
-Este repositorio no reproduce el PowerPoint como una secuencia de diapositivas. Convierte su tablero, reglas, preguntas, casos clínicos y recursos multimedia en un motor de juego real y reutilizable.
