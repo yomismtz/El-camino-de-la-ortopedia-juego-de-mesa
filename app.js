@@ -1,284 +1,47 @@
-const PLAYER_COLORS = ['#6a3f95','#d05f91','#2e8b78','#d18a32','#3975b7','#8d5b45'];
-const DICE = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-const STORAGE_KEY = 'ortopediaGameV05';
-const LEGACY_STORAGE_KEYS = ['ortopediaGameV03','ortopediaGameV02','ortopediaGameV01'];
-const BOARD_END = 38;
-
-const CELL_RULES = {
-  1:{type:'question', deck:3}, 2:{type:'back1'}, 3:{type:'case', deck:1},
-  4:{type:'question', deck:2}, 5:{type:'question', deck:1}, 6:{type:'case', deck:2},
-  7:{type:'neutral'}, 8:{type:'advance1'}, 9:{type:'back2'}, 10:{type:'vacation'},
-  11:{type:'neutral'}, 12:{type:'question', deck:3}, 13:{type:'case', deck:3},
-  14:{type:'jail'}, 15:{type:'advance2'}, 16:{type:'advance1'}, 17:{type:'neutral'},
-  18:{type:'case', deck:4}, 19:{type:'neutral'}, 20:{type:'back2'}, 21:{type:'back1'},
-  22:{type:'neutral'}, 23:{type:'advance2'}, 24:{type:'question', deck:1}, 25:{type:'neutral'},
-  26:{type:'neutral'}, 27:{type:'neutral'}, 28:{type:'case', deck:5}, 29:{type:'neutral'},
-  30:{type:'back2'}, 31:{type:'neutral'}, 32:{type:'jail'}, 33:{type:'neutral'},
-  34:{type:'vacation'}, 35:{type:'question', deck:2}, 36:{type:'vacation'}, 37:{type:'back1'},
-  38:{type:'finish'}
-};
-
-const RULE_META = {
-  question:{icon:'❓',label:'Pregunta',title:'¿Pregunta?',message:'Si contestas mal retrocedes una casilla.',art:'question'},
-  case:{icon:'📩',label:'Caso clínico',title:'Caso Clínico',message:'Excelente: avanzas 2. Buena: avanzas 1. Incorrecta: retrocedes 1.',art:'case'},
-  back2:{icon:'📁',label:'Retrocede 2',title:'Retrocede 2 casillas',message:'Perdiste el expediente.',art:'back2'},
-  jail:{icon:'⚖️',label:'Cárcel',title:'Cárcel',message:'Tu paciente está muy molesto y te ha demandado. Pierde 1 turno.',art:'jail'},
-  vacation:{icon:'🏖️',label:'Vacaciones',title:'Vacaciones',message:'Te fuiste de vacaciones. Regresa al INICIO.',art:'vacation'},
-  advance1:{icon:'✅',label:'Avanza 1',title:'Avanza 1 casilla',message:'Hiciste un excelente diagnóstico.',art:'advance1'},
-  advance2:{icon:'🏁',label:'Avanza 2',title:'Avanza 2 casillas',message:'Concluiste un tratamiento.',art:'advance2'},
-  back1:{icon:'📅',label:'Retrocede 1',title:'Retrocede 1 casilla',message:'El paciente canceló una cita.',art:'back1'},
-  neutral:{icon:'🦷',label:'Casilla',title:'Casilla',message:'Sin evento especial.'},
-  finish:{icon:'🏆',label:'Fin',title:'Fin',message:'Llegaste al final del camino.'}
-};
-
-const SOUND_FILES = {
-  start:'assets/audio/lets-go.mp3',
-  choose:'assets/audio/choose-character.mp3',
-  loading:'assets/audio/loading.mp3',
-  error:'assets/audio/error.mp3',
-  correct:'assets/audio/correct.mp3',
-  excellent:'assets/audio/excellent.mp3',
-  countdown:'assets/audio/countdown.mp3',
-  alarm:'assets/audio/alarm.mp3',
-  win:'assets/audio/win-outro.mp3'
-};
-
-const QUESTION_MEDIA = {
-  2:{type:'audio',src:'assets/audio/question-2.mp3',caption:'🎵 Reproduce la canción original del PowerPoint para responder.'},
-  10:{type:'audio',src:'assets/audio/question-10.mp3',caption:'🎵 Reproduce el audio original del PowerPoint para responder.'},
-  35:{type:'video',src:'assets/video/question-35.mp4',caption:'🎬 Observa el video original del PowerPoint y responde.'}
-};
-
-const questions = window.QUESTIONS || [];
-const clinicalCases = window.CLINICAL_CASES || [];
-
-let state = null;
-let draft = null;
-let pendingQuestion = null;
-let selectedAnswer = null;
-let pendingAfterDialog = null;
-let soundEnabled = true;
-let timerInterval = null;
-let timerRemaining = 30;
-let activeSfx = null;
-let audioContext = null;
-
-const $ = id => document.getElementById(id);
-const setup = $('setup');
-const characters = $('characters');
-const loadingScreen = $('loadingScreen');
-const game = $('game');
-const board = $('board');
-const playerCount = $('playerCount');
-const playerNames = $('playerNames');
-const resumeBtn = $('resumeBtn');
-const rollBtn = $('rollBtn');
-const dice = $('dice');
-const statusText = $('statusText');
-const questionDialog = $('questionDialog');
-const eventDialog = $('eventDialog');
-
-function showScreen(target) {
-  [setup,characters,loadingScreen,game].forEach(s=>s.classList.remove('active'));
-  target.classList.add('active');
-}
-
-function characterPosition(index) {
-  return ['0%','20%','40%','60%','80%','100%'][Math.max(0,Math.min(5,index||0))];
-}
-
-function buildNameInputs() {
-  const count = Number(playerCount.value);
-  playerNames.innerHTML = '';
-  for (let i=0; i<count; i++) {
-    const row = document.createElement('div');
-    row.className = 'name-row';
-    row.innerHTML = `<span class="token-preview" style="--token:${PLAYER_COLORS[i]}">${i+1}</span><input id="name-${i}" maxlength="18" value="Jugador ${i+1}" aria-label="Nombre del jugador ${i+1}">`;
-    playerNames.appendChild(row);
-  }
-}
-
-function beginCharacterSelection() {
-  const count = Number(playerCount.value);
-  draft = {
-    count,
-    names:Array.from({length:count},(_,i)=>($(`name-${i}`).value || `Jugador ${i+1}`).trim()),
-    characters:Array(count).fill(null),
-    pickerIndex:0
-  };
-  showScreen(characters);
-  renderCharacterPicker();
-  playSound('choose');
-}
-
-function renderCharacterPicker() {
-  const i=draft.pickerIndex;
-  $('pickerTitle').textContent=`${draft.names[i]}: elige personaje`;
-  $('pickerHint').textContent=`Jugador ${i+1} de ${draft.count}. Cada personaje puede usarse una sola vez.`;
-  const taken = new Set(draft.characters.filter((x,idx)=>x!==null && idx!==i));
-  const grid=$('characterGrid');
-  grid.innerHTML='';
-  for(let c=0;c<6;c++){
-    const btn=document.createElement('button');
-    btn.type='button';
-    const isTaken=taken.has(c), isSelected=draft.characters[i]===c;
-    btn.className=`character-choice${isTaken?' taken':''}${isSelected?' selected':''}`;
-    btn.disabled=isTaken;
-    btn.innerHTML=`<div class="char-art char-${c}" aria-hidden="true"></div><span>Personaje ${c+1}</span>`;
-    btn.addEventListener('click',()=>{
-      draft.characters[i]=c;
-      synthTone('select');
-      renderCharacterPicker();
-    });
-    grid.appendChild(btn);
-  }
-  $('pickerNextBtn').disabled=draft.characters[i]===null;
-  $('pickerNextBtn').textContent=i===draft.count-1?'Comenzar partida':'Siguiente';
-  $('pickedSummary').innerHTML=draft.names.map((name,idx)=>`<span class="picked-chip">${escapeHtml(name)}: ${draft.characters[idx]===null?'—':`Personaje ${draft.characters[idx]+1}`}</span>`).join('');
-}
-
-function pickerNext() {
-  if (draft.characters[draft.pickerIndex]===null) return;
-  if (draft.pickerIndex < draft.count-1) {
-    draft.pickerIndex++;
-    renderCharacterPicker();
-  } else {
-    showLoadingThenStart();
-  }
-}
-
-function pickerBack() {
-  if (!draft) return showScreen(setup);
-  if (draft.pickerIndex>0) {
-    draft.pickerIndex--;
-    renderCharacterPicker();
-  } else {
-    stopSound();
-    showScreen(setup);
-  }
-}
-
-async function showLoadingThenStart() {
-  stopSound();
-  showScreen(loadingScreen);
-  playSound('loading');
-  await delay(1600);
-  newGameFromDraft();
-}
-
-function newGameFromDraft() {
-  const count=draft.count;
-  state={
-    version:5,
-    players:Array.from({length:count},(_,i)=>({
-      name:draft.names[i], position:0, skipTurns:0, color:PLAYER_COLORS[i], character:draft.characters[i] ?? i
-    })),
-    current:0, usedQuestionIds:[], usedCaseIds:[], turn:1, locked:false
-  };
-  saveGame();
-  showScreen(game);
-  buildBoard();
-  render();
-  statusText.textContent=`${state.players[0].name}, tira el dado.`;
-  playSound('start');
-}
-
-function ruleForCell(n) {
-  if (n===0) return {type:'start'};
-  return CELL_RULES[n] || {type:'neutral'};
-}
-
-function buildBoard() {
-  board.innerHTML='';
-  const cells=[];
-  for(let n=0;n<=BOARD_END;n++){
-    const rule=ruleForCell(n), type=rule.type;
-    const meta=type==='start'?{icon:'🚩',label:'Inicio'}:RULE_META[type];
-    const cell=document.createElement('div');
-    cell.className=`cell ${type}`; cell.dataset.cell=n;
-    const label=n===0?'Inicio':n===BOARD_END?'Fin':n;
-    cell.title=meta?.label||'';
-    cell.innerHTML=`<span class="cell-number">${label}</span><span class="cell-icon">${meta?.icon||'🦷'}</span><div class="tokens"></div>`;
-    cells.push(cell);
-  }
-  const rows=[]; for(let i=0;i<cells.length;i+=8) rows.push(cells.slice(i,i+8));
-  rows.forEach((row,idx)=>(idx%2?[...row].reverse():row).forEach(cell=>board.appendChild(cell)));
-}
-
-function render() {
-  if(!state)return;
-  document.querySelectorAll('.tokens').forEach(x=>x.innerHTML='');
-  state.players.forEach((p,i)=>{
-    if(typeof p.character!=='number') p.character=i%6;
-    const holder=document.querySelector(`[data-cell="${p.position}"] .tokens`); if(!holder)return;
-    const t=document.createElement('span');
-    t.className=`board-token char-${p.character}`;
-    t.title=p.name;
-    holder.appendChild(t);
-  });
-  $('scoreList').innerHTML=state.players.map((p,i)=>`
-    <div class="player-score ${i===state.current?'current':''}">
-      <span class="player-avatar char-${p.character}"></span>
-      <div><strong>${escapeHtml(p.name)}</strong><br><small>${p.position===0?'Inicio':p.position===BOARD_END?'Fin':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} turno`:''}</small></div>
-      <strong>${p.position}/${BOARD_END}</strong>
-    </div>`).join('');
-  $('turnLabel').textContent=`Turno ${state.turn}: ${state.players[state.current].name}`;
-  rollBtn.disabled=state.locked;
-  saveGame();
-}
-
-function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-
-async function rollDice() {
-  if(!state||state.locked)return;
-  state.locked=true; rollBtn.disabled=true;
-  const value=Math.floor(Math.random()*6)+1;
-  dice.classList.add('rolling');
-  for(let i=0;i<7;i++){dice.textContent=DICE[Math.floor(Math.random()*6)]; synthTone('tick',0.025); await delay(65);}
-  dice.textContent=DICE[value-1]; dice.classList.remove('rolling');
-  statusText.textContent=`${state.players[state.current].name} obtuvo ${value}.`;
-  await moveCurrentPlayerBy(value);
-  if(state.players[state.current].position>=BOARD_END)return showWinner(state.players[state.current]);
-  setTimeout(()=>triggerCell(state.players[state.current].position),180);
-}
-
-async function moveCurrentPlayerBy(delta){
-  const p=state.players[state.current];
-  const target=Math.max(0,Math.min(BOARD_END,p.position+delta));
-  const step=target>=p.position?1:-1;
-  while(p.position!==target){p.position+=step;render();document.querySelector(`[data-cell="${p.position}"] .board-token:last-child`)?.classList.add('moving');await delay(145);}
-}
-
-function triggerCell(cell){
-  const rule=ruleForCell(cell);
-  switch(rule.type){
-    case'question':return startQuestion(rule.deck);
-    case'case':return startCase(rule.deck);
-    case'advance1':return showMovementEvent('advance1',1);
-    case'advance2':return showMovementEvent('advance2',2);
-    case'back1':return showMovementEvent('back1',-1);
-    case'back2':return showMovementEvent('back2',-2);
-    case'vacation':return showVacationEvent();
-    case'jail':return showJailEvent();
-    case'finish':return showWinner(state.players[state.current]);
-    default:statusText.textContent='Casilla sin evento especial. Continúa el siguiente jugador.';synthTone('neutral');setTimeout(endTurn,500);
-  }
-}
-
-function pickUnused(pool,usedKey){
-  let candidates=pool.filter(item=>!state[usedKey].includes(String(item.id)));
-  if(!candidates.length){const ids=new Set(pool.map(item=>String(item.id)));state[usedKey]=state[usedKey].filter(id=>!ids.has(id));candidates=pool;}
-  const chosen=candidates[Math.floor(Math.random()*candidates.length)]; if(chosen)state[usedKey].push(String(chosen.id)); return chosen;
-}
-
-function startQuestion(deck){
-  const q=pickUnused(questions.filter(x=>x.deck===deck),'usedQuestionIds');
-  if(!q)return showEvent('Pregunta',`No hay preguntas disponibles en el sobre ${deck}.`,'❓',endTurn,'question');
-  pendingQuestion={...q,kind:'question'};selectedAnswer=null;showQuestion(pendingQuestion);
-}
-function startCase(deck){
-  const q=pickUnused(clinicalCases.filter(x=>x.deck===deck),'usedCaseIds');
-  if(!q)return showEvent('Caso clínico',`No hay casos disponibles en el sobre ${deck}.`,'📩',endTurn,'case');
-  pendingQuestion={...q,kind:'case'};selectedAnswer=null;showQuestion(pendingQuestion);
-}
-
+const PLAYER_COLORS=['#6a3f95','#d05f91','#2e8b78','#d18a32','#3975b7','#8d5b45'];
+const DICE=['⚀','⚁','⚂','⚃','⚄','⚅'],STORAGE_KEY='ortopediaGameV05',BOARD_END=38;
+const CELL_RULES={1:{type:'question',deck:3},2:{type:'back1'},3:{type:'case',deck:1},4:{type:'question',deck:2},5:{type:'question',deck:1},6:{type:'case',deck:2},7:{type:'neutral'},8:{type:'advance1'},9:{type:'back2'},10:{type:'vacation'},11:{type:'neutral'},12:{type:'question',deck:3},13:{type:'case',deck:3},14:{type:'jail'},15:{type:'advance2'},16:{type:'advance1'},17:{type:'neutral'},18:{type:'case',deck:4},19:{type:'neutral'},20:{type:'back2'},21:{type:'back1'},22:{type:'neutral'},23:{type:'advance2'},24:{type:'question',deck:1},25:{type:'neutral'},26:{type:'neutral'},27:{type:'neutral'},28:{type:'case',deck:5},29:{type:'neutral'},30:{type:'back2'},31:{type:'neutral'},32:{type:'jail'},33:{type:'neutral'},34:{type:'vacation'},35:{type:'question',deck:2},36:{type:'vacation'},37:{type:'back1'},38:{type:'finish'}};
+const RULE_META={question:{icon:'❓',title:'¿Pregunta?',message:'Si contestas mal retrocedes una casilla.',art:'question'},case:{icon:'📩',title:'Caso Clínico',message:'Excelente: avanzas 2. Buena: avanzas 1. Incorrecta: retrocedes 1.',art:'case'},back2:{icon:'📁',title:'Retrocede 2 casillas',message:'Perdiste el expediente.',art:'back2'},jail:{icon:'⚖️',title:'Cárcel',message:'Tu paciente está muy molesto y te ha demandado. Pierde 1 turno.',art:'jail'},vacation:{icon:'🏖️',title:'Vacaciones',message:'Te fuiste de vacaciones. Regresa al INICIO.',art:'vacation'},advance1:{icon:'✅',title:'Avanza 1 casilla',message:'Hiciste un excelente diagnóstico.',art:'advance1'},advance2:{icon:'🏁',title:'Avanza 2 casillas',message:'Concluiste un tratamiento.',art:'advance2'},back1:{icon:'📅',title:'Retrocede 1 casilla',message:'El paciente canceló una cita.',art:'back1'},neutral:{icon:'🦷',title:'Casilla'},finish:{icon:'🏆',title:'Fin'}};
+const questions=window.QUESTIONS||[],clinicalCases=window.CLINICAL_CASES||[];
+let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,soundEnabled=true,timer=null,timerLeft=30;
+const $=id=>document.getElementById(id),setup=$('setup'),characters=$('characters'),loadingScreen=$('loadingScreen'),game=$('game'),board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),dice=$('dice'),statusText=$('statusText'),questionDialog=$('questionDialog'),eventDialog=$('eventDialog');
+function showScreen(s){[setup,characters,loadingScreen,game].forEach(x=>x.classList.remove('active'));s.classList.add('active')}
+function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function buildNameInputs(){playerNames.innerHTML='';for(let i=0;i<Number(playerCount.value);i++){const r=document.createElement('div');r.className='name-row';r.innerHTML=`<span class="token-preview" style="--token:${PLAYER_COLORS[i]}">${i+1}</span><input id="name-${i}" maxlength="18" value="Jugador ${i+1}">`;playerNames.appendChild(r)}}
+function playClip(name){if(soundEnabled)tone(name)}function stopClip(){}
+function tone(kind='neutral'){if(!soundEnabled)return;try{const C=window.AudioContext||window.webkitAudioContext,ctx=new C(),o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=kind==='error'?180:kind==='excellent'?850:kind==='alarm'?240:kind==='countdown'?440:kind==='win-outro'?740:kind==='select'?620:520;g.gain.value=.05;o.connect(g).connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.stop(ctx.currentTime+.18)}catch{}}
+function beginCharacterSelection(){const c=Number(playerCount.value);draft={count:c,names:Array.from({length:c},(_,i)=>($(`name-${i}`).value||`Jugador ${i+1}`).trim()),characters:Array(c).fill(null),pickerIndex:0};showScreen(characters);renderPicker();playClip('select')}
+function renderPicker(){const i=draft.pickerIndex,taken=new Set(draft.characters.filter((x,j)=>x!==null&&j!==i));$('pickerTitle').textContent=`${draft.names[i]}: elige personaje`;$('pickerHint').textContent=`Jugador ${i+1} de ${draft.count}. Cada personaje se usa una sola vez.`;const g=$('characterGrid');g.innerHTML='';for(let c=0;c<6;c++){const b=document.createElement('button');b.type='button';b.disabled=taken.has(c);b.className=`character-choice${taken.has(c)?' taken':''}${draft.characters[i]===c?' selected':''}`;b.innerHTML=`<div class="char-art char-${c}"></div><b>Personaje ${c+1}</b>`;b.onclick=()=>{draft.characters[i]=c;tone('select');renderPicker()};g.appendChild(b)}$('pickerNextBtn').disabled=draft.characters[i]===null;$('pickerNextBtn').textContent=i===draft.count-1?'Comenzar partida':'Siguiente';$('pickedSummary').innerHTML=draft.names.map((n,j)=>`<span class="picked-chip">${escapeHtml(n)}: ${draft.characters[j]===null?'—':`Personaje ${draft.characters[j]+1}`}</span>`).join('')}
+function pickerNext(){if(draft.characters[draft.pickerIndex]===null)return;if(draft.pickerIndex<draft.count-1){draft.pickerIndex++;renderPicker()}else startWithLoading()}
+function pickerBack(){if(draft.pickerIndex>0){draft.pickerIndex--;renderPicker()}else showScreen(setup)}
+async function startWithLoading(){showScreen(loadingScreen);playClip('loading');await delay(900);state={version:5,players:Array.from({length:draft.count},(_,i)=>({name:draft.names[i],position:0,skipTurns:0,color:PLAYER_COLORS[i],character:draft.characters[i]})),current:0,usedQuestionIds:[],usedCaseIds:[],turn:1,locked:false};saveGame();showScreen(game);buildBoard();render();statusText.textContent=`${state.players[0].name}, tira el dado.`;playClip('neutral')}
+function ruleForCell(n){return n===0?{type:'start'}:(CELL_RULES[n]||{type:'neutral'})}
+function buildBoard(){board.innerHTML='';const cells=[];for(let n=0;n<=BOARD_END;n++){const r=ruleForCell(n),m=r.type==='start'?{icon:'🚩'}:RULE_META[r.type],c=document.createElement('div');c.className=`cell ${r.type}`;c.dataset.cell=n;c.innerHTML=`<span class="cell-number">${n===0?'Inicio':n===BOARD_END?'Fin':n}</span><span>${m?.icon||'🦷'}</span><div class="tokens"></div>`;cells.push(c)}for(let i=0;i<cells.length;i+=8){const row=cells.slice(i,i+8),ord=(i/8)%2?[...row].reverse():row;ord.forEach(c=>board.appendChild(c))}}
+function render(){if(!state)return;document.querySelectorAll('.tokens').forEach(x=>x.innerHTML='');state.players.forEach((p,i)=>{if(typeof p.character!=='number')p.character=i%6;const h=document.querySelector(`[data-cell="${p.position}"] .tokens`);if(h){const t=document.createElement('span');t.className=`board-token char-${p.character}`;t.title=p.name;h.appendChild(t)}});$('scoreList').innerHTML=state.players.map((p,i)=>`<div class="player-score ${i===state.current?'current':''}"><span class="player-avatar char-${p.character}"></span><div><b>${escapeHtml(p.name)}</b><br><small>${p.position===0?'Inicio':p.position===BOARD_END?'Fin':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} turno`:''}</small></div><b>${p.position}/${BOARD_END}</b></div>`).join('');$('turnLabel').textContent=`Turno ${state.turn}: ${state.players[state.current].name}`;rollBtn.disabled=state.locked;saveGame()}
+async function rollDice(){if(!state||state.locked)return;state.locked=true;rollBtn.disabled=true;const v=Math.floor(Math.random()*6)+1;dice.classList.add('rolling');for(let i=0;i<6;i++){dice.textContent=DICE[Math.floor(Math.random()*6)];await delay(65)}dice.textContent=DICE[v-1];dice.classList.remove('rolling');statusText.textContent=`${state.players[state.current].name} obtuvo ${v}.`;await move(v);if(state.players[state.current].position>=BOARD_END)return showWinner(state.players[state.current]);setTimeout(()=>triggerCell(state.players[state.current].position),160)}
+async function move(delta){const p=state.players[state.current],target=Math.max(0,Math.min(BOARD_END,p.position+delta)),step=target>=p.position?1:-1;while(p.position!==target){p.position+=step;render();document.querySelector(`[data-cell="${p.position}"] .board-token:last-child`)?.classList.add('moving');await delay(135)}}
+function triggerCell(cell){const r=ruleForCell(cell);if(r.type==='question')return startQuestion(r.deck);if(r.type==='case')return startCase(r.deck);if(r.type==='advance1')return movement('advance1',1);if(r.type==='advance2')return movement('advance2',2);if(r.type==='back1')return movement('back1',-1);if(r.type==='back2')return movement('back2',-2);if(r.type==='vacation')return vacation();if(r.type==='jail')return jail();if(r.type==='finish')return showWinner(state.players[state.current]);statusText.textContent='Casilla sin evento especial.';setTimeout(endTurn,450)}
+function pickUnused(pool,key){let c=pool.filter(x=>!state[key].includes(String(x.id)));if(!c.length){const ids=new Set(pool.map(x=>String(x.id)));state[key]=state[key].filter(id=>!ids.has(id));c=pool}const q=c[Math.floor(Math.random()*c.length)];if(q)state[key].push(String(q.id));return q}
+function startQuestion(deck){const q=pickUnused(questions.filter(x=>x.deck===deck),'usedQuestionIds');if(!q)return endTurn();pendingQuestion={...q,kind:'question'};selectedAnswer=null;showQuestion()}
+function startCase(deck){const q=pickUnused(clinicalCases.filter(x=>x.deck===deck),'usedCaseIds');if(!q)return endTurn();pendingQuestion={...q,kind:'case'};selectedAnswer=null;showQuestion()}
+function showQuestion(){stopTimer();const q=pendingQuestion;$('questionCategory').textContent=(q.kind==='case'?'Caso clínico':`Preguntas ${q.deck}`)+(q.origin==='new'?' · nuevo':'');$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;renderMedia(q);$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('timerDisplay').textContent='30';$('timerDisplay').className='';$('timerBtn').disabled=false;$('timerBtn').textContent='⏱️ Iniciar 30 s';const o=$('questionOptions');o.innerHTML='';q.options.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><span>${escapeHtml(x)}</span>`;b.onclick=()=>{selectedAnswer=i;document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};o.appendChild(b)});questionDialog.showModal()}
+function renderMedia(q){const box=$('questionMedia');box.innerHTML='';box.hidden=true;if(q.id===2||q.id===10){box.hidden=false;box.innerHTML=`<p>🎵 El audio original fue recuperado del PowerPoint. La versión web usa una señal sonora de respaldo; el clip original queda en el paquete multimedia para la APK.</p><button type="button" class="secondary" id="playQuestionAudio">▶ Reproducir señal</button>`;setTimeout(()=>{$('playQuestionAudio').onclick=()=>tone('select')},0)}else if(q.id===35){box.hidden=false;box.innerHTML='<p>🎬 El video original fue recuperado y queda reservado para el paquete local/APK. La versión web mantiene el ítem sin descargar el video.</p>'}}
+function confirmAnswer(){if(selectedAnswer===null||!pendingQuestion)return;stopTimer();const opts=[...document.querySelectorAll('.option')];opts.forEach(x=>{x.disabled=true;x.classList.remove('selected')});let delta=0,heading='',detail='',snd='error';if(pendingQuestion.kind==='question'){const ok=selectedAnswer===pendingQuestion.correct;opts[pendingQuestion.correct]?.classList.add('correct');if(!ok){opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading='Incorrecta · retrocedes 1 casilla'}else{heading='Correcta · permaneces en tu casilla';snd='correct'}detail=pendingQuestion.explanation||'El PowerPoint original no incluye retroalimentación textual para esta pregunta.'}else{const grade=pendingQuestion.grades[selectedAnswer]||'incorrect';opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');if(grade==='excellent'){delta=2;heading='Excelente · avanzas 2 casillas';snd='excellent'}else if(grade==='good'){delta=1;heading='Buena · avanzas 1 casilla';snd='correct'}else{delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.feedback[selectedAnswer]||'El PowerPoint original no incluye retroalimentación textual para esta opción.'}playClip(snd);pendingQuestion.resultDelta=delta;$('feedback').hidden=false;$('feedback').innerHTML=`<strong>${escapeHtml(heading)}</strong>${escapeHtml(detail)}`;$('confirmAnswerBtn').hidden=true;$('continueBtn').hidden=false}
+async function continueAfterQuestion(){stopTimer();const d=pendingQuestion?.resultDelta||0;pendingQuestion=null;questionDialog.close();if(d)await move(d);if(state.players[state.current].position>=BOARD_END)return showWinner(state.players[state.current]);endTurn()}
+function startTimer(){if(timer)return;timerLeft=30;$('timerBtn').disabled=true;tone('countdown');timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=String(Math.max(0,timerLeft));if(timerLeft<=5)$('timerDisplay').className='timer-warning';if(timerLeft<=0){stopTimer(false);tone('alarm');$('timerBtn').textContent='⏱️ Tiempo terminado'}},1000)}
+function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+function movement(type,d){const m=RULE_META[type];showEvent(m.title,m.message,m.icon,async()=>{await move(d);if(state.players[state.current].position>=BOARD_END)return showWinner(state.players[state.current]);endTurn()},m.art)}
+function vacation(){const m=RULE_META.vacation;showEvent(m.title,m.message,m.icon,async()=>{const p=state.players[state.current];while(p.position>0){p.position--;render();await delay(42)}endTurn()},m.art)}
+function jail(){const m=RULE_META.jail;state.players[state.current].skipTurns=(state.players[state.current].skipTurns||0)+1;render();showEvent(m.title,m.message,m.icon,endTurn,m.art)}
+function showEvent(title,msg,icon,cb){$('eventRuleArt').hidden=true;$('eventIcon').hidden=false;$('eventIcon').textContent=icon;$('eventTitle').textContent=title;$('eventText').textContent=msg;pendingAfterDialog=cb;eventDialog.showModal()}
+function closeEvent(){eventDialog.close();const c=pendingAfterDialog;pendingAfterDialog=null;c?.()}
+function endTurn(){state.current=(state.current+1)%state.players.length;state.turn++;let guard=0,sk=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*3){const p=state.players[state.current];p.skipTurns--;sk.push(`${p.name} pierde este turno por Cárcel.`);state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;render();statusText.textContent=(sk.length?sk.join(' ')+' ':'')+`${state.players[state.current].name}, tira el dado.`}
+function showWinner(p){state.locked=true;p.position=BOARD_END;render();$('winnerTitle').textContent='¡Llegaste al FIN!';$('winnerText').textContent=`${p.name} completó El camino de la ortopedia dental.`;$('winnerDialog').showModal();tone('win-outro')}
+function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
+function migrate(){if(localStorage.getItem(STORAGE_KEY))return;for(const k of ['ortopediaGameV03','ortopediaGameV02','ortopediaGameV01']){const r=localStorage.getItem(k);if(!r)continue;try{const s=JSON.parse(r);s.version=5;s.players?.forEach((p,i)=>{p.character=typeof p.character==='number'?p.character:i%6;p.skipTurns=p.skipTurns||0});localStorage.setItem(STORAGE_KEY,JSON.stringify(s));break}catch{}}}
+function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players.forEach((p,i)=>{p.character=typeof p.character==='number'?p.character:i%6;p.skipTurns=p.skipTurns||0});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.locked=false;showScreen(game);buildBoard();render();statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira el dado.`}catch{localStorage.removeItem(STORAGE_KEY)}}
+function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;localStorage.removeItem(STORAGE_KEY);state=null;showScreen(setup);buildNameInputs()}
+function playAgain(){$('winnerDialog').close();localStorage.removeItem(STORAGE_KEY);state=null;showScreen(setup);buildNameInputs()}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+playerCount.onchange=buildNameInputs;$('chooseCharactersBtn').onclick=beginCharacterSelection;$('pickerNextBtn').onclick=pickerNext;$('pickerBackBtn').onclick=pickerBack;resumeBtn.onclick=loadGame;rollBtn.onclick=rollDice;$('confirmAnswerBtn').onclick=confirmAnswer;$('continueBtn').onclick=continueAfterQuestion;$('eventContinueBtn').onclick=closeEvent;$('timerBtn').onclick=startTimer;$('resetBtn').onclick=resetGame;$('playAgainBtn').onclick=playAgain;$('soundBtn').onclick=()=>{soundEnabled=!soundEnabled;$('soundBtn').textContent=soundEnabled?'🔊':'🔇'};
+migrate();buildNameInputs();buildBoard();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
