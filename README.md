@@ -4,7 +4,7 @@ Versión digital del juego de mesa educativo originalmente desarrollado en Power
 
 ## Estado actual
 
-**Versión 0.3 — banco completo y ampliado.**
+**Versión 0.4 — banco ampliado a 100 preguntas y 60 casos clínicos.**
 
 Incluye:
 
@@ -12,17 +12,26 @@ Incluye:
 - Tablero de 37 casillas numeradas + FIN.
 - Dado animado y movimiento automático.
 - Reglas originales del PowerPoint: preguntas, casos clínicos, avance/retroceso, Cárcel y Vacaciones.
-- **40 preguntas totales**:
-  - preguntas 1–36 migradas del PowerPoint original;
-  - preguntas 37–40 añadidas en v0.3 y marcadas internamente como contenido nuevo.
-- **30 casos clínicos totales**:
+- **100 preguntas totales**:
+  - preguntas 1–36 migradas literalmente del PowerPoint original;
+  - preguntas 37–40 añadidas en v0.3;
+  - preguntas 41–100 añadidas en v0.4.
+- **60 casos clínicos totales**:
   - C1–C20 migrados del PowerPoint original;
-  - C21–C30 añadidos en v0.3 y marcados internamente como contenido nuevo.
-- 3 sobres de preguntas: 13 / 13 / 14 preguntas.
-- 5 sobres de casos clínicos: 6 casos por sobre.
-- En los casos originales, la clasificación **Excelente / Buena / Incorrecta** fue reconstruida a partir de los disparadores, imágenes y sonidos del propio PPT.
+  - C21–C30 añadidos en v0.3;
+  - C31–C60 añadidos en v0.4.
+- 3 sobres de preguntas con distribución final aproximada de 33 / 33 / 34 preguntas.
+- 5 sobres de casos clínicos con **12 casos por sobre**.
+- En los casos clínicos se mantiene la regla: Excelente +2 · Buena +1 · Incorrecta −1.
+- Los contenidos agregados están marcados internamente con `origin: "new"`; el contenido original conserva `origin: "ppt"`.
 - Guardado automático de la partida con `localStorage`.
-- PWA básica y caché offline.
+- PWA básica y caché offline v0.4.
+
+## Base clínica del contenido nuevo
+
+El material añadido en v0.4 se centra en desarrollo de la dentición, hábitos orales, mordidas cruzadas, mantenimiento/recuperación de espacio, alteraciones de erupción, Clase II y III, crecimiento, diagnóstico y guía de conducta pediátrica. Como referencia principal se utilizó la **American Academy of Pediatric Dentistry (AAPD), Management of the Developing Dentition and Occlusion in Pediatric Dentistry, revisión 2024**, junto con su documento de **Behavior Guidance for the Pediatric Dental Patient, revisión 2024**.
+
+Los casos nuevos son material docente para el juego; no sustituyen la valoración clínica individual de un paciente real.
 
 ## Fidelidad al PowerPoint
 
@@ -31,36 +40,37 @@ La migración de las preguntas 1–36 y casos C1–C20 conserva el texto, opcion
 Elementos que conviene revisar antes de usar el banco como evaluación formal:
 
 - Pregunta 16: la opción marcada como correcta por la animación no coincide claramente con el texto explicativo.
-- Pregunta 25: la animación del PowerPoint marca como correcta `2 vueltas al día por 3 semanas`, mientras la retroalimentación escrita indica `0.25 mm cada 12 h`.
+- Pregunta 25: la animación del PowerPoint y la retroalimentación escrita presentan una inconsistencia.
 - Pregunta 26: la retroalimentación escrita repite la explicación de la pregunta 25.
-- Pregunta 31: la retroalimentación escrita pertenece a la diferencia entre ortopedia y ortodoncia, no a Moctezuma II.
+- Preguntas 27 y 28 están duplicadas en el PowerPoint original.
+- Pregunta 31: la retroalimentación escrita pertenece a otro tema.
 - Pregunta 36: la explicación original contiene una inconsistencia de redacción.
 - Caso C16: una de las cuatro opciones no tiene retroalimentación textual en el PowerPoint.
-- Preguntas 2, 10 y 35 dependen de audio/video del PowerPoint; la multimedia se integrará en v0.4.
+- Preguntas 2, 10 y 35 dependen de multimedia del PowerPoint y siguen pendientes de integración audiovisual.
 
-## Contenido nuevo de v0.3
-
-Las preguntas 37–40 y los casos C21–C30 son material educativo nuevo, separado internamente con `origin: "new"`. Para hábitos, crecimiento, crossbite y selección de tratamiento se tomó como referencia general la guía de la **American Academy of Pediatric Dentistry (AAPD), Management of the Developing Dentition and Occlusion in Pediatric Dentistry, revisión 2024**.
-
-## Próxima fase — v0.4
+## Próxima fase — v0.5 visual y multimedia
 
 1. Extraer e integrar imágenes, personajes, GIF, audios y video originales del PowerPoint.
 2. Restaurar el audio de las preguntas 2 y 10 y el contenido audiovisual de la pregunta 35.
 3. Usar las tarjetas originales de reglas como ventanas/eventos del juego.
 4. Añadir selección visual de personaje.
 5. Añadir música y efectos con controles independientes.
-6. Revisar clínicamente las preguntas marcadas como inconsistentes sin modificar el original sin aprobación de la autora.
+6. Revisar clínicamente las preguntas originales marcadas como inconsistentes sin modificar el original sin aprobación de la autora.
 7. Preparar Capacitor/Android para APK.
 
 ## Estructura
 
 ```text
-index.html            Interfaz principal
-styles.css            Diseño responsive
-app.js                Motor del juego
-questions.js          Banco de 40 preguntas
-cases.js              Inicializador del banco clínico
-cases-deck1.js...     Cinco sobres con 30 casos clínicos
-manifest.webmanifest  Configuración PWA
-sw.js                  Caché offline
+index.html                    Interfaz principal
+styles.css                    Diseño responsive
+app.js                        Motor del juego
+questions.js                  Banco base de 40 preguntas
+questions-extra-deck1.js      Preguntas 41–60
+questions-extra-deck2.js      Preguntas 61–80
+questions-extra-deck3.js      Preguntas 81–100
+cases.js                      Inicializador del banco clínico
+cases-deck1.js...deck5.js     Casos C1–C30
+cases-extra-deck1.js...deck5.js Casos C31–C60
+manifest.webmanifest          Configuración PWA
+sw.js                         Caché offline
 ```
