@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#5b2c83" />
+  <title>El camino de la ortopedia dental</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="setup" class="screen active">
+      <div class="hero-card">
+        <div class="tooth-mark" aria-hidden="true">🦷</div>
+        <p class="eyebrow">Juego de mesa educativo</p>
+        <h1>El camino de la ortopedia dental</h1>
+        <p class="subtitle">Versión digital basada en el juego original de PowerPoint.</p>
+
+        <div class="setup-grid">
+          <label>
+            Número de jugadores
+            <select id="playerCount">
+              <option value="2">2 jugadores</option>
+              <option value="3">3 jugadores</option>
+              <option value="4">4 jugadores</option>
+              <option value="5">5 jugadores</option>
+              <option value="6">6 jugadores</option>
+            </select>
+          </label>
+          <div id="playerNames" class="player-names"></div>
+        </div>
+
+        <div class="actions">
+          <button id="newGameBtn" class="primary">Comenzar partida</button>
+          <button id="resumeBtn" class="secondary" hidden>Continuar partida guardada</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="game" class="screen">
+      <header class="game-header">
+        <div>
+          <p class="eyebrow">El camino de la ortopedia dental</p>
+          <h2 id="turnLabel">Turno</h2>
+        </div>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" aria-label="Activar o desactivar sonidos">🔊</button>
+          <button id="resetBtn" class="danger-ghost">Reiniciar</button>
+        </div>
+      </header>
+
+      <div class="game-layout">
+        <aside class="score-panel">
+          <h3>Jugadores</h3>
+          <div id="scoreList"></div>
+          <div class="legend">
+            <span><i class="dot dental"></i>Ortopedia</span>
+            <span><i class="dot culture"></i>Cultura</span>
+            <span><i class="dot case"></i>Caso clínico</span>
+          </div>
+        </aside>
+
+        <section class="board-panel">
+          <div id="board" class="board" aria-label="Tablero de 37 casillas"></div>
+        </section>
+
+        <aside class="control-panel">
+          <div class="dice-card">
+            <div id="dice" class="dice" aria-live="polite">⚀</div>
+            <button id="rollBtn" class="primary big">Tirar dado</button>
+            <p id="statusText">Pulsa el dado para comenzar.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="questionDialog" class="modal">
+    <form method="dialog" class="modal-card" id="questionForm">
+      <div class="modal-head">
+        <span id="questionCategory" class="category-pill">Pregunta</span>
+        <span id="questionNumber" class="question-number"></span>
+      </div>
+      <h2 id="questionText"></h2>
+      <div id="questionOptions" class="options"></div>
+      <div id="feedback" class="feedback" hidden></div>
+      <div class="modal-actions">
+        <button id="confirmAnswerBtn" type="button" class="primary">Confirmar respuesta</button>
+        <button id="continueBtn" type="button" class="secondary" hidden>Continuar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="winnerDialog" class="modal">
+    <div class="modal-card winner-card">
+      <div class="trophy">🏆</div>
+      <h2 id="winnerTitle">¡Fin del juego!</h2>
+      <p id="winnerText"></p>
+      <button id="playAgainBtn" class="primary">Jugar otra vez</button>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
