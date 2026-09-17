@@ -4,73 +4,63 @@ Versión digital del juego de mesa educativo originalmente desarrollado en Power
 
 ## Estado actual
 
-**Versión 0.4 — banco ampliado a 100 preguntas y 60 casos clínicos.**
+**Versión 0.5 — visual y multimedia.**
 
 Incluye:
 
 - 2 a 6 jugadores locales.
-- Tablero de 37 casillas numeradas + FIN.
-- Dado animado y movimiento automático.
-- Reglas originales del PowerPoint: preguntas, casos clínicos, avance/retroceso, Cárcel y Vacaciones.
-- **100 preguntas totales**:
-  - preguntas 1–36 migradas literalmente del PowerPoint original;
-  - preguntas 37–40 añadidas en v0.3;
-  - preguntas 41–100 añadidas en v0.4.
-- **60 casos clínicos totales**:
-  - C1–C20 migrados del PowerPoint original;
-  - C21–C30 añadidos en v0.3;
-  - C31–C60 añadidos en v0.4.
-- 3 sobres de preguntas con distribución final aproximada de 33 / 33 / 34 preguntas.
-- 5 sobres de casos clínicos con **12 casos por sobre**.
-- En los casos clínicos se mantiene la regla: Excelente +2 · Buena +1 · Incorrecta −1.
-- Los contenidos agregados están marcados internamente con `origin: "new"`; el contenido original conserva `origin: "ppt"`.
-- Guardado automático de la partida con `localStorage`.
-- PWA básica y caché offline v0.4.
+- Tablero de 37 casillas numeradas + FIN y reglas originales.
+- **100 preguntas** y **60 casos clínicos**.
+- Pantalla de selección de 6 personajes/fichas, sin repetir personaje.
+- Interfaz visual inspirada en el juego original, con colores y tarjetas de eventos reconstruidas a partir del PowerPoint.
+- Temporizador opcional de 30 segundos.
+- Sonidos de interfaz generados en la propia app mediante Web Audio para correcto, excelente, incorrecto, selección, temporizador, alarma y victoria; funcionan offline y no requieren archivos externos.
+- Guardado automático de partida y recuperación de partidas anteriores.
+- PWA/offline: interfaz y bancos quedan en caché tras cargarse.
 
-## Base clínica del contenido nuevo
+## Multimedia recuperada del PowerPoint
 
-El material añadido en v0.4 se centra en desarrollo de la dentición, hábitos orales, mordidas cruzadas, mantenimiento/recuperación de espacio, alteraciones de erupción, Clase II y III, crecimiento, diagnóstico y guía de conducta pediátrica. Como referencia principal se utilizó la **American Academy of Pediatric Dentistry (AAPD), Management of the Developing Dentition and Occlusion in Pediatric Dentistry, revisión 2024**, junto con su documento de **Behavior Guidance for the Pediatric Dental Patient, revisión 2024**.
+Durante la migración se recuperaron del archivo fuente los recursos originales, incluidos personajes, tarjetas, GIF, 12 MP3, 1 WAV y 1 MP4. También se identificaron los clips asociados a correcto/error/excelente, countdown/alarma, las preguntas 2 y 10 y el video de la pregunta 35.
 
-Los casos nuevos son material docente para el juego; no sustituyen la valoración clínica individual de un paciente real.
+La versión web pública usa sonidos sintetizados como respaldo y no publica los clips binarios originales. El paquete multimedia recuperado se conserva para la compilación local/Android y puede incorporarse como `assets` cuando se prepare la APK.
+
+Las preguntas 2, 10 y 35 se mantienen identificadas como preguntas multimedia; en la web muestran una indicación de que su audio/video original está reservado para el paquete local/APK.
 
 ## Fidelidad al PowerPoint
 
-La migración de las preguntas 1–36 y casos C1–C20 conserva el texto, opciones y retroalimentación del archivo fuente, incluyendo errores ortográficos o inconsistencias que ya existían. No se corrigieron silenciosamente.
+Las preguntas 1–36 y los casos C1–C20 conservan el texto, opciones y retroalimentación del archivo fuente. El contenido agregado posteriormente permanece marcado como `origin: "new"`.
 
-Elementos que conviene revisar antes de usar el banco como evaluación formal:
+Se conservan las mecánicas originales:
 
-- Pregunta 16: la opción marcada como correcta por la animación no coincide claramente con el texto explicativo.
-- Pregunta 25: la animación del PowerPoint y la retroalimentación escrita presentan una inconsistencia.
-- Pregunta 26: la retroalimentación escrita repite la explicación de la pregunta 25.
-- Preguntas 27 y 28 están duplicadas en el PowerPoint original.
-- Pregunta 31: la retroalimentación escrita pertenece a otro tema.
-- Pregunta 36: la explicación original contiene una inconsistencia de redacción.
-- Caso C16: una de las cuatro opciones no tiene retroalimentación textual en el PowerPoint.
-- Preguntas 2, 10 y 35 dependen de multimedia del PowerPoint y siguen pendientes de integración audiovisual.
+- Pregunta incorrecta: retrocede 1.
+- Caso clínico: Excelente +2 · Buena +1 · Incorrecta −1.
+- Expediente: retrocede 2.
+- Cárcel: pierde 1 turno.
+- Vacaciones: regresa al Inicio.
+- Excelente diagnóstico: avanza 1.
+- Tratamiento concluido: avanza 2.
+- Paciente cancela: retrocede 1.
 
-## Próxima fase — v0.5 visual y multimedia
+## Siguiente fase — primera APK
 
-1. Extraer e integrar imágenes, personajes, GIF, audios y video originales del PowerPoint.
-2. Restaurar el audio de las preguntas 2 y 10 y el contenido audiovisual de la pregunta 35.
-3. Usar las tarjetas originales de reglas como ventanas/eventos del juego.
-4. Añadir selección visual de personaje.
-5. Añadir música y efectos con controles independientes.
-6. Revisar clínicamente las preguntas originales marcadas como inconsistentes sin modificar el original sin aprobación de la autora.
-7. Preparar Capacitor/Android para APK.
+1. Probar una partida completa en navegador y Android horizontal.
+2. Integrar el paquete multimedia original como assets locales de Android.
+3. Integrar Capacitor y crear el proyecto Android.
+4. Añadir icono y pantalla de inicio.
+5. Generar una primera APK de prueba.
+6. Tras validar, generar APK/AAB firmado.
 
 ## Estructura
 
 ```text
-index.html                    Interfaz principal
-styles.css                    Diseño responsive
-app.js                        Motor del juego
-questions.js                  Banco base de 40 preguntas
-questions-extra-deck1.js      Preguntas 41–60
-questions-extra-deck2.js      Preguntas 61–80
-questions-extra-deck3.js      Preguntas 81–100
-cases.js                      Inicializador del banco clínico
-cases-deck1.js...deck5.js     Casos C1–C30
-cases-extra-deck1.js...deck5.js Casos C31–C60
-manifest.webmanifest          Configuración PWA
-sw.js                         Caché offline
+index.html                     Interfaz principal
+styles.css                     Diseño responsive
+app.js                         Motor v0.5
+questions.js                   Banco base de preguntas
+questions-extra-deck*.js       Ampliación hasta 100 preguntas
+cases.js                       Inicializador de casos
+cases-deck*.js                 Casos originales y v0.3
+cases-extra-deck*.js           Ampliación hasta 60 casos
+manifest.webmanifest           Configuración PWA
+sw.js                          Caché offline v0.5
 ```
