@@ -47,13 +47,6 @@
           </select>
         </label>
         <div id="playerNames" class="player-names"></div>
-        <div class="code-entry">
-          <span class="eyebrow">🎓 ACTIVIDAD DOCENTE ONLINE</span>
-          <div class="code-entry-row">
-            <input id="joinCodeInput" maxlength="6" placeholder="ABC123" aria-label="Código de actividad">
-            <button id="joinCodeBtn" class="btn secondary">Ingresar con código</button>
-          </div>
-        </div>
         <div class="actions">
           <button id="chooseCharactersBtn" class="btn primary">Elegir personajes →</button>
           <button id="resumeBtn" class="btn secondary" hidden>Continuar partida guardada</button>
@@ -168,13 +161,10 @@
 <dialog id="winnerDialog" class="modal">
   <div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p><button id="playAgainBtn" class="btn primary">Jugar otra vez</button></div>
 </dialog>
-
-<script src="online-config.js"></script>
 <script src="questions.js"></script>
 <script src="questions-extra-deck1.js"></script><script src="questions-extra-deck2.js"></script><script src="questions-extra-deck3.js"></script>
 <script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
 <script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
 <script src="app-v10.js"></script>
-<script>const jc=document.getElementById('joinCodeInput'),jb=document.getElementById('joinCodeBtn');if(jc&&jb){jc.oninput=()=>jc.value=jc.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);jb.onclick=()=>{const c=jc.value.trim();if(c.length===6)location.href='join.html?code='+encodeURIComponent(c)};}</script>
 </body>
 </html>
