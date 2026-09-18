@@ -10,10 +10,6 @@ on:
       - 'teacher.html'
       - 'teacher.css'
       - 'teacher.js'
-      - 'online-config.js'
-      - 'join.js'
-      - 'join.css'
-      - 'join.html'
       - 'app-v10.js'
       - 'styles-v10.css'
       - 'sw.js'
@@ -50,7 +46,7 @@ jobs:
         run: |
           rm -rf www android
           mkdir -p www
-          cp index.html play.html privacy.html teacher.html teacher.css teacher.js join.html join.css join.js online-config.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
+          cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
           cp questions*.js cases*.js www/
 
       - name: Create Android project
