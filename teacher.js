@@ -1,4 +1,3 @@
-const API=(window.ORTOPEDIA_API_BASE||'').replace(/\/$/,'');
 const STORAGE_KEY='ortopediaTeacherActivitiesV1';
 const ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
 let activities=[],selectedId=null,editingQuestionId=null,runState=null;
@@ -11,8 +10,8 @@ function render(){renderStats();renderActivities();renderEditor()}
 function renderStats(){const qs=activities.flatMap(a=>a.questions||[]);$('activityCount').textContent=activities.length;$('questionCount').textContent=qs.length;$('activeCount').textContent=activities.filter(a=>a.enabled).reduce((n,a)=>n+(a.questions?.length||0),0)}
 function renderActivities(){const host=$('activityList');host.innerHTML='';if(!activities.length){host.innerHTML='<p class="hint">Todavía no hay actividades.</p>';return}activities.forEach(a=>{const b=document.createElement('div');b.className='activity-item'+(a.id===selectedId?' active':'');b.innerHTML='<b>'+esc(a.title||'Actividad sin título')+'</b><small>'+(a.questions?.length||0)+' preguntas · '+(a.enabled?'Activa en tablero':'Solo actividad')+'</small>';b.onclick=()=>{selectedId=a.id;editingQuestionId=null;render()};host.appendChild(b)})}
 function current(){return activities.find(a=>a.id===selectedId)||null}
-function renderEditor(){const a=current();$('emptyState').hidden=!!a;$('editorState').hidden=!a;if(!a)return;$('activityTitle').value=a.title||'';$('activityInstructions').value=a.instructions||'';$('activityEnabled').checked=!!a.enabled;$('questionNumberBadge').textContent=(a.questions?.length||0)+' preguntas';renderQuestionList(a);renderOnline(a)}
-function newActivity(){const a={id:uid('act'),title:'Nueva actividad',instructions:'',enabled:false,questions:[],online:null};activities.unshift(a);selectedId=a.id;editingQuestionId=null;save();render();setTimeout(()=>$('activityTitle').select(),0)}
+function renderEditor(){const a=current();$('emptyState').hidden=!!a;$('editorState').hidden=!a;if(!a)return;$('activityTitle').value=a.title||'';$('activityInstructions').value=a.instructions||'';$('activityEnabled').checked=!!a.enabled;$('questionNumberBadge').textContent=(a.questions?.length||0)+' preguntas';renderQuestionList(a)}
+function newActivity(){const a={id:uid('act'),title:'Nueva actividad',instructions:'',enabled:false,questions:[]};activities.unshift(a);selectedId=a.id;editingQuestionId=null;save();render();setTimeout(()=>$('activityTitle').select(),0)}
 function updateActivity(){const a=current();if(!a)return;a.title=$('activityTitle').value.trim()||'Actividad sin título';a.instructions=$('activityInstructions').value.trim();a.enabled=$('activityEnabled').checked;save();renderActivities()}
 function deleteActivity(){const a=current();if(!a)return;if(!confirm('¿Eliminar esta actividad y todas sus preguntas?'))return;activities=activities.filter(x=>x.id!==a.id);selectedId=activities[0]?.id||null;editingQuestionId=null;save();render()}
 function readQuestionForm(){const text=$('questionTextInput').value.trim();const opts=[...document.querySelectorAll('.option-input')].map(x=>x.value.trim());while(opts.length&& !opts[opts.length-1])opts.pop();if(!text)return alert('Escribe la pregunta.'),null;if(opts.length<2||opts.some(x=>!x))return alert('Completa al menos dos opciones consecutivas.'),null;const correct=Number($('correctOption').value);if(correct>=opts.length)return alert('La respuesta correcta debe corresponder a una opción escrita.'),null;return{id:editingQuestionId||uid('q'),text,options:opts,correct,deck:Number($('questionDeck').value)||1,explanation:$('questionExplanation').value.trim()}}
@@ -32,42 +31,4 @@ function finishRun(){$('runQuestion').hidden=true;$('runResult').hidden=false;co
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('newActivityBtn').onclick=newActivity;$('emptyNewBtn').onclick=newActivity;$('activityTitle').oninput=updateActivity;$('activityInstructions').oninput=updateActivity;$('activityEnabled').onchange=updateActivity;$('deleteActivityBtn').onclick=deleteActivity;$('saveQuestionBtn').onclick=saveQuestion;$('cancelEditBtn').onclick=clearQuestionForm;$('exportBtn').onclick=exportData;$('importInput').onchange=e=>e.target.files[0]&&importData(e.target.files[0]);$('runActivityBtn').onclick=openRun;$('closeRunBtn').onclick=()=>$('runDialog').close();$('startRunBtn').onclick=startRun;$('nextRunBtn').onclick=nextRun;$('restartRunBtn').onclick=()=>{$('runResult').hidden=true;$('runIntro').hidden=false};
 load();
-function renderOnline(a){
-  const p=$('onlinePanel'); if(!p)return;
-  if(a?.online?.code&&a.online.active){
-    p.hidden=false;$('onlineCode').textContent=a.online.code;$('onlineStatus').textContent='Sesión publicada y activa.';
-  }else p.hidden=true;
-}
-async function publishOnline(){
-  const a=current(); if(!a)return;
-  if(!API)return alert('El servicio online aún no está configurado.');
-  if(!a.questions?.length)return alert('Agrega al menos una pregunta antes de publicar.');
-  if(a.online?.active)return alert('Esta actividad ya tiene un código activo: '+a.online.code);
-  $('publishOnlineBtn').disabled=true;$('publishOnlineBtn').textContent='Publicando…';
-  try{
-    const r=await fetch(API+'/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({activity:{title:a.title,instructions:a.instructions,questions:a.questions}})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(data.error||'No se pudo publicar.');
-    a.online={code:data.code,adminToken:data.adminToken,active:true};
-    save();renderOnline(a);alert('Código creado: '+data.code);
-  }catch(e){alert(e.message||'No se pudo conectar con el servicio online.')}
-  finally{$('publishOnlineBtn').disabled=false;$('publishOnlineBtn').textContent='🌐 Publicar online'}
-}
-async function closeOnline(){
-  const a=current(); if(!a?.online?.code||!a.online.adminToken)return;
-  if(!confirm('¿Cerrar el código '+a.online.code+'? Los estudiantes ya no podrán entrar.'))return;
-  try{
-    const r=await fetch(API+'/api/sessions/'+encodeURIComponent(a.online.code),{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+a.online.adminToken},body:JSON.stringify({active:false})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(data.error||'No se pudo cerrar el código.');
-    a.online.active=false;save();renderOnline(a);
-  }catch(e){alert(e.message||'No se pudo cerrar el código.')}
-}
-async function copyText(text){
-  try{await navigator.clipboard.writeText(text);return true}catch{return false}
-}
-
-$('publishOnlineBtn').onclick=publishOnline;
-$('closeOnlineBtn').onclick=closeOnline;
-$('copyCodeBtn').onclick=async()=>{const a=current();if(a?.online?.code){await copyText(a.online.code);$('onlineStatus').textContent='Código copiado.'}};
-$('copyLinkBtn').onclick=async()=>{const a=current();if(a?.online?.code){const link=new URL('join.html',location.href);link.searchParams.set('code',a.online.code);await copyText(link.href);$('onlineStatus').textContent='Enlace copiado.'}};
+if(a?.online?.code){const link=new URL('join.html',location.href);link.searchParams.set('code',a.online.code);await copyText(link.href);$('onlineStatus').textContent='Enlace copiado.'}};
