@@ -1,4 +1,4 @@
-name: Build Android APK v1.3
+name: Build Android APK v1.4
 on:
   workflow_dispatch:
   push:
@@ -14,6 +14,7 @@ on:
       - 'styles-v10.css'
       - 'sw.js'
       - 'manifest.webmanifest'
+      - 'brand/**'
       - 'questions*.js'
       - 'cases*.js'
       - 'package.json'
@@ -35,8 +36,14 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Validate JavaScript
-        run: node --check app-v10.js
+      - name: Validate sources
+        shell: bash
+        run: |
+          node --check app-v10.js
+          node --check teacher.js
+          test -f brand/logo-el-camino-dental.svg
+          test -f brand/icon-el-camino-dental.svg
+          test -f brand/ic_launcher_custom.xml
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
@@ -48,23 +55,34 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
           cp questions*.js cases*.js www/
+          cp -r brand www/
 
       - name: Create Android project
         run: npx cap add android
 
-      - name: Force landscape orientation
+      - name: Sync local web assets
+        run: npx cap sync android
+
+      - name: Apply El Camino Dental branding
         shell: bash
         run: |
+          mkdir -p android/app/src/main/res/drawable
+          cp brand/ic_launcher_custom.xml android/app/src/main/res/drawable/ic_launcher_custom.xml
           python3 - <<'PY'
           from pathlib import Path
           p=Path('android/app/src/main/AndroidManifest.xml')
           s=p.read_text()
           s=s.replace('android:exported="true"','android:exported="true" android:screenOrientation="landscape" android:keepScreenOn="true"',1)
+          s=s.replace('android:icon="@mipmap/ic_launcher"','android:icon="@drawable/ic_launcher_custom"')
+          s=s.replace('android:roundIcon="@mipmap/ic_launcher_round"','android:roundIcon="@drawable/ic_launcher_custom"')
           p.write_text(s)
+          strings=Path('android/app/src/main/res/values/strings.xml')
+          x=strings.read_text()
+          import re
+          x=re.sub(r'<string name="app_name">.*?</string>','<string name="app_name">El Camino Dental</string>',x)
+          x=re.sub(r'<string name="title_activity_main">.*?</string>','<string name="title_activity_main">El Camino Dental</string>',x)
+          strings.write_text(x)
           PY
-
-      - name: Sync local web assets
-        run: npx cap sync android
 
       - name: Build installable APK
         working-directory: android
@@ -73,11 +91,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoOrtopediaDental-v1.3.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v1.4.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoOrtopediaDental-v1.3
-          path: ElCaminoOrtopediaDental-v1.3.apk
+          name: ElCaminoDental-v1.4
+          path: ElCaminoDental-v1.4.apk
           if-no-files-found: error
