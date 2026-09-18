@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2f8df5">
+  <title>Ingresar con código | El camino de la ortopedia dental</title>
+  <meta name="description" content="Ingresa el código de una actividad docente y juega sus preguntas.">
+  <link rel="stylesheet" href="join.css">
+</head>
+<body>
+<main class="shell">
+  <header><a href="./">🦷 <b>El camino de la ORTOPEDIA DENTAL</b></a><a href="play.html">🎲 Juego principal</a></header>
+
+  <section id="joinView" class="card hero">
+    <span class="pill">🎓 ACTIVIDAD DOCENTE</span>
+    <h1>Ingresa el código de tu maestra o maestro.</h1>
+    <p>El código funciona mientras la actividad permanezca activa.</p>
+    <div class="code-box">
+      <input id="codeInput" maxlength="6" inputmode="text" autocomplete="off" placeholder="ABC123" aria-label="Código de actividad">
+      <button id="joinBtn">Ingresar →</button>
+    </div>
+    <p id="joinStatus" class="status"></p>
+  </section>
+
+  <section id="activityView" class="card" hidden>
+    <div class="activity-head">
+      <div><span class="pill">🧠 ACTIVIDAD</span><h2 id="activityTitle"></h2><p id="activityInstructions"></p></div>
+      <span id="activityCode" class="code-chip"></span>
+    </div>
+    <label class="student-label">Nombre, apodo o equipo
+      <input id="studentName" maxlength="40" placeholder="Ej. Equipo Azul">
+    </label>
+    <button id="startBtn" class="primary">Comenzar actividad</button>
+  </section>
+
+  <section id="quizView" class="card" hidden>
+    <div class="progress-row"><span id="counter"></span><span id="score"></span></div>
+    <div class="bar"><i id="bar"></i></div>
+    <h2 id="questionText"></h2>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback" hidden></div>
+    <button id="nextBtn" class="primary" hidden>Siguiente →</button>
+  </section>
+
+  <section id="resultView" class="card result" hidden>
+    <div class="trophy">🏆</div>
+    <h2>Actividad terminada</h2>
+    <p id="resultText"></p>
+    <button id="retryBtn" class="primary">Jugar otra vez</button>
+    <a href="play.html" class="secondary">Volver al juego</a>
+  </section>
+</main>
+<script src="online-config.js"></script>
+<script src="join.js"></script>
+</body>
+</html>
