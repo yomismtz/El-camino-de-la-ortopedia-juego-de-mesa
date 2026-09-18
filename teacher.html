@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#2f8df5">
   <title>Modo Docente | El camino de la ortopedia dental</title>
-  <meta name="description" content="Crea actividades y bancos de preguntas personalizados para estudiantes.">
+  <meta name="description" content="Crea actividades para proyectar en clase con hasta 50 preguntas y 20 casos clínicos.">
   <link rel="stylesheet" href="teacher.css">
 </head>
 <body>
@@ -21,14 +21,15 @@
 <main class="page">
   <section class="hero card">
     <div>
-      <span class="pill">🎓 MODO DOCENTE</span>
-      <h1>Crea actividades para tus estudiantes.</h1>
-      <p>Agrega tus propias preguntas con opciones, marca la respuesta correcta y añade retroalimentación. Puedes usarlas como actividad independiente o integrarlas al tablero.</p>
+      <span class="pill">🎓 MODO DOCENTE · AULA</span>
+      <h1>Crea y proyecta tus propias actividades.</h1>
+      <p>Cada actividad puede incluir hasta <b>50 preguntas de opción múltiple</b> y <b>20 casos clínicos</b>. Marca la respuesta correcta, añade retroalimentación y úsala directamente en el salón.</p>
     </div>
-    <div class="hero-stats">
+    <div class="hero-stats four">
       <div><b id="activityCount">0</b><span>actividades</span></div>
-      <div><b id="questionCount">0</b><span>preguntas propias</span></div>
-      <div><b id="activeCount">0</b><span>activas en el juego</span></div>
+      <div><b id="questionCount">0</b><span>preguntas</span></div>
+      <div><b id="caseCount">0</b><span>casos clínicos</span></div>
+      <div><b id="activeCount">0</b><span>reactivos activos</span></div>
     </div>
   </section>
 
@@ -43,104 +44,180 @@
         <button id="exportBtn" class="btn secondary">⬇ Exportar JSON</button>
         <label class="btn secondary file-btn">⬆ Importar JSON<input id="importInput" type="file" accept=".json,application/json"></label>
       </div>
-      <p class="hint">Los datos se guardan localmente en este dispositivo. Exporta una copia si quieres moverlos a otro equipo.</p>
+      <p class="hint">Todo se guarda localmente. Exporta una copia para respaldo o para mover tu actividad a otra computadora.</p>
     </aside>
 
     <section class="card editor">
       <div id="emptyState" class="empty-state">
         <div class="big-icon">🧑‍🏫</div>
-        <h2>Crea una actividad</h2>
-        <p>Puedes preparar cuestionarios para clase, repaso, evaluación formativa o actividades por equipos.</p>
+        <h2>Crea una actividad para tu clase</h2>
+        <p>Puedes usarla como quiz proyectado, actividad por equipos o incorporar sus reactivos al tablero.</p>
         <button id="emptyNewBtn" class="btn primary">Crear primera actividad</button>
       </div>
 
       <div id="editorState" hidden>
         <div class="editor-top">
-          <div>
+          <div class="editor-title-block">
             <span class="eyebrow">ACTIVIDAD</span>
             <input id="activityTitle" class="title-input" maxlength="80" placeholder="Ej. Repaso de ortopedia funcional">
-            <textarea id="activityInstructions" rows="2" maxlength="300" placeholder="Instrucciones opcionales para los estudiantes"></textarea>
+            <textarea id="activityInstructions" rows="2" maxlength="300" placeholder="Instrucciones para el grupo"></textarea>
           </div>
           <div class="editor-actions">
             <label class="switch"><input id="activityEnabled" type="checkbox"><span></span>Usar en el tablero</label>
-            <button id="runActivityBtn" class="btn accent">▶ Iniciar actividad</button>
+            <button id="runActivityBtn" class="btn accent">▶ Proyectar actividad</button>
             <button id="deleteActivityBtn" class="btn danger">Eliminar</button>
           </div>
         </div>
 
-        <div class="question-builder">
-          <div class="section-head">
-            <div><span class="eyebrow">PREGUNTAS</span><h2 id="questionEditorTitle">Agregar pregunta</h2></div>
-            <span id="questionNumberBadge" class="counter">0 preguntas</span>
-          </div>
-
-          <label>Pregunta
-            <textarea id="questionTextInput" rows="3" maxlength="500" placeholder="Escribe la pregunta"></textarea>
-          </label>
-
-          <div class="options-editor">
-            <label>Opción A <input class="option-input" data-option="0" maxlength="220" placeholder="Respuesta A"></label>
-            <label>Opción B <input class="option-input" data-option="1" maxlength="220" placeholder="Respuesta B"></label>
-            <label>Opción C <input class="option-input" data-option="2" maxlength="220" placeholder="Respuesta C (opcional)"></label>
-            <label>Opción D <input class="option-input" data-option="3" maxlength="220" placeholder="Respuesta D (opcional)"></label>
-          </div>
-
-          <div class="builder-row">
-            <label>Respuesta correcta
-              <select id="correctOption">
-                <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
-              </select>
-            </label>
-            <label>Sobre del tablero
-              <select id="questionDeck">
-                <option value="1">Preguntas 1</option><option value="2">Preguntas 2</option><option value="3">Preguntas 3</option>
-              </select>
-            </label>
-          </div>
-
-          <label>Retroalimentación
-            <textarea id="questionExplanation" rows="2" maxlength="500" placeholder="Explica por qué es correcta o añade un mensaje para el estudiante"></textarea>
-          </label>
-
-          <div class="builder-actions">
-            <button id="saveQuestionBtn" class="btn primary">Agregar pregunta</button>
-            <button id="cancelEditBtn" class="btn secondary" hidden>Cancelar edición</button>
-          </div>
+        <div class="capacity">
+          <div><span>Preguntas</span><b id="questionCapacity">0 / 50</b><i><em id="questionCapacityBar"></em></i></div>
+          <div><span>Casos clínicos</span><b id="caseCapacity">0 / 20</b><i><em id="caseCapacityBar"></em></i></div>
         </div>
 
-        <div id="questionList" class="question-list"></div>
+        <div class="editor-tabs">
+          <button class="editor-tab active" data-tab="questions">❓ Preguntas <span id="questionTabCount">0</span></button>
+          <button class="editor-tab" data-tab="cases">📋 Casos clínicos <span id="caseTabCount">0</span></button>
+        </div>
+
+        <section id="questionsPanel" class="builder-panel">
+          <div class="question-builder">
+            <div class="section-head">
+              <div><span class="eyebrow">PREGUNTAS DE OPCIÓN MÚLTIPLE</span><h2 id="questionEditorTitle">Agregar pregunta</h2></div>
+              <span class="counter">Máximo 50</span>
+            </div>
+
+            <label>Pregunta
+              <textarea id="questionTextInput" rows="3" maxlength="500" placeholder="Escribe la pregunta"></textarea>
+            </label>
+
+            <div class="options-editor">
+              <label>Opción A <input class="question-option-input" data-option="0" maxlength="220" placeholder="Respuesta A"></label>
+              <label>Opción B <input class="question-option-input" data-option="1" maxlength="220" placeholder="Respuesta B"></label>
+              <label>Opción C <input class="question-option-input" data-option="2" maxlength="220" placeholder="Respuesta C (opcional)"></label>
+              <label>Opción D <input class="question-option-input" data-option="3" maxlength="220" placeholder="Respuesta D (opcional)"></label>
+            </div>
+
+            <div class="builder-row">
+              <label>Respuesta correcta
+                <select id="questionCorrectOption">
+                  <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+                </select>
+              </label>
+              <label>Sobre del tablero
+                <select id="questionDeck">
+                  <option value="1">Preguntas 1</option><option value="2">Preguntas 2</option><option value="3">Preguntas 3</option>
+                </select>
+              </label>
+            </div>
+
+            <label>Retroalimentación
+              <textarea id="questionExplanation" rows="2" maxlength="500" placeholder="Explica por qué es correcta o añade un mensaje docente"></textarea>
+            </label>
+
+            <div class="builder-actions">
+              <button id="saveQuestionBtn" class="btn primary">Agregar pregunta</button>
+              <button id="cancelQuestionEditBtn" class="btn secondary" hidden>Cancelar edición</button>
+            </div>
+          </div>
+          <div id="questionList" class="question-list"></div>
+        </section>
+
+        <section id="casesPanel" class="builder-panel" hidden>
+          <div class="question-builder case-builder">
+            <div class="section-head">
+              <div><span class="eyebrow">CASOS CLÍNICOS</span><h2 id="caseEditorTitle">Agregar caso clínico</h2></div>
+              <span class="counter case-counter">Máximo 20</span>
+            </div>
+
+            <label>Descripción del caso
+              <textarea id="caseTextInput" rows="5" maxlength="900" placeholder="Describe edad, hallazgos, diagnóstico, antecedentes o situación clínica"></textarea>
+            </label>
+
+            <div class="options-editor">
+              <label>Opción A <input class="case-option-input" data-case-option="0" maxlength="260" placeholder="Conducta / diagnóstico A"></label>
+              <label>Opción B <input class="case-option-input" data-case-option="1" maxlength="260" placeholder="Conducta / diagnóstico B"></label>
+              <label>Opción C <input class="case-option-input" data-case-option="2" maxlength="260" placeholder="Opción C (opcional)"></label>
+              <label>Opción D <input class="case-option-input" data-case-option="3" maxlength="260" placeholder="Opción D (opcional)"></label>
+            </div>
+
+            <div class="builder-row">
+              <label>Respuesta correcta
+                <select id="caseCorrectOption">
+                  <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+                </select>
+              </label>
+              <label>Sobre clínico del tablero
+                <select id="caseDeck">
+                  <option value="1">Caso 1</option><option value="2">Caso 2</option><option value="3">Caso 3</option><option value="4">Caso 4</option><option value="5">Caso 5</option>
+                </select>
+              </label>
+            </div>
+
+            <label>Retroalimentación clínica
+              <textarea id="caseExplanation" rows="3" maxlength="700" placeholder="Explica por qué esa es la mejor respuesta"></textarea>
+            </label>
+
+            <div class="builder-actions">
+              <button id="saveCaseBtn" class="btn primary case-primary">Agregar caso clínico</button>
+              <button id="cancelCaseEditBtn" class="btn secondary" hidden>Cancelar edición</button>
+            </div>
+          </div>
+          <div id="caseList" class="question-list"></div>
+        </section>
       </div>
     </section>
   </section>
 </main>
 
 <dialog id="runDialog">
-  <div class="run-card">
-    <div class="run-head"><span class="pill">🧠 ACTIVIDAD</span><button id="closeRunBtn" class="close-btn">✕</button></div>
+  <div class="run-card classroom">
+    <div class="run-head">
+      <span class="pill">📽️ MODO AULA</span>
+      <div class="run-head-actions">
+        <button id="fullscreenBtn" class="close-btn" title="Pantalla completa">⛶</button>
+        <button id="closeRunBtn" class="close-btn" title="Cerrar">✕</button>
+      </div>
+    </div>
+
     <div id="runIntro">
       <h2 id="runTitle"></h2>
       <p id="runInstructions"></p>
-      <div class="run-config">
-        <label>Nombre o equipo <input id="studentName" maxlength="40" placeholder="Ej. Equipo 1"></label>
-        <label><input id="shuffleQuestions" type="checkbox" checked> Mezclar preguntas</label>
+      <div class="run-summary">
+        <span>❓ <b id="runQuestionCount">0</b> preguntas</span>
+        <span>📋 <b id="runCaseCount">0</b> casos clínicos</span>
       </div>
-      <button id="startRunBtn" class="btn accent big">Comenzar actividad</button>
+      <div class="run-config">
+        <label>Nombre del grupo o equipo <input id="studentName" maxlength="40" placeholder="Ej. Grupo 401 / Equipo Azul"></label>
+        <label class="check-row"><input id="includeQuestions" type="checkbox" checked> Incluir preguntas</label>
+        <label class="check-row"><input id="includeCases" type="checkbox" checked> Incluir casos clínicos</label>
+        <label class="check-row"><input id="shuffleQuestions" type="checkbox" checked> Mezclar el orden</label>
+      </div>
+      <button id="startRunBtn" class="btn accent big">Comenzar actividad proyectada</button>
     </div>
+
     <div id="runQuestion" hidden>
-      <div class="run-progress"><span id="runCounter"></span><span id="runScore"></span></div>
+      <div class="run-progress">
+        <span id="runType" class="type-badge">Pregunta</span>
+        <span id="runCounter"></span>
+        <span id="runScore"></span>
+      </div>
+      <div class="run-progress-bar"><i id="runProgressBar"></i></div>
       <h2 id="runQuestionText"></h2>
       <div id="runOptions" class="run-options"></div>
       <div id="runFeedback" class="run-feedback" hidden></div>
       <button id="nextRunBtn" class="btn accent" hidden>Siguiente →</button>
     </div>
+
     <div id="runResult" hidden class="result">
       <div class="trophy">🏆</div>
       <h2>Actividad terminada</h2>
       <p id="resultText"></p>
+      <div id="resultBreakdown" class="result-breakdown"></div>
       <button id="restartRunBtn" class="btn primary">Repetir actividad</button>
     </div>
   </div>
 </dialog>
+
 <script src="teacher.js"></script>
 </body>
 </html>
