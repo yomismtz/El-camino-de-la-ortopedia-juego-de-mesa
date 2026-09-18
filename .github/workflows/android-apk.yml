@@ -1,0 +1,106 @@
+name: Build Android APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'v1chunks/**'
+      - '.github/workflows/android-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reconstruct v1.0 sources
+        shell: bash
+        run: |
+          cat v1chunks/chunk_* > v1-sources.b64
+          base64 -d v1-sources.b64 > v1-sources.zip
+          rm -rf .v1src
+          mkdir .v1src
+          unzip -o v1-sources.zip -d .v1src
+          test -f .v1src/play.html
+          test -f .v1src/app-v10.js
+          test -f .v1src/styles-v10.css
+
+      - name: Apply v1.0 web sources
+        shell: bash
+        run: |
+          cp .v1src/index.html ./index.html
+          cp .v1src/play.html ./play.html
+          cp .v1src/styles-v10.css ./styles-v10.css
+          cp .v1src/app-v10.js ./app-v10.js
+          cp .v1src/manifest.webmanifest ./manifest.webmanifest
+          cp .v1src/sw.js ./sw.js
+          cp .v1src/package.json ./package.json
+          cp .v1src/capacitor.config.json ./capacitor.config.json
+
+      - name: Validate JavaScript
+        run: node --check app-v10.js
+
+      - name: Publish v1.0 sources to main
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html play.html styles-v10.css app-v10.js manifest.webmanifest sw.js package.json capacitor.config.json
+          if ! git diff --cached --quiet; then
+            git commit -m "release: v1.0 circular 100-cell two-dice game"
+            git push
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare web bundle
+        shell: bash
+        run: |
+          rm -rf www android
+          mkdir -p www
+          cp index.html play.html privacy.html manifest.webmanifest sw.js styles-v10.css app-v10.js www/
+          cp questions*.js cases*.js www/
+
+      - name: Create Android project
+        run: npx cap add android
+
+      - name: Force landscape orientation
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          s=p.read_text()
+          s=s.replace('android:exported="true"','android:exported="true" android:screenOrientation="landscape" android:keepScreenOn="true"',1)
+          p.write_text(s)
+          PY
+
+      - name: Sync local web assets
+        run: npx cap sync android
+
+      - name: Build installable APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoOrtopediaDental-v1.0.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ElCaminoOrtopediaDental-APK
+          path: ElCaminoOrtopediaDental-v1.0.apk
+          if-no-files-found: error
