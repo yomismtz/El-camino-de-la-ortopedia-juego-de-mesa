@@ -1,0 +1,1 @@
+window.ORTOPEDIA_API_BASE = window.ORTOPEDIA_API_BASE || '';
