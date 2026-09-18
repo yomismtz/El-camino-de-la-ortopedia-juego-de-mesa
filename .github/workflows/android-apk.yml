@@ -1,4 +1,4 @@
-name: Build Android APK v1.1
+name: Build Android APK v1.2
 on:
   workflow_dispatch:
   push:
@@ -7,6 +7,9 @@ on:
       - 'play.html'
       - 'index.html'
       - 'privacy.html'
+      - 'teacher.html'
+      - 'teacher.css'
+      - 'teacher.js'
       - 'app-v10.js'
       - 'styles-v10.css'
       - 'sw.js'
@@ -43,7 +46,7 @@ jobs:
         run: |
           rm -rf www android
           mkdir -p www
-          cp index.html play.html privacy.html manifest.webmanifest sw.js styles-v10.css app-v10.js www/
+          cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
           cp questions*.js cases*.js www/
 
       - name: Create Android project
@@ -70,11 +73,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoOrtopediaDental-v1.1.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoOrtopediaDental-v1.2.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoOrtopediaDental-v1.1
-          path: ElCaminoOrtopediaDental-v1.1.apk
+          name: ElCaminoOrtopediaDental-v1.2
+          path: ElCaminoOrtopediaDental-v1.2.apk
           if-no-files-found: error
