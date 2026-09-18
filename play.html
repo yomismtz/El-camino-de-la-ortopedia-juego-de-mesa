@@ -1,12 +1,170 @@
-<!doctype html><html lang="es-MX"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#25193b"><title>Jugar | El camino de la ortopedia dental</title><meta name="description" content="Juego de mesa educativo de ortopedia dental con 100 preguntas y 60 casos clínicos."><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head><body>
-<a href="./" style="position:fixed;z-index:9999;top:10px;left:10px;padding:8px 12px;border:2px solid #241c2a;border-radius:999px;background:#fff;color:#4b246b;text-decoration:none;font:700 13px system-ui;box-shadow:0 4px 12px rgba(0,0,0,.14)">← Sitio oficial</a>
-<a href="privacy.html" style="position:fixed;z-index:9999;top:10px;right:10px;padding:8px 12px;border:2px solid #241c2a;border-radius:999px;background:#fff;color:#4b246b;text-decoration:none;font:700 13px system-ui;box-shadow:0 4px 12px rgba(0,0,0,.14)">Privacidad</a>
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#278BFF">
+  <meta name="color-scheme" content="light">
+  <title>Jugar | El camino de la ortopedia dental</title>
+  <meta name="description" content="Juego educativo de ortopedia dental con tablero espiral de 100 casillas, dos dados, 100 preguntas y 60 casos clínicos.">
+  <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles-v10.css">
+
+</head>
+<body>
+<div class="app-bg"></div>
 <main class="app-shell">
-<section id="setup" class="screen active"><div class="hero-card game-frame"><div class="text-logo"><span>🦷</span> El camino de la ortopedia dental</div><p class="eyebrow">Juego de mesa educativo · v0.5 multimedia</p><p class="subtitle"><b>100 preguntas · 60 casos clínicos</b> · reglas y contenido recuperados del PowerPoint.</p><div class="rules-summary"><h2>Reglas originales</h2><div class="rules-grid"><div><b>❓ Pregunta</b><span>Incorrecta: retrocede 1.</span></div><div><b>📩 Caso clínico</b><span>Excelente +2 · Buena +1 · Incorrecta −1.</span></div><div><b>📁 Expediente</b><span>Retrocede 2.</span></div><div><b>⚖️ Cárcel</b><span>Pierde 1 turno.</span></div><div><b>🏖️ Vacaciones</b><span>Regresa al INICIO.</span></div><div><b>✅ Diagnóstico</b><span>Avanza 1.</span></div><div><b>🏁 Tratamiento</b><span>Avanza 2.</span></div><div><b>📅 Cancelación</b><span>Retrocede 1.</span></div></div></div><div class="setup-grid"><label>Número de jugadores / equipos<select id="playerCount"><option value="2">2 jugadores</option><option value="3">3 jugadores</option><option value="4">4 jugadores</option><option value="5">5 jugadores</option><option value="6">6 jugadores</option></select></label><div id="playerNames" class="player-names"></div></div><div class="actions"><button id="chooseCharactersBtn" class="primary">Elegir personajes</button><button id="resumeBtn" class="secondary" hidden>Continuar partida guardada</button></div></div></section>
-<section id="characters" class="screen character-screen"><div class="character-shell game-frame"><p class="eyebrow">Elige tu personaje</p><h1 id="pickerTitle">Jugador 1</h1><p id="pickerHint"></p><div id="characterGrid" class="character-grid"></div><div id="pickedSummary" class="picked-summary"></div><div class="actions"><button id="pickerBackBtn" class="secondary">Volver</button><button id="pickerNextBtn" class="primary" disabled>Siguiente</button></div></div></section>
-<section id="loadingScreen" class="screen loading-screen"><div class="loading-card"><div class="loader">🦷</div><p>Preparando el tablero…</p></div></section>
-<section id="game" class="screen"><header class="game-header"><div><div class="mini-logo">🦷 El camino de la ortopedia dental</div><h2 id="turnLabel">Turno</h2></div><div class="header-actions"><button id="soundBtn" class="icon-btn" aria-label="Sonido">🔊</button><button id="resetBtn" class="danger-ghost">Reiniciar</button></div></header><div class="game-layout"><aside class="score-panel"><h3>Jugadores</h3><div id="scoreList"></div><div class="legend"><span>🟢 Pregunta</span><span>📩 Caso clínico</span><span>⬆️ Avanza</span><span>⬇️ Retrocede</span></div></aside><section class="board-panel"><div id="board" class="board"></div></section><aside class="control-panel"><div class="dice-card"><div id="dice" class="dice">⚀</div><button id="rollBtn" class="primary big">Tirar dado</button><p id="statusText">Pulsa el dado para comenzar.</p></div></aside></div></section></main>
-<dialog id="questionDialog" class="modal"><form method="dialog" class="modal-card" id="questionForm"><div class="modal-head"><span id="questionCategory" class="category-pill">Pregunta</span><span id="questionNumber"></span></div><h2 id="questionText"></h2><div id="questionMedia" class="question-media" hidden></div><div class="question-tools"><button id="timerBtn" type="button" class="timer-btn">⏱️ Iniciar 30 s</button><span id="timerDisplay">30</span></div><div id="questionOptions" class="options"></div><div id="feedback" class="feedback" hidden></div><div class="modal-actions"><button id="confirmAnswerBtn" type="button" class="primary">Confirmar respuesta</button><button id="continueBtn" type="button" class="secondary" hidden>Continuar</button></div></form></dialog>
-<dialog id="eventDialog" class="modal"><div class="modal-card event-card"><div id="eventRuleArt" class="rule-art" hidden></div><div id="eventIcon" class="event-icon">🦷</div><h2 id="eventTitle"></h2><p id="eventText"></p><button id="eventContinueBtn" class="primary">Continuar</button></div></dialog>
-<dialog id="winnerDialog" class="modal"><div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Fin del juego!</h2><p id="winnerText"></p><button id="playAgainBtn" class="primary">Jugar otra vez</button></div></dialog>
-<script src="questions.js"></script><script src="questions-extra-deck1.js"></script><script src="questions-extra-deck2.js"></script><script src="questions-extra-deck3.js"></script><script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script><script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script><script src="app.js"></script></body></html>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Sitio oficial">
+      <span class="brand-tooth">🦷</span>
+      <span><small>El camino de la</small><strong>ORTOPEDIA DENTAL</strong></span>
+    </a>
+    <div class="top-actions">
+      <button id="soundBtn" class="icon-btn" aria-label="Activar o desactivar sonido">🔊</button>
+      <button id="rulesBtn" class="icon-btn" aria-label="Reglas">📖</button>
+      <a class="icon-btn link-btn" href="privacy.html" aria-label="Privacidad">🔒</a>
+    </div>
+  </header>
+
+  <section id="setup" class="screen active">
+    <div class="setup-card glass-card">
+      <div class="setup-copy">
+        <span class="pill">🎲🎲 2 dados · 100 casillas · Meta al centro</span>
+        <h1>Aprender ortopedia dental jugando.</h1>
+        <p>Forma de 2 a 5 jugadores o equipos. Cada participante elige un personaje distinto y recorre un tablero circular de 100 casillas hasta llegar a la meta.</p>
+        <div class="feature-row">
+          <span>🧠 100 preguntas</span><span>📋 60 casos clínicos</span><span>👥 2–5 jugadores</span><span>🏆 Meta 100</span>
+        </div>
+      </div>
+      <div class="setup-form">
+        <label>Número de jugadores
+          <select id="playerCount">
+            <option value="2">2 jugadores</option>
+            <option value="3">3 jugadores</option>
+            <option value="4">4 jugadores</option>
+            <option value="5" selected>5 jugadores</option>
+          </select>
+        </label>
+        <div id="playerNames" class="player-names"></div>
+        <div class="actions">
+          <button id="chooseCharactersBtn" class="btn primary">Elegir personajes →</button>
+          <button id="resumeBtn" class="btn secondary" hidden>Continuar partida guardada</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="characters" class="screen">
+    <div class="character-shell glass-card">
+      <div class="section-title">
+        <span class="pill">🎭 Personajes únicos</span>
+        <h1 id="pickerTitle">Elige tu personaje</h1>
+        <p id="pickerHint"></p>
+      </div>
+      <div id="characterGrid" class="character-grid"></div>
+      <div id="pickedSummary" class="picked-summary"></div>
+      <div class="actions centered">
+        <button id="pickerBackBtn" class="btn secondary">← Volver</button>
+        <button id="pickerNextBtn" class="btn primary" disabled>Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="loadingScreen" class="screen loading-screen">
+    <div class="loading-card glass-card"><div class="loader">🦷</div><h2>Preparando el tablero…</h2><p>100 casillas · dos dados · cinco personajes</p></div>
+  </section>
+
+  <section id="game" class="screen game-screen">
+    <div class="game-grid">
+      <section class="board-card glass-card">
+        <div class="board-header">
+          <div><span class="eyebrow">TABLERO PRINCIPAL</span><h2>Camino a la meta</h2></div>
+          <div class="turn-chip"><span>Turno</span><strong id="turnLabel">Jugador</strong></div>
+        </div>
+        <div id="board" class="spiral-board" aria-label="Tablero circular de 100 casillas">
+          <div class="board-decoration deco-a">🌿</div><div class="board-decoration deco-b">🌸</div><div class="board-decoration deco-c">🪴</div>
+          <div class="goal"><span>👑</span><strong>META</strong><b>100</b></div>
+        </div>
+        <div class="legend">
+          <span><i class="legend-dot question">?</i>Pregunta</span>
+          <span><i class="legend-dot case">📋</i>Caso</span>
+          <span><i class="legend-dot advance1">+1</i>Diagnóstico</span>
+          <span><i class="legend-dot advance2">+2</i>Tratamiento</span>
+          <span><i class="legend-dot back1">−1</i>Cancelación</span>
+          <span><i class="legend-dot back2">−2</i>Expediente</span>
+          <span><i class="legend-dot jail">⚖</i>Cárcel</span>
+          <span><i class="legend-dot vacation">✈</i>Vacaciones</span>
+        </div>
+      </section>
+
+      <aside class="side-stack">
+        <section class="dice-panel glass-card">
+          <span class="eyebrow">🎲🎲 DOS DADOS</span>
+          <div class="dice-row"><div id="dice1" class="die">⚀</div><div id="dice2" class="die">⚀</div></div>
+          <div class="dice-total">Total: <strong id="diceTotal">2</strong></div>
+          <button id="rollBtn" class="btn roll-btn">Tirar los dados</button>
+          <p id="statusText" class="status">Pulsa los dados para comenzar.</p>
+        </section>
+
+        <section class="players-panel glass-card">
+          <div class="panel-title"><h3>Jugadores</h3><button id="resetBtn" class="tiny-btn">Reiniciar</button></div>
+          <div id="scoreList" class="score-list"></div>
+        </section>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<dialog id="questionDialog" class="modal">
+  <form method="dialog" class="modal-card question-card" id="questionForm">
+    <div class="modal-head"><span id="questionCategory" class="category-pill">Pregunta</span><span id="questionNumber"></span><span class="timer-wrap">⏱ <b id="timerDisplay">30</b>s</span></div>
+    <h2 id="questionText"></h2>
+    <div id="questionMedia" class="question-media" hidden></div>
+    <div id="questionOptions" class="options"></div>
+    <div id="feedback" class="feedback" hidden></div>
+    <div class="modal-actions">
+      <button id="timerBtn" type="button" class="btn ghost">Iniciar 30 s</button>
+      <button id="confirmAnswerBtn" type="button" class="btn primary">Confirmar respuesta</button>
+      <button id="continueBtn" type="button" class="btn primary" hidden>Continuar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="eventDialog" class="modal">
+  <div class="modal-card event-card">
+    <div id="eventIcon" class="event-icon">🦷</div>
+    <h2 id="eventTitle"></h2><p id="eventText"></p>
+    <button id="eventContinueBtn" class="btn primary">Continuar</button>
+  </div>
+</dialog>
+
+<dialog id="rulesDialog" class="modal">
+  <div class="modal-card rules-card">
+    <div class="modal-head"><span class="category-pill">📖 Reglas</span><button id="closeRulesBtn" class="tiny-btn">Cerrar</button></div>
+    <h2>Reglas del camino</h2>
+    <div class="rules-grid">
+      <div>🎲🎲 <b>Dos dados</b><span>Avanza la suma de ambos.</span></div>
+      <div>❓ <b>Pregunta</b><span>Incorrecta: retrocede 1.</span></div>
+      <div>📋 <b>Caso clínico</b><span>Excelente +2 · Buena +1 · Incorrecta −1.</span></div>
+      <div>📁 <b>Expediente</b><span>Retrocede 2.</span></div>
+      <div>⚖️ <b>Cárcel</b><span>Pierde 1 turno.</span></div>
+      <div>🏖️ <b>Vacaciones</b><span>Regresa al inicio.</span></div>
+      <div>✅ <b>Diagnóstico</b><span>Avanza 1.</span></div>
+      <div>🏁 <b>Tratamiento</b><span>Avanza 2.</span></div>
+      <div>📅 <b>Cancelación</b><span>Retrocede 1.</span></div>
+      <div>🏆 <b>Victoria</b><span>Gana quien llega o supera la casilla 100.</span></div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="winnerDialog" class="modal">
+  <div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p><button id="playAgainBtn" class="btn primary">Jugar otra vez</button></div>
+</dialog>
+
+<script src="questions.js"></script>
+<script src="questions-extra-deck1.js"></script><script src="questions-extra-deck2.js"></script><script src="questions-extra-deck3.js"></script>
+<script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
+<script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
+<script src="app-v10.js"></script>
+</body>
+</html>
