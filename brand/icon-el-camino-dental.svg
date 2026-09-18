@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t d">
+<title id="t">El Camino Dental</title><desc id="d">Diente con un camino hacia un amanecer.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#31c6f4"/><stop offset=".5" stop-color="#148de4"/><stop offset="1" stop-color="#0752ba"/></linearGradient>
+  <linearGradient id="tooth" x1=".2" y1=".05" x2=".7" y2="1"><stop stop-color="#ffffff"/><stop offset=".72" stop-color="#eefaff"/><stop offset="1" stop-color="#c9efff"/></linearGradient>
+  <linearGradient id="road" x1=".15" y1=".95" x2=".8" y2=".12"><stop stop-color="#075dba"/><stop offset=".5" stop-color="#00aeba"/><stop offset="1" stop-color="#42d7b0"/></linearGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#003b83" flood-opacity=".35"/></filter>
+</defs>
+<rect x="14" y="14" width="484" height="484" rx="104" fill="url(#bg)"/>
+<path d="M14 331C121 424 216 437 314 389c65-32 117-35 184-4v113H14Z" fill="#064cb1" opacity=".35"/>
+<path d="M34 80C137 12 293 7 475 65" fill="none" stroke="#bff6ff" stroke-width="24" stroke-linecap="round" opacity=".42"/>
+<g filter="url(#shadow)">
+  <path d="M152 92c-41 0-74 25-88 66-18 54 5 107 30 157 25 49 20 109 57 132 25 15 48-1 62-45 12-38 26-55 43-55s31 17 43 55c14 44 37 60 62 45 37-23 32-83 57-132 25-50 48-103 30-157-14-41-47-66-88-66-38 0-64 24-104 24s-66-24-104-24Z" fill="url(#tooth)" stroke="#0b72cb" stroke-width="15"/>
+  <path d="M171 412c18-78 66-134 121-169 58-37 109-56 133-87-17 59-59 93-96 120-40 29-78 67-99 136Z" fill="url(#road)"/>
+  <path d="M207 366c9-19 19-37 31-53M258 282c14-14 29-26 45-36M332 228c15-9 29-19 41-30" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <path d="M315 183a46 46 0 0 1 92 0" fill="#ffc347"/>
+  <g stroke="#ffc347" stroke-width="13" stroke-linecap="round">
+    <path d="M361 116V91"/><path d="M321 130l-17-18"/><path d="M401 130l17-18"/><path d="M305 166h-25"/><path d="M417 166h25"/>
+  </g>
+  <path d="M128 144c10-21 24-31 42-34" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" opacity=".8"/>
+</g>
+<g fill="#fff"><path d="M438 291l10 23 23 10-23 10-10 23-10-23-23-10 23-10Z"/><path d="M405 352l7 16 16 7-16 7-7 16-7-16-16-7 16-7Z"/></g>
+</svg>
