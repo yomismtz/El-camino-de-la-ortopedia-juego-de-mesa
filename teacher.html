@@ -62,25 +62,10 @@
             <textarea id="activityInstructions" rows="2" maxlength="300" placeholder="Instrucciones opcionales para los estudiantes"></textarea>
           </div>
           <div class="editor-actions">
-            <button id="publishOnlineBtn" class="btn accent">🌐 Publicar online</button>
             <label class="switch"><input id="activityEnabled" type="checkbox"><span></span>Usar en el tablero</label>
             <button id="runActivityBtn" class="btn accent">▶ Iniciar actividad</button>
             <button id="deleteActivityBtn" class="btn danger">Eliminar</button>
           </div>
-        </div>
-
-        <div id="onlinePanel" class="online-panel" hidden>
-          <div>
-            <span class="eyebrow">SESIÓN ONLINE</span>
-            <h3>Código activo: <strong id="onlineCode">------</strong></h3>
-            <p>Comparte este código o enlace. Funcionará hasta que cierres la sesión.</p>
-          </div>
-          <div class="online-actions">
-            <button id="copyCodeBtn" class="btn secondary">Copiar código</button>
-            <button id="copyLinkBtn" class="btn secondary">Copiar enlace</button>
-            <button id="closeOnlineBtn" class="btn danger">Cerrar código</button>
-          </div>
-          <p id="onlineStatus" class="hint"></p>
         </div>
 
         <div class="question-builder">
@@ -156,8 +141,6 @@
     </div>
   </div>
 </dialog>
-
-<script src="online-config.js"></script>
 <script src="teacher.js"></script>
 </body>
 </html>
