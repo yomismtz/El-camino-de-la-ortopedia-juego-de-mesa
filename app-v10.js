@@ -36,7 +36,9 @@ const CELL_TYPES={
   jail:new Set([44,83]),
   vacation:new Set([37,68])
 };
-const questions=window.QUESTIONS||[];
+const TEACHER_ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
+function loadTeacherQuestions(){try{const q=JSON.parse(localStorage.getItem(TEACHER_ACTIVE_KEY)||'[]');return Array.isArray(q)?q.filter(x=>x&&x.text&&Array.isArray(x.options)&&x.options.length>=2):[]}catch{return[]}}
+const questions=[...(window.QUESTIONS||[]),...loadTeacherQuestions()];
 const clinicalCases=window.CLINICAL_CASES||[];
 let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,soundEnabled=true,timer=null,timerLeft=30;
 const $=id=>document.getElementById(id);
