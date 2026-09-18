@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2f8df5">
+  <title>Modo Docente | El camino de la ortopedia dental</title>
+  <meta name="description" content="Crea actividades y bancos de preguntas personalizados para estudiantes.">
+  <link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./">🦷 <span>El camino de la <b>ORTOPEDIA DENTAL</b></span></a>
+  <nav>
+    <a href="./">Inicio</a>
+    <a href="play.html">🎲 Jugar</a>
+    <a href="privacy.html">🔒 Privacidad</a>
+  </nav>
+</header>
+
+<main class="page">
+  <section class="hero card">
+    <div>
+      <span class="pill">🎓 MODO DOCENTE</span>
+      <h1>Crea actividades para tus estudiantes.</h1>
+      <p>Agrega tus propias preguntas con opciones, marca la respuesta correcta y añade retroalimentación. Puedes usarlas como actividad independiente o integrarlas al tablero.</p>
+    </div>
+    <div class="hero-stats">
+      <div><b id="activityCount">0</b><span>actividades</span></div>
+      <div><b id="questionCount">0</b><span>preguntas propias</span></div>
+      <div><b id="activeCount">0</b><span>activas en el juego</span></div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <aside class="card side">
+      <div class="section-head">
+        <div><span class="eyebrow">MIS ACTIVIDADES</span><h2>Banco docente</h2></div>
+        <button id="newActivityBtn" class="btn primary">+ Nueva</button>
+      </div>
+      <div id="activityList" class="activity-list"></div>
+      <div class="side-actions">
+        <button id="exportBtn" class="btn secondary">⬇ Exportar JSON</button>
+        <label class="btn secondary file-btn">⬆ Importar JSON<input id="importInput" type="file" accept=".json,application/json"></label>
+      </div>
+      <p class="hint">Los datos se guardan localmente en este dispositivo. Exporta una copia si quieres moverlos a otro equipo.</p>
+    </aside>
+
+    <section class="card editor">
+      <div id="emptyState" class="empty-state">
+        <div class="big-icon">🧑‍🏫</div>
+        <h2>Crea una actividad</h2>
+        <p>Puedes preparar cuestionarios para clase, repaso, evaluación formativa o actividades por equipos.</p>
+        <button id="emptyNewBtn" class="btn primary">Crear primera actividad</button>
+      </div>
+
+      <div id="editorState" hidden>
+        <div class="editor-top">
+          <div>
+            <span class="eyebrow">ACTIVIDAD</span>
+            <input id="activityTitle" class="title-input" maxlength="80" placeholder="Ej. Repaso de ortopedia funcional">
+            <textarea id="activityInstructions" rows="2" maxlength="300" placeholder="Instrucciones opcionales para los estudiantes"></textarea>
+          </div>
+          <div class="editor-actions">
+            <label class="switch"><input id="activityEnabled" type="checkbox"><span></span>Usar en el tablero</label>
+            <button id="runActivityBtn" class="btn accent">▶ Iniciar actividad</button>
+            <button id="deleteActivityBtn" class="btn danger">Eliminar</button>
+          </div>
+        </div>
+
+        <div class="question-builder">
+          <div class="section-head">
+            <div><span class="eyebrow">PREGUNTAS</span><h2 id="questionEditorTitle">Agregar pregunta</h2></div>
+            <span id="questionNumberBadge" class="counter">0 preguntas</span>
+          </div>
+
+          <label>Pregunta
+            <textarea id="questionTextInput" rows="3" maxlength="500" placeholder="Escribe la pregunta"></textarea>
+          </label>
+
+          <div class="options-editor">
+            <label>Opción A <input class="option-input" data-option="0" maxlength="220" placeholder="Respuesta A"></label>
+            <label>Opción B <input class="option-input" data-option="1" maxlength="220" placeholder="Respuesta B"></label>
+            <label>Opción C <input class="option-input" data-option="2" maxlength="220" placeholder="Respuesta C (opcional)"></label>
+            <label>Opción D <input class="option-input" data-option="3" maxlength="220" placeholder="Respuesta D (opcional)"></label>
+          </div>
+
+          <div class="builder-row">
+            <label>Respuesta correcta
+              <select id="correctOption">
+                <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+              </select>
+            </label>
+            <label>Sobre del tablero
+              <select id="questionDeck">
+                <option value="1">Preguntas 1</option><option value="2">Preguntas 2</option><option value="3">Preguntas 3</option>
+              </select>
+            </label>
+          </div>
+
+          <label>Retroalimentación
+            <textarea id="questionExplanation" rows="2" maxlength="500" placeholder="Explica por qué es correcta o añade un mensaje para el estudiante"></textarea>
+          </label>
+
+          <div class="builder-actions">
+            <button id="saveQuestionBtn" class="btn primary">Agregar pregunta</button>
+            <button id="cancelEditBtn" class="btn secondary" hidden>Cancelar edición</button>
+          </div>
+        </div>
+
+        <div id="questionList" class="question-list"></div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<dialog id="runDialog">
+  <div class="run-card">
+    <div class="run-head"><span class="pill">🧠 ACTIVIDAD</span><button id="closeRunBtn" class="close-btn">✕</button></div>
+    <div id="runIntro">
+      <h2 id="runTitle"></h2>
+      <p id="runInstructions"></p>
+      <div class="run-config">
+        <label>Nombre o equipo <input id="studentName" maxlength="40" placeholder="Ej. Equipo 1"></label>
+        <label><input id="shuffleQuestions" type="checkbox" checked> Mezclar preguntas</label>
+      </div>
+      <button id="startRunBtn" class="btn accent big">Comenzar actividad</button>
+    </div>
+    <div id="runQuestion" hidden>
+      <div class="run-progress"><span id="runCounter"></span><span id="runScore"></span></div>
+      <h2 id="runQuestionText"></h2>
+      <div id="runOptions" class="run-options"></div>
+      <div id="runFeedback" class="run-feedback" hidden></div>
+      <button id="nextRunBtn" class="btn accent" hidden>Siguiente →</button>
+    </div>
+    <div id="runResult" hidden class="result">
+      <div class="trophy">🏆</div>
+      <h2>Actividad terminada</h2>
+      <p id="resultText"></p>
+      <button id="restartRunBtn" class="btn primary">Repetir actividad</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="teacher.js"></script>
+</body>
+</html>
