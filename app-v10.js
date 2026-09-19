@@ -69,21 +69,92 @@ async function rollDice(){if(!state||state.locked)return;state.locked=true;rollB
 async function move(delta){const p=state.players[state.current],target=Math.max(0,Math.min(100,p.position+delta)),step=target>=p.position?1:-1;while(p.position!==target){p.position+=step;render();tone('step');await delay(105)}const landed=document.querySelector(`[data-cell="${p.position}"]`);if(landed){landed.classList.add('landed');setTimeout(()=>landed.classList.remove('landed'),420)}}
 function triggerCell(cell){const r=ruleForCell(cell);if(r.type==='question')return startQuestion(r.deck);if(r.type==='case')return startCase(r.deck);if(r.type==='advance1')return movement('advance1',1);if(r.type==='advance2')return movement('advance2',2);if(r.type==='back1')return movement('back1',-1);if(r.type==='back2')return movement('back2',-2);if(r.type==='vacation')return vacation();if(r.type==='jail')return jail();if(r.type==='finish')return showWinner(state.players[state.current]);statusText.textContent='Casilla de descanso. Siguiente turno.';setTimeout(endTurn,450)}
 function pickUnused(pool,key){if(!pool.length)return null;let available=pool.filter(x=>!state[key].includes(String(x.id)));if(!available.length){const ids=new Set(pool.map(x=>String(x.id)));state[key]=state[key].filter(id=>!ids.has(id));available=pool}const item=available[Math.floor(Math.random()*available.length)];state[key].push(String(item.id));return item}
-function startQuestion(deck){const q=pickUnused(activeQuestionBank().filter(x=>x.deck===deck),'usedQuestionIds');if(!q)return endTurn();pendingQuestion={...q,kind:'question'};selectedAnswer=null;showQuestion()}
-function startCase(deck){const q=pickUnused(activeCaseBank().filter(x=>x.deck===deck),'usedCaseIds');if(!q)return endTurn();pendingQuestion={...q,kind:'case'};selectedAnswer=null;showQuestion()}
+function startQuestion(deck){const q=pickUnused(activeQuestionBank().filter(x=>x.deck===deck),'usedQuestionIds');if(!q)return endTurn();pendingQuestion={...q,kind:'question'};selectedAnswer=null;tone('question');showQuestion()}
+function startCase(deck){const q=pickUnused(activeCaseBank().filter(x=>x.deck===deck),'usedCaseIds');if(!q)return endTurn();pendingQuestion={...q,kind:'case'};selectedAnswer=null;tone('case');showQuestion()}
 function showQuestion(){stopTimer();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('timerDisplay').textContent='30';$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal()}
 function confirmAnswer(){if(selectedAnswer===null||!pendingQuestion)return;stopTimer();const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});let delta=0,heading='',detail='',snd='error';if(pendingQuestion.kind==='question'){const ok=selectedAnswer===pendingQuestion.correct;opts[pendingQuestion.correct]?.classList.add('correct');if(ok){heading='Correcta · permaneces en tu casilla';snd='correct'}else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.explanation||'Continúa el recorrido.'}else{const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');if(grade==='excellent'){delta=2;heading='Excelente · avanzas 2 casillas';snd='excellent'}else if(grade==='good'){delta=1;heading='Buena · avanzas 1 casilla';snd='correct'}else{delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.feedback?.[selectedAnswer]||'Revisa el razonamiento clínico.'}tone(snd);pendingQuestion.resultDelta=delta;$('feedback').hidden=false;$('feedback').innerHTML=`<strong>${esc(heading)}</strong><span>${esc(detail)}</span>`;$('confirmAnswerBtn').hidden=true;$('continueBtn').hidden=false}
 async function continueAfterQuestion(){stopTimer();const d=pendingQuestion?.resultDelta||0;pendingQuestion=null;questionDialog.close();if(d)await move(d);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);endTurn()}
 function startTimer(){if(timer)return;timerLeft=30;$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);if(timerLeft<=0){stopTimer();tone('alarm');$('timerBtn').textContent='Tiempo terminado'}},1000)}
 function stopTimer(){if(timer){clearInterval(timer);timer=null}}
-function movement(type,delta){const m=RULE_META[type];showEvent(m.title,m.message,m.icon,async()=>{await move(delta);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);endTurn()})}
-function vacation(){const m=RULE_META.vacation;showEvent(m.title,m.message,m.icon,async()=>{state.players[state.current].position=0;render();await delay(350);endTurn()})}
-function jail(){const m=RULE_META.jail;state.players[state.current].skipTurns=(state.players[state.current].skipTurns||0)+1;render();showEvent(m.title,m.message,m.icon,endTurn)}
+function movement(type,delta){const m=RULE_META[type];tone(type);showEvent(m.title,m.message,m.icon,async()=>{await move(delta);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);endTurn()})}
+function vacation(){const m=RULE_META.vacation;tone('vacation');showEvent(m.title,m.message,m.icon,async()=>{state.players[state.current].position=0;render();await delay(350);endTurn()})}
+function jail(){const m=RULE_META.jail;tone('jail');state.players[state.current].skipTurns=(state.players[state.current].skipTurns||0)+1;render();showEvent(m.title,m.message,m.icon,endTurn)}
 function showEvent(title,text,icon,cb){$('eventIcon').textContent=icon;$('eventTitle').textContent=title;$('eventText').textContent=text;pendingAfterDialog=cb;eventDialog.showModal()}
 function closeEvent(){eventDialog.close();const cb=pendingAfterDialog;pendingAfterDialog=null;cb?.()}
-function endTurn(){state.current=(state.current+1)%state.players.length;state.turn++;let guard=0;const skipped=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*2){const p=state.players[state.current];p.skipTurns--;skipped.push(`${p.name} pierde este turno por Cárcel.`);state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;render();statusText.textContent=(skipped.length?skipped.join(' ')+' ':'')+`${state.players[state.current].name}, tira los dos dados.`}
+function endTurn(){state.current=(state.current+1)%state.players.length;state.turn++;let guard=0;const skipped=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*2){const p=state.players[state.current];p.skipTurns--;skipped.push(`${p.name} pierde este turno por Cárcel.`);state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;render();tone('turn');statusText.textContent=(skipped.length?skipped.join(' ')+' ':'')+`${state.players[state.current].name}, tira los dos dados.`}
 function showWinner(p){state.locked=true;p.position=100;render();$('winnerTitle').textContent='¡Llegaste a la META!';$('winnerText').textContent=`${p.name} completó las 100 casillas de El Camino Dental.`;$('winnerDialog').showModal();tone('win')}
-function tone(kind='neutral'){if(!soundEnabled)return;try{const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC(),o=ctx.createOscillator(),g=ctx.createGain();const f={error:180,correct:640,excellent:850,alarm:240,dice:420,select:560,start:700,win:920,step:360}[kind]||500;o.frequency.value=f;g.gain.value=.04;o.connect(g).connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.17);o.stop(ctx.currentTime+.18)}catch{}}
+let audioCtx=null;
+function audioContext(){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return null;
+  if(!audioCtx)audioCtx=new AC();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  return audioCtx
+}
+function beep(ctx,freq,start,dur=.12,vol=.035,type='sine',endFreq=null){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,start);
+  if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(30,endFreq),start+dur);
+  g.gain.setValueAtTime(.0001,start);
+  g.gain.exponentialRampToValueAtTime(Math.max(.0002,vol),start+.008);
+  g.gain.exponentialRampToValueAtTime(.0001,start+dur);
+  o.connect(g).connect(ctx.destination);o.start(start);o.stop(start+dur+.02)
+}
+function noise(ctx,start,dur=.12,vol=.02,highpass=500){
+  const length=Math.max(1,Math.floor(ctx.sampleRate*dur)),buf=ctx.createBuffer(1,length,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<length;i++)d[i]=(Math.random()*2-1)*(1-i/length);
+  const src=ctx.createBufferSource(),g=ctx.createGain(),filter=ctx.createBiquadFilter();
+  src.buffer=buf;filter.type='highpass';filter.frequency.value=highpass;
+  g.gain.setValueAtTime(vol,start);g.gain.exponentialRampToValueAtTime(.0001,start+dur);
+  src.connect(filter).connect(g).connect(ctx.destination);src.start(start);src.stop(start+dur+.02)
+}
+function tone(kind='neutral'){
+  if(!soundEnabled)return;
+  try{
+    const ctx=audioContext();if(!ctx)return;const t=ctx.currentTime+.01;
+    switch(kind){
+      case 'select':
+        beep(ctx,520,t,.07,.025,'sine',660);beep(ctx,760,t+.07,.08,.022,'sine');break;
+      case 'start':
+        beep(ctx,392,t,.12,.028,'triangle');beep(ctx,523,t+.11,.12,.03,'triangle');beep(ctx,659,t+.22,.18,.035,'triangle');break;
+      case 'dice':
+        for(let i=0;i<9;i++){noise(ctx,t+i*.045,.045,.016,700);beep(ctx,180+Math.random()*130,t+i*.045,.035,.012,'square')}
+        beep(ctx,420,t+.43,.08,.022,'triangle');break;
+      case 'step':
+        noise(ctx,t,.035,.011,900);beep(ctx,290,t,.045,.014,'triangle',245);break;
+      case 'question':
+        beep(ctx,610,t,.09,.024,'sine');beep(ctx,760,t+.085,.13,.026,'sine');break;
+      case 'case':
+        beep(ctx,330,t,.10,.025,'triangle');beep(ctx,440,t+.09,.10,.025,'triangle');beep(ctx,550,t+.18,.14,.027,'triangle');break;
+      case 'correct':
+        beep(ctx,523,t,.10,.028,'sine');beep(ctx,659,t+.075,.11,.03,'sine');beep(ctx,784,t+.15,.16,.032,'sine');break;
+      case 'excellent':
+        beep(ctx,523,t,.09,.027,'triangle');beep(ctx,659,t+.07,.10,.03,'triangle');beep(ctx,784,t+.14,.11,.032,'triangle');beep(ctx,1047,t+.22,.22,.035,'sine');break;
+      case 'error':
+        beep(ctx,240,t,.11,.028,'square',190);beep(ctx,170,t+.11,.16,.026,'square',135);break;
+      case 'alarm':
+        beep(ctx,740,t,.14,.035,'square');beep(ctx,740,t+.20,.14,.035,'square');beep(ctx,740,t+.40,.18,.035,'square');break;
+      case 'advance1':
+        beep(ctx,440,t,.08,.025,'triangle');beep(ctx,587,t+.07,.12,.03,'triangle');break;
+      case 'advance2':
+        beep(ctx,440,t,.08,.025,'triangle');beep(ctx,587,t+.07,.08,.029,'triangle');beep(ctx,740,t+.14,.14,.032,'triangle');break;
+      case 'back1':
+        beep(ctx,410,t,.09,.025,'triangle',300);beep(ctx,300,t+.08,.13,.025,'triangle',220);break;
+      case 'back2':
+        noise(ctx,t,.08,.025,300);beep(ctx,330,t,.10,.027,'sawtooth',230);beep(ctx,220,t+.10,.14,.025,'sawtooth',150);break;
+      case 'jail':
+        noise(ctx,t,.06,.025,1100);beep(ctx,190,t,.16,.03,'square');noise(ctx,t+.17,.06,.023,1100);beep(ctx,150,t+.17,.20,.03,'square');break;
+      case 'vacation':
+        beep(ctx,523,t,.10,.024,'sine');beep(ctx,659,t+.08,.10,.025,'sine');beep(ctx,880,t+.16,.20,.025,'sine',990);noise(ctx,t+.22,.18,.010,1400);break;
+      case 'turn':
+        beep(ctx,660,t,.055,.018,'sine');beep(ctx,880,t+.055,.075,.019,'sine');break;
+      case 'win':
+        beep(ctx,523,t,.13,.03,'triangle');beep(ctx,659,t+.10,.13,.032,'triangle');beep(ctx,784,t+.20,.13,.034,'triangle');beep(ctx,1047,t+.30,.30,.038,'sine');noise(ctx,t+.28,.30,.010,1800);break;
+      default:
+        beep(ctx,500,t,.10,.02,'sine');
+    }
+  }catch{}
+}
 function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
 function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
 function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.locked=false;showScreen($('game'));buildBoard();render();statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
