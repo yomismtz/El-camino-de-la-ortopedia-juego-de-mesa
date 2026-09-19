@@ -1,4 +1,4 @@
-name: Build Android APK v2.3
+name: Build Android APK v2.4
 on:
   workflow_dispatch:
   push:
@@ -92,8 +92,8 @@ jobs:
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
           import re
-          g=re.sub(r'versionCode\s+\d+','versionCode 23',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.3"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 24',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.4"',g)
           gradle.write_text(g)
           PY
 
@@ -104,11 +104,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.3.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.4.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v2.3
-          path: ElCaminoDental-v2.3.apk
+          name: ElCaminoDental-v2.4
+          path: ElCaminoDental-v2.4.apk
           if-no-files-found: error
