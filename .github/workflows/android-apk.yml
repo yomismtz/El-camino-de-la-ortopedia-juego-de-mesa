@@ -1,4 +1,4 @@
-name: Build Android APK v1.8
+name: Build Android APK v1.9
 on:
   workflow_dispatch:
   push:
@@ -16,6 +16,7 @@ on:
       - 'manifest.webmanifest'
       - 'brand/**'
       - 'questions*.js'
+      - 'fundamentos-oclusion.js'
       - 'cases*.js'
       - 'package.json'
       - 'capacitor.config.json'
@@ -41,6 +42,7 @@ jobs:
         run: |
           node --check app-v10.js
           node --check teacher.js
+          node --check fundamentos-oclusion.js
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
@@ -54,7 +56,7 @@ jobs:
           rm -rf www android
           mkdir -p www
           cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
-          cp questions*.js cases*.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js www/
           cp -r brand www/
 
       - name: Create Android project
@@ -85,8 +87,8 @@ jobs:
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
           import re
-          g=re.sub(r'versionCode\s+\d+','versionCode 18',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "1.8"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 19',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "1.9"',g)
           gradle.write_text(g)
           PY
 
@@ -97,11 +99,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v1.8.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v1.9.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v1.8
-          path: ElCaminoDental-v1.8.apk
+          name: ElCaminoDental-v1.9
+          path: ElCaminoDental-v1.9.apk
           if-no-files-found: error
