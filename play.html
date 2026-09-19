@@ -99,7 +99,11 @@
 
       <aside class="side-stack">
         <section class="dice-panel glass-card">
-          <span class="eyebrow">🎲🎲 DOS DADOS</span>
+          <div class="turn-callout" aria-live="polite">
+            <div id="turnAvatar" class="turn-avatar">🦷</div>
+            <div class="turn-copy"><span>AHORA JUEGA</span><strong id="turnPlayerName">Jugador 1</strong><small id="turnPrompt">Tira los dados</small></div>
+          </div>
+          <span class="eyebrow dice-eyebrow">🎲🎲 DOS DADOS</span>
           <div class="dice-row"><div id="dice1" class="die">⚀</div><div id="dice2" class="die">⚀</div></div>
           <div class="dice-total">Total: <strong id="diceTotal">2</strong></div>
           <button id="rollBtn" class="btn roll-btn">Tirar los dados</button>
