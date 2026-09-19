@@ -23,3 +23,20 @@
 
 /* v1.4 El Camino Dental branding */
 .brand-logo{display:block;width:230px;max-height:66px;object-fit:contain;object-position:left center}.loader-logo{display:block;width:118px;height:118px;margin:0 auto 14px;border-radius:28px;box-shadow:0 15px 35px rgba(10,99,174,.22);animation:bob .8s infinite alternate}.topbar .brand{min-width:245px}@media(max-width:720px){.brand-logo{width:190px;max-height:52px}.topbar .brand{min-width:200px}}
+
+/* v1.5 tablero más despejado + fichas de personaje */
+.spiral-board{width:min(100%,930px);background:radial-gradient(circle,#fffdf8 0 16%,#efe7c6 16.2% 17.4%,#fdfdf6 17.6% 33%,#e7f2d5 33.2% 34.4%,#fffdf6 34.6% 50%,#dff0cf 50.2% 51.4%,#fffdf6 51.6% 67%,#dceecb 67.2% 68.4%,#fffdf6 68.6% 84%,#d7ebc4 84.2% 100%)}
+.spiral-board:before{background:repeating-radial-gradient(circle at center,transparent 0 58px,rgba(118,160,77,.06) 59px 61px,transparent 62px 118px)}
+.cell{width:30px;height:26px;border-radius:10px;font-size:10px;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+.cell-icon{font-size:10px}
+.goal{width:106px;height:106px}
+.start-marker{left:6.8%;top:7.2%;min-width:82px;display:grid;gap:6px;justify-items:center}
+.tokens{position:absolute;inset:0}
+.start-tokens{position:relative;min-height:28px;min-width:48px}
+.board-token{position:absolute;left:50%;top:50%;transform:translate(calc(-50% + var(--sx,0px)),calc(-50% + var(--sy,0px)));width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--token);box-shadow:0 0 0 2px #fff,0 4px 8px rgba(0,0,0,.25);z-index:20;transition:transform .18s ease,width .18s ease,height .18s ease}
+.board-token.active{width:27px;height:27px;box-shadow:0 0 0 3px #fff,0 0 0 6px color-mix(in srgb,var(--token) 34%,transparent),0 5px 10px rgba(0,0,0,.28);z-index:24}
+.token-face{font-size:12px;line-height:1}.board-token.active .token-face{font-size:14px}
+.cell.current-cell{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 0 6px rgba(32,147,255,.22),0 6px 12px rgba(56,79,111,.22)}
+.board-decoration{font-size:22px;opacity:.32}
+@media(max-width:1100px){.spiral-board{max-width:760px}}
+@media(max-width:720px){.spiral-board{width:700px}.cell{width:28px;height:24px;font-size:9px}.board-token{width:20px;height:20px}.board-token.active{width:24px;height:24px}.token-face{font-size:11px}.board-token.active .token-face{font-size:12px}.goal{width:94px;height:94px}}
