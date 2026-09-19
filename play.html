@@ -37,6 +37,12 @@
         </div>
       </div>
       <div class="setup-form">
+        <label class="module-selector">Módulo de preguntas
+          <select id="gameModule">
+            <option value="fundamentos_oclusion" selected>Fundamentos de la oclusión · 100 preguntas</option>
+            <option value="ortopedia_general">Ortopedia / banco general</option>
+          </select>
+        </label>
         <label>Número de jugadores
           <select id="playerCount">
             <option value="2">2 jugadores</option>
@@ -99,6 +105,7 @@
 
       <aside class="side-stack">
         <section class="dice-panel glass-card">
+          <div id="moduleBadge" class="module-badge">📘 Fundamentos de la oclusión</div>
           <div class="turn-callout" aria-live="polite">
             <div id="turnAvatar" class="turn-avatar">🦷</div>
             <div class="turn-copy"><span>AHORA JUEGA</span><strong id="turnPlayerName">Jugador 1</strong><small id="turnPrompt">Tira los dados</small></div>
@@ -165,6 +172,7 @@
   <div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p><button id="playAgainBtn" class="btn primary">Jugar otra vez</button></div>
 </dialog>
 <script src="questions.js"></script>
+<script src="fundamentos-oclusion.js"></script>
 <script src="questions-extra-deck1.js"></script><script src="questions-extra-deck2.js"></script><script src="questions-extra-deck3.js"></script>
 <script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
 <script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
