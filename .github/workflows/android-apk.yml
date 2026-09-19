@@ -1,4 +1,4 @@
-name: Build Android APK v1.4
+name: Build Android APK v1.5
 on:
   workflow_dispatch:
   push:
@@ -82,6 +82,12 @@ jobs:
           x=re.sub(r'<string name="app_name">.*?</string>','<string name="app_name">El Camino Dental</string>',x)
           x=re.sub(r'<string name="title_activity_main">.*?</string>','<string name="title_activity_main">El Camino Dental</string>',x)
           strings.write_text(x)
+          gradle=Path('android/app/build.gradle')
+          g=gradle.read_text()
+          import re
+          g=re.sub(r'versionCode\s+\d+','versionCode 15',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "1.5"',g)
+          gradle.write_text(g)
           PY
 
       - name: Build installable APK
@@ -91,11 +97,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v1.4.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v1.5.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v1.4
-          path: ElCaminoDental-v1.4.apk
+          name: ElCaminoDental-v1.5
+          path: ElCaminoDental-v1.5.apk
           if-no-files-found: error
