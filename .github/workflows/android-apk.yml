@@ -1,4 +1,4 @@
-name: Build Android APK v2.2
+name: Build Android APK v2.3
 on:
   workflow_dispatch:
   push:
@@ -18,6 +18,7 @@ on:
       - 'questions*.js'
       - 'fundamentos-oclusion.js'
       - 'fundamentos-casos.js'
+      - 'steiner*.js'
       - 'cases*.js'
       - 'package.json'
       - 'capacitor.config.json'
@@ -45,6 +46,8 @@ jobs:
           node --check teacher.js
           node --check fundamentos-oclusion.js
           node --check fundamentos-casos.js
+          node --check steiner-questions.js
+          node --check steiner-cases.js
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
@@ -58,7 +61,7 @@ jobs:
           rm -rf www android
           mkdir -p www
           cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
-          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js www/
           cp -r brand www/
 
       - name: Create Android project
@@ -89,8 +92,8 @@ jobs:
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
           import re
-          g=re.sub(r'versionCode\s+\d+','versionCode 22',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.2"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 23',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.3"',g)
           gradle.write_text(g)
           PY
 
@@ -101,11 +104,11 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.2.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.3.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v2.2
-          path: ElCaminoDental-v2.2.apk
+          name: ElCaminoDental-v2.3
+          path: ElCaminoDental-v2.3.apk
           if-no-files-found: error
