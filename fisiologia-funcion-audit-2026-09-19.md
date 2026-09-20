@@ -78,7 +78,7 @@ Casos:
 - 0 casos sin una única respuesta Excelente.
 - 0 reactivos sin campo de evidencia.
 - Opciones de respuesta <= 44 caracteres en el banco de preguntas y <= 43 en los casos.
-- Posiciones de respuesta correcta redistribuidas para reducir patrones predecibles.
+- Posiciones de respuesta correcta equilibradas: A=25, B=25, C=25, D=25.
 
 ## Nota
 Este módulo es un recurso educativo. La auditoría comprueba coherencia con las fuentes indicadas y evita afirmaciones clínicas que excedan la evidencia disponible; no sustituye diagnóstico ni planificación individual.
