@@ -1,25 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 360" role="img" aria-labelledby="t d">
-<title id="t">El Camino Dental</title><desc id="d">Logo de El Camino Dental, con un diente y un camino.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+<title id="title">El Camino Dental</title>
+<desc id="desc">Un diente blanco rodeado por una carretera azul en bucle con un amanecer.</desc>
 <defs>
-  <linearGradient id="tooth" x1=".15" y1=".05" x2=".75" y2="1"><stop stop-color="#fff"/><stop offset=".75" stop-color="#eaf9ff"/><stop offset="1" stop-color="#ccefff"/></linearGradient>
-  <linearGradient id="road" x1=".2" y1=".95" x2=".82" y2=".1"><stop stop-color="#075dba"/><stop offset=".5" stop-color="#06acbc"/><stop offset="1" stop-color="#45d6ae"/></linearGradient>
-  <linearGradient id="blueText" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#114a97"/><stop offset="1" stop-color="#149fe2"/></linearGradient>
-  <linearGradient id="greenText" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#18a990"/><stop offset="1" stop-color="#45d0ad"/></linearGradient>
-  <filter id="s" x="-20%" y="-20%" width="150%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0b6399" flood-opacity=".18"/></filter>
+  <linearGradient id="tooth" x1=".15" y1=".05" x2=".78" y2="1">
+    <stop stop-color="#ffffff"/>
+    <stop offset=".62" stop-color="#f7fcff"/>
+    <stop offset="1" stop-color="#cceeff"/>
+  </linearGradient>
+  <linearGradient id="road" x1=".05" y1=".3" x2=".95" y2=".72">
+    <stop stop-color="#073f86"/>
+    <stop offset=".45" stop-color="#075da8"/>
+    <stop offset="1" stop-color="#087fc0"/>
+  </linearGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
+    <stop stop-color="#0fc1d4"/>
+    <stop offset="1" stop-color="#26d4c1"/>
+  </linearGradient>
+  <linearGradient id="sun" x1=".2" y1="0" x2=".8" y2="1">
+    <stop stop-color="#ffd95c"/>
+    <stop offset="1" stop-color="#ffae22"/>
+  </linearGradient>
+  <linearGradient id="blueText" x1="0" x2="1">
+    <stop stop-color="#073f86"/>
+    <stop offset="1" stop-color="#075da8"/>
+  </linearGradient>
+  <linearGradient id="tealText" x1="0" x2="1">
+    <stop stop-color="#10a7b9"/>
+    <stop offset="1" stop-color="#18c2b2"/>
+  </linearGradient>
+  <filter id="shadow" x="-25%" y="-25%" width="150%" height="170%">
+    <feDropShadow dx="0" dy="10" stdDeviation="11" flood-color="#0a5685" flood-opacity=".22"/>
+  </filter>
 </defs>
-<g transform="translate(25 16)" filter="url(#s)">
-  <path d="M137 25c-54 0-98 33-116 88-23 72 7 142 40 208 13 26 18 39 29 39 18 0 27-23 37-54 16-51 35-73 58-73s42 22 58 73c10 31 19 54 37 54 11 0 16-13 29-39 33-66 63-136 40-208-18-55-62-88-116-88-49 0-83 31-128 31S186 25 137 25Z" fill="url(#tooth)" stroke="#148ad7" stroke-width="14"/>
-  <path d="M109 327c17-64 55-112 103-144 45-30 81-44 102-76-13 46-44 78-77 102-38 29-70 61-86 118Z" fill="url(#road)"/>
-  <path d="M137 286c8-17 16-31 27-44M186 216c12-10 24-19 37-27M250 169c13-8 24-16 34-26" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
-  <path d="M221 124a34 34 0 0 1 68 0" fill="#ffc347"/>
-  <g stroke="#ffc347" stroke-width="9" stroke-linecap="round"><path d="M255 74V56"/><path d="M226 84l-13-13"/><path d="M284 84l13-13"/></g>
-  <path d="M90 89c9-19 21-27 37-30" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".85"/>
-  <g fill="#20afe0"><path d="M327 98l7 17 17 7-17 7-7 17-7-17-17-7 17-7Z"/><path d="M318 152l5 12 12 5-12 5-5 12-5-12-12-5 12-5Z"/></g>
+
+<g transform="translate(30 12)" filter="url(#shadow)">
+  <g>
+    <path d="M194 58a61 61 0 0 1 122 0" fill="url(#sun)"/>
+    <g stroke="#ffb326" stroke-width="11" stroke-linecap="round">
+      <path d="M255 8V-8"/>
+      <path d="M215 19l-14-15"/>
+      <path d="M295 19l14-15"/>
+      <path d="M190 47l-19-5"/>
+      <path d="M320 47l19-5"/>
+    </g>
+  </g>
+
+  <path d="M109 44c-47 0-84 29-100 77-19 59 7 117 35 173 25 50 19 102 49 121 21 13 42-4 54-43 15-49 31-69 49-69s34 20 49 69c12 39 33 56 54 43 30-19 24-71 49-121 28-56 54-114 35-173-16-48-53-77-100-77-39 0-65 26-87 26s-48-26-87-26Z"
+        fill="url(#tooth)" stroke="#2399d2" stroke-width="10"/>
+
+  <path d="M51 164C93 108 164 89 244 98c72 8 131 44 146 86 15 42-20 88-83 116-75 33-177 33-250-2-62-30-83-78-55-117 11-15 28-28 49-38Z"
+        fill="none" stroke="url(#rim)" stroke-width="66" stroke-linecap="round" opacity=".98"/>
+  <path d="M51 164C93 108 164 89 244 98c72 8 131 44 146 86 15 42-20 88-83 116-75 33-177 33-250-2-62-30-83-78-55-117 11-15 28-28 49-38Z"
+        fill="none" stroke="url(#road)" stroke-width="54" stroke-linecap="round"/>
+  <path d="M34 183c25-23 57-41 94-52M183 110c29-2 58 0 84 5M317 132c23 11 42 24 55 39M368 221c-17 22-46 41-82 54M226 295c-30 4-61 3-90-2M79 274c-27-12-48-28-59-46"
+        fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="24 18"/>
+
+  <path d="M101 85c11-22 27-32 48-35" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".82"/>
 </g>
-<g transform="translate(420 78)">
-  <text x="0" y="80" font-family="Arial Rounded MT Bold, Nunito, system-ui, sans-serif" font-size="82" font-weight="900" fill="url(#blueText)">El Camino</text>
-  <text x="0" y="174" font-family="Arial Rounded MT Bold, Nunito, system-ui, sans-serif" font-size="100" font-weight="900" fill="url(#greenText)">Dental</text>
-  <path d="M5 208H575" stroke="#b9e9e0" stroke-width="5" stroke-linecap="round"/>
-  <text x="7" y="250" font-family="system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="6" fill="#315f84">APRENDE · PRACTICA · SONRÍE</text>
+
+<g transform="translate(465 80)">
+  <text x="0" y="78" font-family="Nunito, 'Arial Rounded MT Bold', 'Segoe UI', sans-serif" font-size="88" font-weight="900" fill="url(#blueText)">El Camino</text>
+  <text x="0" y="188" font-family="Nunito, 'Arial Rounded MT Bold', 'Segoe UI', sans-serif" font-size="112" font-weight="900" fill="url(#tealText)">Dental</text>
+  <path d="M3 218C174 198 409 198 603 218" fill="none" stroke="#f3b423" stroke-width="5" stroke-linecap="round"/>
 </g>
 </svg>
