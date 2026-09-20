@@ -21,6 +21,8 @@ on:
       - 'steiner*.js'
       - 'fisiologia-funcion-questions.js'
       - 'fisiologia-funcion-cases.js'
+      - 'crecimiento-desarrollo-questions.js'
+      - 'crecimiento-desarrollo-cases.js'
       - 'cases*.js'
       - 'package.json'
       - 'capacitor.config.json'
@@ -52,6 +54,8 @@ jobs:
           node --check steiner-cases.js
           node --check fisiologia-funcion-questions.js
           node --check fisiologia-funcion-cases.js
+          node --check crecimiento-desarrollo-questions.js
+          node --check crecimiento-desarrollo-cases.js
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
@@ -65,7 +69,7 @@ jobs:
           rm -rf www android
           mkdir -p www
           cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
-          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js www/
           cp -r brand www/
 
       - name: Create Android project
@@ -83,7 +87,7 @@ jobs:
           from pathlib import Path
           p=Path('android/app/src/main/AndroidManifest.xml')
           s=p.read_text()
-          s=s.replace('android:exported="true"','android:exported="true" android:screenOrientation="landscape" android:keepScreenOn="true"',1)
+          s=s.replace('android:exported="true"','android:exported="true" android:keepScreenOn="true"',1)
           s=s.replace('android:icon="@mipmap/ic_launcher"','android:icon="@drawable/ic_launcher_custom"')
           s=s.replace('android:roundIcon="@mipmap/ic_launcher_round"','android:roundIcon="@drawable/ic_launcher_custom"')
           p.write_text(s)
