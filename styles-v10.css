@@ -521,7 +521,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 
 
 /* v2.6 — ajuste móvil sin desplazamiento */
-@media (max-width:720px){
+@media (max-width:720px) and (orientation:portrait){
   html,body{width:100%;max-width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
   body{min-height:100dvh}
   .app-shell{min-width:0!important;width:100%;height:100dvh;max-height:100dvh;margin:0;padding:5px;overflow:hidden}
@@ -626,6 +626,11 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
   .event-card p,.winner-card p{font-size:11px;margin:5px 0 8px}
   .rules-grid{grid-template-columns:1fr 1fr;gap:4px}
   .rules-grid>div{padding:5px;border-radius:8px;font-size:8px;line-height:1.12}
+}
+
+@media (max-width:720px) and (orientation:landscape){
+  html,body{width:100%;max-width:100%;overflow:hidden}
+  .app-shell{min-width:0!important;width:100%;max-width:100%;margin:0}
 }
 
 /* Teléfonos en horizontal: comprime modales para evitar desplazamiento vertical */
