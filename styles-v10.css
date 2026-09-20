@@ -650,3 +650,81 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
   .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
   .rules-grid>div{padding:4px;font-size:7px}
 }
+
+
+/* v2.6.1 — zona segura Android para controles inferiores */
+@media (max-width:720px) and (orientation:portrait){
+  :root{
+    --mobile-safe-bottom:max(env(safe-area-inset-bottom, 0px),32px);
+  }
+
+  /* Android puede dibujar la WebView detrás de la barra de navegación.
+     Reservamos una franja táctil real para que ningún botón quede debajo. */
+  .app-shell{
+    padding-bottom:var(--mobile-safe-bottom);
+  }
+
+  .screen.active{
+    height:calc(100dvh - 51px - var(--mobile-safe-bottom));
+    max-height:calc(100dvh - 51px - var(--mobile-safe-bottom));
+  }
+
+  .character-shell{
+    height:100%;
+    padding:7px 7px 6px;
+  }
+
+  .character-grid{
+    min-height:0;
+  }
+
+  .character-shell>.actions{
+    position:relative;
+    z-index:20;
+    min-height:46px;
+    padding:2px 0 4px;
+    margin:0;
+    background:rgba(255,255,255,.96);
+    border-radius:14px;
+  }
+
+  .character-shell>.actions .btn{
+    min-height:42px;
+    padding:9px 8px;
+    font-size:11px;
+    touch-action:manipulation;
+  }
+
+  /* También protege configuración, tablero y acciones de modales. */
+  .setup-card{
+    padding-bottom:calc(9px + var(--mobile-safe-bottom));
+  }
+
+  .game-playing .app-shell{
+    padding-bottom:var(--mobile-safe-bottom);
+  }
+
+  .game-playing .game-screen.active{
+    height:calc(100dvh - 46px - var(--mobile-safe-bottom));
+    max-height:calc(100dvh - 46px - var(--mobile-safe-bottom));
+  }
+
+  .modal{
+    max-height:calc(100dvh - var(--mobile-safe-bottom) - 8px);
+  }
+
+  .modal-card{
+    max-height:calc(100dvh - var(--mobile-safe-bottom) - 8px);
+  }
+
+  .modal-actions{
+    padding-bottom:4px;
+  }
+}
+
+/* En teléfonos con barra de navegación especialmente alta, ganar un poco más de margen. */
+@media (max-width:720px) and (orientation:portrait) and (max-height:780px){
+  :root{--mobile-safe-bottom:max(env(safe-area-inset-bottom, 0px),38px)}
+  .character-shell>.actions{min-height:48px}
+  .character-shell>.actions .btn{min-height:44px}
+}
