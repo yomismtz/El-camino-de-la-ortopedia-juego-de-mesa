@@ -518,3 +518,130 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 .module-selector select{font-weight:850;color:#174e78;background:linear-gradient(145deg,#fff,#edf9ff)}
 .module-badge{display:flex;align-items:center;justify-content:center;min-height:32px;margin-bottom:5px;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg,#eaf7ff,#eafbf5);border:1px solid rgba(58,163,205,.22);color:#28698f;font-size:11px;font-weight:950;letter-spacing:.02em;text-align:center}
 .game-playing .module-badge{min-height:25px;margin-bottom:3px;padding:4px 8px;font-size:9px}
+
+
+/* v2.6 — ajuste móvil sin desplazamiento */
+@media (max-width:720px){
+  html,body{width:100%;max-width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+  body{min-height:100dvh}
+  .app-shell{min-width:0!important;width:100%;height:100dvh;max-height:100dvh;margin:0;padding:5px;overflow:hidden}
+  .topbar{height:46px;padding:0 3px 4px}
+  .brand-logo{width:136px;max-width:42vw;max-height:38px}
+  .top-actions{gap:4px}
+  .icon-btn{width:34px;height:34px;font-size:15px}
+  .screen.active{height:calc(100dvh - 51px);max-height:calc(100dvh - 51px);overflow:hidden}
+
+  /* Configuración: todo visible sin desplazamiento */
+  .setup-card{height:100%;min-height:0;grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:7px;padding:9px;border-radius:19px;align-items:stretch;overflow:hidden}
+  .setup-copy{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:0}
+  .setup-copy .pill{font-size:9px;padding:4px 7px}
+  .setup-copy h1{font-size:clamp(18px,5.5vw,24px);line-height:1;margin:0;letter-spacing:-.025em}
+  .setup-copy p,.setup-copy .feature-row{display:none}
+  .setup-form{padding:8px;border-radius:15px;min-height:0;overflow:hidden}
+  .setup-form>label{gap:3px;font-size:11px}
+  .setup-form>label+label{margin-top:5px}
+  .setup-form select,.name-row input{padding:7px 9px;border-width:1px;border-radius:10px;font-size:12px;min-height:32px}
+  .player-names{gap:4px;margin:6px 0}
+  .name-row{grid-template-columns:26px minmax(0,1fr);gap:5px}
+  .player-number{width:25px;height:25px;font-size:10px}
+  .actions{gap:5px;flex-wrap:nowrap}
+  .actions .btn{flex:1 1 0;min-width:0;padding:8px 7px;border-radius:11px;font-size:11px;line-height:1.15}
+
+  /* Personajes: 12 opciones en una sola pantalla */
+  .character-shell{height:100%;min-height:0;padding:7px;border-radius:19px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:4px;overflow:hidden}
+  .section-title .pill{display:none}
+  .section-title h1{font-size:18px;line-height:1.05;margin:1px 0}
+  .section-title p{font-size:10px;line-height:1.15;margin:2px 0}
+  .character-grid{height:100%;max-height:none;overflow:hidden;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:4px;margin:2px 0;padding:0}
+  .character-card{min-width:0;min-height:0;height:100%;padding:3px;border-width:2px;border-radius:11px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;overflow:hidden}
+  .character-card:hover,.character-card.selected{transform:none}
+  .character-art{height:clamp(38px,7.5dvh,58px);min-height:34px;border-radius:9px;font-size:clamp(27px,7dvh,43px)}
+  .character-card h3{font-size:9px;line-height:1.05;margin:3px 1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .character-card>b,.character-card p,.select-label,.pawn,.character-bubble,.picked-summary{display:none!important}
+  .character-shell>.actions{margin:0}
+  .character-shell>.actions .btn{padding:7px 6px;font-size:10px}
+
+  /* Tablero en retrato: tablero arriba, controles compactos abajo */
+  .game-playing{height:100dvh;max-height:100dvh;overflow:hidden}
+  .game-playing .app-shell{height:100dvh;max-height:100dvh;padding:4px;overflow:hidden}
+  .game-playing .topbar{height:42px;padding:0 2px 3px}
+  .game-playing .brand-logo{width:125px;max-height:34px}
+  .game-playing .icon-btn{width:31px;height:31px;font-size:14px}
+  .game-playing .game-screen.active{height:calc(100dvh - 46px);max-height:calc(100dvh - 46px);overflow:hidden}
+  .game-playing .game-grid{height:100%;min-height:0;display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 158px;gap:4px;overflow:hidden}
+  .game-playing .board-card{height:100%;min-height:0;padding:2px;border-radius:18px;display:grid;place-items:center;overflow:hidden}
+  .game-playing .board-header,.game-playing .legend{display:none}
+  .game-playing .spiral-board{
+    --play-board:min(calc(100vw - 12px),calc(100dvh - 212px));
+    width:var(--play-board);height:var(--play-board);
+    max-width:none;max-height:none;margin:0;border-width:4px
+  }
+  .game-playing .cell{width:clamp(18px,5.4vw,24px);height:clamp(16px,4.7vw,21px);border-width:1px;border-radius:5px;font-size:clamp(6px,1.8vw,8px);box-shadow:0 1px 3px rgba(89,69,34,.18)}
+  .game-playing .cell-icon{font-size:6px;right:1px}
+  .game-playing .board-token{top:-8px;width:15px;height:15px;font-size:8px;box-shadow:0 0 0 2px #fff,0 2px 4px #0003}
+  .game-playing .goal{width:68px;height:68px;border-width:3px;box-shadow:0 0 0 3px #fff,0 5px 12px rgba(147,105,13,.20)}
+  .game-playing .goal span{font-size:16px}.game-playing .goal strong{font-size:11px}.game-playing .goal b{font-size:10px}
+  .game-playing .start-marker{left:5%;top:5%;padding:3px 5px;border-radius:6px;font-size:7px}
+  .game-playing .board-decoration{display:none}
+
+  .game-playing .side-stack{height:158px;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:1fr;gap:4px;overflow:hidden}
+  .game-playing .dice-panel,.game-playing .players-panel{height:100%;min-height:0;padding:5px;border-radius:15px;overflow:hidden}
+  .game-playing .module-badge{min-height:17px;margin-bottom:2px;padding:2px 5px;font-size:7px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .game-playing .turn-callout{grid-template-columns:28px minmax(0,1fr);gap:5px;padding:3px 5px;margin-bottom:2px;border-radius:10px}
+  .game-playing .turn-avatar{width:27px;height:27px;font-size:17px}
+  .game-playing .turn-copy span{font-size:6px}.game-playing .turn-copy strong{font-size:10px}.game-playing .turn-copy small{font-size:7px;margin-top:0}
+  .game-playing .dice-eyebrow{display:none}
+  .game-playing .dice-row{gap:6px;margin:1px 0}
+  .game-playing .die{width:38px;height:38px;border-radius:10px;font-size:29px}
+  .game-playing .dice-total{font-size:8px;line-height:1}.game-playing .dice-total strong{font-size:12px}
+  .game-playing .roll-btn{margin-top:2px;padding:5px 4px;border-radius:8px;font-size:9px;line-height:1.05}
+  .game-playing .status{margin:2px 0 0;min-height:11px;max-height:22px;font-size:7px;line-height:1.1;overflow:hidden}
+  .game-playing .panel-title{min-height:18px}.game-playing .panel-title h3{font-size:10px}
+  .game-playing .tiny-btn{padding:3px 4px;border-radius:6px;font-size:7px}
+  .game-playing .score-list{display:grid;grid-template-columns:1fr;gap:2px;margin-top:2px;align-content:start}
+  .game-playing .player-row{grid-template-columns:21px minmax(0,1fr) auto;gap:3px;padding:2px 3px;border-width:1px;border-radius:7px;min-width:0}
+  .game-playing .avatar{width:20px;height:20px;font-size:12px}
+  .game-playing .player-row b{font-size:7px}.game-playing .player-row small{font-size:5.5px}
+  .game-playing .player-row>strong{font-size:6px}.game-playing .progress{height:2px;margin-top:1px}
+
+  /* Preguntas y casos: caben completos en el viewport */
+  .modal{width:calc(100vw - 8px);max-width:calc(100vw - 8px);max-height:calc(100dvh - 8px);margin:auto}
+  .modal-card{max-height:calc(100dvh - 8px);padding:9px;border-radius:16px;overflow:hidden}
+  .question-card{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto auto;gap:5px}
+  .modal-head{gap:5px;min-width:0}
+  .category-pill{max-width:58vw;padding:4px 6px;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #questionNumber{font-size:8px;white-space:nowrap}
+  .timer-wrap{font-size:10px;white-space:nowrap}
+  .question-card h2{font-size:clamp(14px,4vw,19px);line-height:1.08;margin:2px 0}
+  .question-media{padding:5px 6px;border-radius:8px;font-size:9px}
+  .options{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;min-height:0}
+  .option{min-width:0;padding:6px;border-width:1px;border-radius:10px;grid-template-columns:24px minmax(0,1fr);gap:5px;font-size:clamp(9px,2.7vw,12px);line-height:1.12}
+  .option span:first-child{width:23px;height:23px;font-size:9px}
+  .feedback{margin-top:0;padding:6px;border-radius:9px;font-size:9px;line-height:1.15;max-height:19dvh;overflow:hidden}
+  .modal-actions{gap:4px;margin-top:0;flex-wrap:nowrap}
+  .modal-actions .btn{flex:1 1 0;min-width:0;padding:7px 5px;border-radius:9px;font-size:9px;line-height:1.1}
+  .event-card,.winner-card,.rules-card{max-height:calc(100dvh - 8px);padding:10px}
+  .event-icon,.trophy{font-size:43px}
+  .event-card h2,.winner-card h2,.rules-card h2{font-size:18px;margin:5px 0}
+  .event-card p,.winner-card p{font-size:11px;margin:5px 0 8px}
+  .rules-grid{grid-template-columns:1fr 1fr;gap:4px}
+  .rules-grid>div{padding:5px;border-radius:8px;font-size:8px;line-height:1.12}
+}
+
+/* Teléfonos en horizontal: comprime modales para evitar desplazamiento vertical */
+@media (max-height:520px) and (orientation:landscape){
+  html,body{height:100%;overflow:hidden}
+  .modal{max-height:calc(100dvh - 6px)}
+  .modal-card{max-height:calc(100dvh - 6px);padding:7px;border-radius:13px;overflow:hidden}
+  .question-card{gap:3px}
+  .question-card h2{font-size:15px;line-height:1.05;margin:1px 0}
+  .modal-head{gap:4px}.category-pill{padding:3px 5px;font-size:7px}.timer-wrap,#questionNumber{font-size:8px}
+  .options{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  .option{padding:4px 6px;border-radius:8px;grid-template-columns:21px minmax(0,1fr);gap:4px;font-size:9px;line-height:1.05}
+  .option span:first-child{width:20px;height:20px;font-size:8px}
+  .feedback{padding:4px 6px;font-size:8px;line-height:1.08;max-height:18dvh;overflow:hidden}
+  .modal-actions{gap:4px;margin-top:1px}.modal-actions .btn{padding:5px 7px;font-size:8px}
+  .event-icon,.trophy{font-size:34px}
+  .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+  .rules-grid>div{padding:4px;font-size:7px}
+}
