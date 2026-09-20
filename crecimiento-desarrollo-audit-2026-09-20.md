@@ -90,7 +90,23 @@ Cada uno de los 20 temas tiene exactamente 5 preguntas y 3 casos:
 - `54b5523` — reescritura del banco de 100 preguntas con reactivos únicos.
 - `6200a94` — reescritura de los 60 casos con escenarios únicos.
 
-## Estado
-**APROBADO PARA INTEGRACIÓN.**
+## Integración al juego
+- Selector de módulo añadido en `play.html`.
+- Bancos `crecimiento-desarrollo-questions.js` y `crecimiento-desarrollo-cases.js` cargados antes de `app-v10.js`.
+- Enrutamiento de preguntas y casos añadido en `app-v10.js`.
+- Etiquetas de módulo y categoría añadidas a la interfaz.
+- Totales visibles actualizados a 500 preguntas y 270 casos clínicos.
+- Ambos bancos añadidos al caché offline.
+- Service worker actualizado de `el-camino-dental-v31` a `el-camino-dental-v32`.
+- Validación posterior: selector, scripts, rutas de bancos, etiquetas y caché presentes; 100 preguntas y 60 casos disponibles en los tres mazos.
+- Comprobación sintáctica JavaScript: `app-v10.js`, `sw.js` y ambos bancos = OK.
 
-La auditoría estructural final obtuvo 0 duplicados, 0 índices inválidos y 0 reactivos sin evidencia. El módulo todavía no se considera integrado hasta modificar selector, lógica de bancos y caché offline.
+## Commits de integración
+- `b85bca2` — selector, scripts y totales visibles.
+- `cbf46bb` — enrutamiento de bancos, badge y categorías.
+- `ebcc479` — caché offline v32.
+
+## Estado
+**AUDITADO E INTEGRADO.**
+
+La auditoría estructural final mantiene 0 duplicados, 0 índices inválidos y 0 reactivos sin evidencia. El módulo de Crecimiento y desarrollo craneofacial ya está disponible en la lógica principal del juego y en el caché offline.
