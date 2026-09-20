@@ -1,26 +1,46 @@
-# Desarrollo — Crecimiento y desarrollo craneofacial
+# Auditoría — Crecimiento y desarrollo craneofacial
 
-Fecha de inicio: 2026-09-20
+Fecha de cierre de auditoría: 2026-09-20
 
-## Objetivo del módulo
-- 100 preguntas auditadas.
-- 60 casos clínicos auditados.
-- Niveles: Básico, Intermedio y Clínico.
-- Opciones breves para teléfono.
-- Evidencia asociada a cada reactivo.
-- Distribución A/B/C/D equilibrada al finalizar.
-- Sin duplicados ni afirmaciones causales o terapéuticas que excedan la evidencia.
+## Resultado
+Banco corregido y auditado antes de integración al juego.
 
-## Temario aprobado
-1. Crecimiento vs. desarrollo.
+- 100 preguntas únicas.
+- 60 casos clínicos/situacionales únicos.
+- 0 enunciados duplicados normalizados.
+- 0 reactivos completos duplicados.
+- 0 respuestas correctas fuera de rango.
+- 0 reactivos sin evidencia.
+- 0 referencias visibles a clase, presentación o diapositivas.
+- Opciones breves para móvil: máximo 49 caracteres en preguntas y 47 en casos.
+
+## Distribución
+
+### Preguntas
+- Básico: 34
+- Intermedio: 33
+- Clínico: 33
+- Respuesta correcta A/B/C/D: 25 / 25 / 25 / 25
+
+### Casos
+- Básico: 20
+- Intermedio: 20
+- Clínico: 20
+- Exactamente 1 respuesta Excelente por caso.
+- Exactamente 1 respuesta Buena por caso.
+- Posición de Excelente A/B/C/D: 15 / 15 / 15 / 15
+
+## Cobertura temática
+Cada uno de los 20 temas tiene exactamente 5 preguntas y 3 casos:
+1. Crecimiento y desarrollo.
 2. Tejido óseo dinámico.
 3. Osteoblastos y osteoclastos.
 4. BMU.
 5. Modelado y remodelado.
-6. Ley de Wolff y mecanostato de Frost.
-7. Teorías de crecimiento: genética, sutural, cartilaginosa y matriz funcional.
-8. Osificación intramembranosa y endocondral.
-9. Crecimiento del maxilar.
+6. Ley de Wolff y mecanostato.
+7. Teorías de crecimiento.
+8. Osificación.
+9. Crecimiento maxilar.
 10. Crecimiento mandibular.
 11. Base craneal y sincondrosis.
 12. Suturas.
@@ -31,32 +51,46 @@ Fecha de inicio: 2026-09-20
 17. Curvas de Scammon.
 18. Crecimiento neural y somático.
 19. Pico puberal.
-20. Aplicación clínica del crecimiento.
+20. Aplicación clínica.
 
-## Criterios científicos fijados antes de redactar el banco
-- Las teorías históricas se enseñarán como modelos explicativos, no como verdades exclusivas.
-- El crecimiento craneofacial se tratará como proceso coordinado con control genético e influencia ambiental.
-- Las suturas no se presentarán de forma simplista como centros autónomos que determinan todo el crecimiento facial.
-- Se diferenciarán modelado y remodelado óseo.
-- El mecanostato se presentará como modelo de adaptación mecánica del hueso, evitando convertir umbrales históricos en reglas clínicas universales.
-- La base craneal se relacionará con osificación endocondral y crecimiento mediante sincondrosis.
-- El cartílago condilar se tratará como cartílago secundario con capacidad adaptativa, evitando afirmar que un aparato garantiza crecimiento mandibular adicional.
-- Los patrones de crecimiento neural/somático y el pico puberal se usarán como conceptos de crecimiento diferencial; no como predictores perfectos del individuo.
-- El momento de tratamiento deberá depender del diagnóstico y objetivo terapéutico, no únicamente de edad cronológica.
+## Criterios científicos aplicados
+- Las teorías clásicas se presentan como modelos complementarios, no como verdades exclusivas.
+- Se distingue modelado de remodelado óseo y se evita usarlos como sinónimos.
+- Ley de Wolff y mecanostato se usan como marcos de adaptación mecánica, no como recetas clínicas universales.
+- Las suturas se tratan como sitios activos de crecimiento/respuesta dentro de un sistema coordinado, no como motores autónomos universales.
+- Las sincondrosis de base craneal se vinculan con osificación endocondral.
+- El cartílago condilar se trata como cartílago secundario con capacidad adaptativa.
+- No se afirma que aparatos funcionales garanticen una cantidad fija de crecimiento mandibular.
+- Las curvas de Scammon se usan como modelos poblacionales/históricos y no como predictores individuales exactos.
+- Edad cronológica y CVM no se usan como predictores absolutos. CVM se considera un indicador complementario con variabilidad de observador y de paciente.
+- El momento terapéutico se vincula a diagnóstico, objetivo, maduración y crecimiento restante.
 
-## Núcleo bibliográfico inicial auditado
+## Núcleo bibliográfico verificado
 - PMID 32151371 — Craniofacial Growth: Current Theories and Influence on Management.
-- PMID 10925768 — Craniofacial growth.
-- PMID 7572089 — Basic mechanisms in craniofacial growth.
+- PMID 19883366 — Bone modeling and remodeling.
+- PMID 3688455 — Bone mass and the mechanostat.
+- PMID 40396131 — Toward a clear relationship between mechanical signals and bone adaptation.
 - PMID 35887171 — Cranial Base Synchondrosis: Chondrocytes at the Hub.
 - PMID 16191905 — Cranial base in craniofacial development.
 - PMID 27250655 — Developmental Regulation of the Growth Plate and Cranial Synchondrosis.
 - PMID 16040724 — Adaptive remodeling of condylar cartilage.
 - PMID 19164410 — Abnormal mandibular growth and condylar cartilage.
-- PMID 8060014 / PMID 15038485 — Wolff's law and bone adaptation.
-- PMID 3688455 — Frost mechanostat.
-- PMID 26096594 — Mechanostat and OPG/RANKL/RANK.
-- PMID 3041795 — Sutures and forces.
+- PMID 38669735 — Inter-/intra-observer agreement of CVM staging: systematic review and meta-analysis.
+- PMID 35370135 — Efficacy of the Cervical Vertebral Maturation Method: systematic review.
+- PMID 25773948 — Reliability of the cervical vertebrae maturation method.
+- PMID 29411861 — Historical review of Scammon growth study.
+- Fels Longitudinal Study / PMC4103980 — variation in adolescent craniofacial growth.
+- AAPD — Management of the Developing Dentition and Occlusion in Pediatric Dentistry.
+
+## Archivos auditados
+- `crecimiento-desarrollo-questions.js`
+- `crecimiento-desarrollo-cases.js`
+
+## Commits de corrección
+- `54b5523` — reescritura del banco de 100 preguntas con reactivos únicos.
+- `6200a94` — reescritura de los 60 casos con escenarios únicos.
 
 ## Estado
-Fase iniciada. Esta ficha establece el marco de auditoría antes de generar e integrar los 160 reactivos.
+**APROBADO PARA INTEGRACIÓN.**
+
+La auditoría estructural final obtuvo 0 duplicados, 0 índices inválidos y 0 reactivos sin evidencia. El módulo todavía no se considera integrado hasta modificar selector, lógica de bancos y caché offline.
