@@ -223,7 +223,7 @@ function chooseComputerAnswer(q,player=currentPlayer()){
     const r=secureRandomFloat();
     if(excellent>=0&&r<cfg.excellent)return excellent;
     if(good>=0&&r<cfg.excellent+cfg.good)return good;
-    return randomChoice(incorrect)??good??excellent??0
+    return randomChoice(incorrect)??([good,excellent,0].find(i=>Number.isInteger(i)&&i>=0)??0)
   }
   if(secureRandomFloat()<cfg.questionAccuracy)return q.correct;
   const wrong=q.options.map((_,i)=>i).filter(i=>i!==q.correct);
@@ -600,6 +600,8 @@ $('playAgainBtn').onclick=playAgain;
 $('soundBtn').onclick=toggleSound;
 $('rulesBtn').onclick=()=>{tone('ui');rulesDialog.showModal()};
 $('closeRulesBtn').onclick=()=>{tone('ui');rulesDialog.close()};
+questionDialog.addEventListener('cancel',e=>e.preventDefault());
+eventDialog.addEventListener('cancel',e=>e.preventDefault());
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     clearComputerTimer();
