@@ -563,11 +563,38 @@ function tone(kind='neutral'){
   }catch{}
 }
 function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
-function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
-function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
-function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));buildNameInputs()}
-function playAgain(){$('winnerDialog').close();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));buildNameInputs()}
+function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.mode=s.players.some(p=>p.isComputer)?'computer':'local';s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
+function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.mode=state.players.some(p=>p.isComputer)?'computer':'local';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();if(isComputerTurn()){statusText.textContent=`Partida recuperada. 🤖 ${currentPlayer().name} continúa automáticamente.`;scheduleComputerTurn(650)}else statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
+function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;clearComputerTimer();stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
+function playAgain(){$('winnerDialog').close();clearComputerTimer();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
-playerCount.onchange=()=>{buildNameInputs();tone('select')};if(gameModule)gameModule.onchange=()=>tone('select');if(gameDifficulty)gameDifficulty.onchange=()=>tone('select');$('chooseCharactersBtn').onclick=()=>{tone('ui');beginCharacterSelection()};$('pickerNextBtn').onclick=()=>{tone('ui');pickerNext()};$('pickerBackBtn').onclick=()=>{tone('ui');pickerBack()};resumeBtn.onclick=()=>{tone('ui');loadGame()};rollBtn.onclick=rollDice;$('confirmAnswerBtn').onclick=confirmAnswer;$('continueBtn').onclick=()=>{tone('ui');continueAfterQuestion()};$('eventContinueBtn').onclick=()=>{tone('ui');closeEvent()};$('timerBtn').onclick=()=>{tone('ui');startTimer()};$('resetBtn').onclick=resetGame;$('playAgainBtn').onclick=playAgain;$('soundBtn').onclick=toggleSound;$('rulesBtn').onclick=()=>{tone('ui');rulesDialog.showModal()};$('closeRulesBtn').onclick=()=>{tone('ui');rulesDialog.close()};
-document.addEventListener('visibilitychange',()=>{if(document.hidden){if(musicActive)stopBackgroundMusic(false);if(audioCtx?.state==='running')audioCtx.suspend().catch(()=>{})}else if(soundEnabled&&state&&$('game')?.classList.contains('active')){audioContext();startBackgroundMusic()}});
-migrate();buildNameInputs();buildBoard();updateSoundButton();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+playerCount.onchange=()=>{if(!computerSetupEnabled())buildNameInputs();tone('select')};
+if(gameMode)gameMode.onchange=()=>{updateGameModeUI();tone('select')};
+if(aiLevel)aiLevel.onchange=()=>tone('select');
+if(gameModule)gameModule.onchange=()=>tone('select');
+if(gameDifficulty)gameDifficulty.onchange=()=>tone('select');
+$('chooseCharactersBtn').onclick=()=>{tone('ui');beginCharacterSelection()};
+$('pickerNextBtn').onclick=()=>{tone('ui');pickerNext()};
+$('pickerBackBtn').onclick=()=>{tone('ui');pickerBack()};
+resumeBtn.onclick=()=>{tone('ui');loadGame()};
+rollBtn.onclick=()=>rollDice(false);
+$('confirmAnswerBtn').onclick=()=>{if(!isComputerTurn())confirmAnswer()};
+$('continueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');continueAfterQuestion()}};
+$('eventContinueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');closeEvent()}};
+$('timerBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');startTimer()}};
+$('resetBtn').onclick=resetGame;
+$('playAgainBtn').onclick=playAgain;
+$('soundBtn').onclick=toggleSound;
+$('rulesBtn').onclick=()=>{tone('ui');rulesDialog.showModal()};
+$('closeRulesBtn').onclick=()=>{tone('ui');rulesDialog.close()};
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    clearComputerTimer();
+    if(musicActive)stopBackgroundMusic(false);
+    if(audioCtx?.state==='running')audioCtx.suspend().catch(()=>{})
+  }else if(state&&$('game')?.classList.contains('active')){
+    if(soundEnabled){audioContext();startBackgroundMusic()}
+    if(isComputerTurn()&&!state.locked)scheduleComputerTurn(500)
+  }
+});
+migrate();updateGameModeUI();buildBoard();updateSoundButton();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
