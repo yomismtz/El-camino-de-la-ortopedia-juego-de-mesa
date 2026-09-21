@@ -29,7 +29,7 @@
 
   function moduleBank(key){
     const mod=MODULES[key]||MODULES.fundamentos_oclusion;
-    return mod.get().filter(q=>q&&q.text&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(q.correct));
+    return mod.get().filter(q=>q&&q.text&&Array.isArray(q.options)&&q.options.length>=2&&Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.options.length);
   }
 
   function availableDifficulties(bank){
