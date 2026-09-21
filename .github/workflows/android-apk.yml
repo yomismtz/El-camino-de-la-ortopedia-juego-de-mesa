@@ -23,6 +23,7 @@ on:
       - 'fisiologia-funcion-cases.js'
       - 'crecimiento-desarrollo-questions.js'
       - 'crecimiento-desarrollo-cases.js'
+      - 'habitos-parafunciones-*.js'
       - 'cases*.js'
       - 'package.json'
       - 'capacitor.config.json'
@@ -56,6 +57,7 @@ jobs:
           node --check fisiologia-funcion-cases.js
           node --check crecimiento-desarrollo-questions.js
           node --check crecimiento-desarrollo-cases.js
+          for f in habitos-parafunciones-*.js; do node --check "$f"; done
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
@@ -69,7 +71,7 @@ jobs:
           rm -rf www android
           mkdir -p www
           cp index.html play.html privacy.html teacher.html teacher.css teacher.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
-          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
           cp -r brand www/
 
       - name: Create Android project
