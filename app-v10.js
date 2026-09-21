@@ -18,23 +18,33 @@ const CHARACTERS=[
 const RULE_META={
   question:{icon:'❓',title:'Pregunta',message:'Si contestas mal, retrocedes 1 casilla.'},
   case:{icon:'📋',title:'Caso clínico',message:'Excelente +2 · Buena +1 · Incorrecta −1.'},
-  back2:{icon:'📁',title:'Perdiste el expediente',message:'Retrocede 2 casillas.'},
-  jail:{icon:'⚖️',title:'Cárcel',message:'Tu paciente está muy molesto y te ha demandado. Pierdes 1 turno.'},
-  vacation:{icon:'🏖️',title:'Vacaciones',message:'Te fuiste de vacaciones. Regresa al INICIO.'},
-  advance1:{icon:'✅',title:'Excelente diagnóstico',message:'Avanza 1 casilla.'},
-  advance2:{icon:'🏁',title:'Tratamiento concluido',message:'Avanza 2 casillas.'},
-  back1:{icon:'📅',title:'Paciente canceló',message:'Retrocede 1 casilla.'},
-  neutral:{icon:'🦷',title:'Casilla'},finish:{icon:'🏆',title:'Meta'}
+  advance1:{icon:'✅',title:'Excelente diagnóstico',message:'Avanza 1 casilla y resuelve lo que haya donde caigas.'},
+  advance2:{icon:'🏁',title:'Tratamiento concluido',message:'Avanza 2 casillas y resuelve la nueva casilla.'},
+  back1:{icon:'📅',title:'Paciente canceló',message:'Retrocede 1 casilla y resuelve la nueva casilla.'},
+  back2:{icon:'📁',title:'Perdiste el expediente',message:'Retrocede 2 casillas y resuelve la nueva casilla.'},
+  back3:{icon:'⚠️',title:'El tratamiento salió mal',message:'Retrocede 3 casillas y resuelve la nueva casilla.'},
+  vacation:{icon:'🏖️',title:'Te fuiste de vacaciones',message:'Pierdes 1 turno.'},
+  tax:{icon:'🧾',title:'No declaraste tus impuestos',message:'Pierdes 1 turno.'},
+  equipment:{icon:'🛠️',title:'Se descompuso el equipo',message:'Pierdes 1 turno mientras resuelves el problema.'},
+  lawsuit:{icon:'⚖️',title:'Tu paciente te demandó',message:'Vas directamente a la cárcel.'},
+  jail:{icon:'🔒',title:'Cárcel',message:'Primera visita: pierdes 2 turnos. Desde la segunda: pierdes 3.'},
+  neutral:{icon:'🦷',title:'Descanso',message:'No ocurre nada.'},
+  finish:{icon:'🏆',title:'Meta'}
 };
+const JAIL_CELL=44;
 const CELL_TYPES={
-  question:new Set([3,8,15,21,28,35,42,49,56,63,70,77,84,91,97]),
-  case:new Set([5,12,18,25,32,39,46,53,60,67,74,81,88,95]),
-  advance1:new Set([6,23,41,58,76,93]),
-  advance2:new Set([11,30,51,72,90]),
-  back1:new Set([16,34,55,79,96]),
-  back2:new Set([26,65,87]),
-  jail:new Set([44,83]),
-  vacation:new Set([37,68])
+  question:new Set([3,8,13,18,23,28,33,38,43,48,53,58,63,68,73,78,83,88,93,97]),
+  case:new Set([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]),
+  advance1:new Set([2,21,41,52,61,72,98]),
+  advance2:new Set([6,26,46,66,86,99]),
+  back1:new Set([11,31,51,71,91]),
+  back2:new Set([16,36,56,76,96]),
+  back3:new Set([17,37,57,77,92]),
+  vacation:new Set([12,32,62,82]),
+  tax:new Set([14,34,64,84]),
+  lawsuit:new Set([27,67,87]),
+  jail:new Set([44]),
+  equipment:new Set([4,24,54,74,94])
 };
 const TEACHER_ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
 const TEACHER_CASE_KEY='ortopediaActiveTeacherCasesV1';
@@ -173,7 +183,7 @@ function randomizePresentedItem(item,kind){
   }
   return out
 }
-async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:12,module:draft.module||'fundamentos_oclusion',difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>({name:draft.names[i],position:0,skipTurns:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color})),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`}
+async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:12,module:draft.module||'fundamentos_oclusion',difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>({name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color})),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`}
 function buildBoard(){board.querySelectorAll('.cell,.start-marker').forEach(n=>n.remove());const start=document.createElement('div');start.className='start-marker';start.innerHTML='<b>INICIO</b><div class="start-tokens"></div>';board.appendChild(start);for(let n=1;n<=100;n++){const t=(n-1)/99,turns=4.6,theta=-Math.PI*.68+t*turns*2*Math.PI,rx=46-29*t,ry=44-27*t,x=50+rx*Math.cos(theta),y=50+ry*Math.sin(theta),r=ruleForCell(n),m=RULE_META[r.type]||RULE_META.neutral,c=document.createElement('div');c.className=`cell ${r.type}${n===100?' finish':''}${n%10===0&&n<100?' milestone':''}`;c.dataset.cell=n;c.style.left=`${x}%`;c.style.top=`${y}%`;c.style.zIndex=110-n;c.innerHTML=`<span class="cell-number">${n}</span>${r.type!=='neutral'&&r.type!=='finish'?`<span class="cell-icon">${m.icon}</span>`:''}<span class="tokens"></span>`;board.appendChild(c)}}
 function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,100));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${tokenFace(p)}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}" style="--player:${p.color}"><div class="avatar">${ch.emoji}</div><div><b>${esc(p.name)}</b><small>${ch.name} · ${p.position===0?'Inicio':p.position>=100?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} turno`:''}</small><div class="progress"><i style="width:${Math.min(100,p.position)}%"></i></div></div><strong>${Math.min(p.position,100)}/100</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').textContent=currentCh.pawnEmoji||currentCh.emoji;if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';if($('turnPrompt'))$('turnPrompt').textContent=state.locked?'Moviendo ficha…':'Tira los dados';if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`;rollBtn.disabled=state.locked;saveGame()}
 async function rollDice(){if(!state||state.locked)return;state.locked=true;rollBtn.disabled=true;const a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);for(let i=0;i<8;i++){$('dice1').textContent=DICE[Math.floor(Math.random()*6)];$('dice2').textContent=DICE[Math.floor(Math.random()*6)];$('dice1').classList.add('rolling');$('dice2').classList.add('rolling');await delay(55)}$('dice1').textContent=DICE[a-1];$('dice2').textContent=DICE[b-1];$('dice1').classList.remove('rolling');$('dice2').classList.remove('rolling');$('diceTotal').textContent=a+b;tone('dice');statusText.textContent=`${state.players[state.current].name} obtuvo ${a} + ${b} = ${a+b}.`;await move(a+b);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);setTimeout(()=>triggerCell(state.players[state.current].position),180)}
@@ -362,8 +372,8 @@ function tone(kind='neutral'){
   }catch{}
 }
 function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
-function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
-function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
+function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
+function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
 function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));buildNameInputs()}
 function playAgain(){$('winnerDialog').close();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));buildNameInputs()}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
