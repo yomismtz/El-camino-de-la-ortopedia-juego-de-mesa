@@ -18,13 +18,35 @@
     return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
   }
 
+  function randomIndex(max){
+    if(max<=1)return 0;
+    try{
+      if(window.crypto?.getRandomValues){
+        const limit=Math.floor(0x100000000/max)*max;
+        const buf=new Uint32Array(1);
+        do{window.crypto.getRandomValues(buf)}while(buf[0]>=limit);
+        return buf[0]%max;
+      }
+    }catch{}
+    return Math.floor(Math.random()*max);
+  }
+
   function shuffle(arr){
     const a=[...arr];
     for(let i=a.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
+      const j=randomIndex(i+1);
       [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
+  }
+
+  function randomizeQuestionOptions(q){
+    const order=shuffle(Array.from({length:q.options.length},(_,i)=>i));
+    return {
+      ...q,
+      options:order.map(i=>q.options[i]),
+      correct:order.indexOf(q.correct)
+    };
   }
 
   function moduleBank(key){
@@ -96,7 +118,7 @@
     const source=filteredBank();
     if(!source.length)return;
     const count=Math.min(requested,source.length);
-    const questions=shuffle(source).slice(0,count);
+    const questions=shuffle(source).slice(0,count).map(randomizeQuestionOptions);
     exam={module,difficulty,count,questions,answers:Array(count).fill(null),index:0,startedAt:Date.now()};
     const mod=MODULES[module];
     $('runModule').textContent=mod.icon+' '+mod.label;
