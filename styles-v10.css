@@ -787,7 +787,7 @@ html,body{
   max-height:var(--app-height)!important;
   overflow:hidden!important;
   overscroll-behavior:none!important;
-  touch-action:manipulation!important;
+  touch-action:pan-y!important;
 }
 body{position:fixed!important;inset:0!important}
 .app-shell{
@@ -1128,4 +1128,11 @@ body{position:fixed!important;inset:0!important}
   .setup-form>label.mode-selector{grid-column:1/2!important}
   .setup-form>label.difficulty-selector{grid-column:2/3!important}
   .setup-form>label.player-count-selector,.setup-form>label.ai-level-selector{grid-column:1/3!important}
+}
+
+
+/* v3.7 — bloqueo táctil horizontal definitivo */
+html,body,.app-shell,.screen,.game-grid,.board-card,.side-stack{
+  overscroll-behavior-x:none!important;
+  touch-action:pan-y!important;
 }
