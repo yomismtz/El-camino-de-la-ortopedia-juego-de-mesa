@@ -249,6 +249,19 @@ function scheduleComputerTurn(delayMs=720){
   tone('computer');
   queueComputerAction(()=>rollDice(true),delayMs)
 }
+function resumeComputerAutomation(){
+  if(!state||!isComputerTurn())return;
+  if(questionDialog?.open&&pendingQuestion){
+    if(!$('feedback').hidden)queueComputerAction(()=>continueAfterQuestion(),450);
+    else runComputerQuestion();
+    return
+  }
+  if(eventDialog?.open){
+    queueComputerAction(()=>{if(eventDialog.open)closeEvent()},450);
+    return
+  }
+  if(!state.locked)scheduleComputerTurn(450)
+}
 function shuffledIndices(length,lastIndex=null){
   const a=Array.from({length},(_,i)=>i);
   for(let i=a.length-1;i>0;i--){
@@ -594,7 +607,7 @@ document.addEventListener('visibilitychange',()=>{
     if(audioCtx?.state==='running')audioCtx.suspend().catch(()=>{})
   }else if(state&&$('game')?.classList.contains('active')){
     if(soundEnabled){audioContext();startBackgroundMusic()}
-    if(isComputerTurn()&&!state.locked)scheduleComputerTurn(500)
+    if(isComputerTurn())resumeComputerAutomation()
   }
 });
 migrate();updateGameModeUI();buildBoard();updateSoundButton();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
