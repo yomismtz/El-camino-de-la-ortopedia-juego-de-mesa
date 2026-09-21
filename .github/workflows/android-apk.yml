@@ -1,4 +1,4 @@
-name: Build Android APK v3.6
+name: Build Android APK v3.7
 on:
   workflow_dispatch:
   push:
@@ -16,6 +16,8 @@ on:
       - 'legacy-difficulty-audit.js'
       - 'legacy-case-grading-audit.js'
       - 'app-v10.js'
+      - 'android-navigation.js'
+      - 'site.css'
       - 'styles-v10.css'
       - 'sw.js'
       - 'manifest.webmanifest'
@@ -53,6 +55,7 @@ jobs:
         shell: bash
         run: |
           node --check app-v10.js
+          node --check android-navigation.js
           node --check teacher.js
           node --check exam.js
           node --check legacy-difficulty-audit.js
@@ -78,7 +81,7 @@ jobs:
         run: |
           rm -rf www android
           mkdir -p www
-          cp index.html play.html privacy.html teacher.html teacher.css teacher.js exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
+          cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js styles-v10.css app-v10.js android-navigation.js www/
           cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
           cp -r brand www/
 
@@ -110,8 +113,8 @@ jobs:
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
           import re
-          g=re.sub(r'versionCode\s+\d+','versionCode 36',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.6"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 37',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7"',g)
           gradle.write_text(g)
           PY
 
@@ -126,11 +129,11 @@ jobs:
           done
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v3.6.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v3.7.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v3.6
-          path: ElCaminoDental-v3.6.apk
+          name: ElCaminoDental-v3.7
+          path: ElCaminoDental-v3.7.apk
           if-no-files-found: error
