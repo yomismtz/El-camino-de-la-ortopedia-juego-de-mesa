@@ -190,3 +190,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .exam-option{min-height:38px;padding:4px 6px;font-size:8px}
   .run-actions .primary-btn,.run-actions .secondary-btn{min-height:32px;padding:4px;font-size:8px}
 }
+
+
+/* v3.7 — sin deslizamiento horizontal */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important;overscroll-behavior-x:none;touch-action:pan-y}
+.exam-app,.exam-topbar,.exam-screen,.panel,.setup-grid,.run-card,.results-card{min-width:0;max-width:100%}
+img,svg,canvas{max-width:100%}
