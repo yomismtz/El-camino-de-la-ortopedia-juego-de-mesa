@@ -102,3 +102,15 @@ Casos:
 - Service worker actualizado a caché v37 e incluye los ocho archivos del módulo.
 - Workflow Android actualizado para validar y copiar los bancos.
 - Se agregó fallback de casos por banco para evitar casillas clínicas vacías cuando un módulo no contiene un deck solicitado.
+
+
+## Cierre de integración Android/web
+
+- Web publicada con el módulo `habitos_parafunciones`, 600 preguntas y 330 casos clínicos visibles en el total general.
+- Caché PWA: `el-camino-dental-v37`.
+- Versión Android de prueba: **2.7.0**.
+- App ID de prueba: `com.yomismtz.elcaminodental.v27`.
+- Workflow Android: **Build Android APK v2.7**.
+- Run validado: `35546430509` — **success**.
+- Artifact validado: `ElCaminoDental-v2.7`.
+- Dentro del APK se verificó la presencia de los 8 archivos del banco de Hábitos y parafunciones, el selector del módulo, el ruteo en `app-v10.js` y el caché v37.
