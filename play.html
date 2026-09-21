@@ -108,12 +108,16 @@
         <div class="legend">
           <span><i class="legend-dot question">?</i>Pregunta</span>
           <span><i class="legend-dot case">📋</i>Caso</span>
-          <span><i class="legend-dot advance1">+1</i>Diagnóstico</span>
+          <span><i class="legend-dot advance1">+1</i>Avanza</span>
           <span><i class="legend-dot advance2">+2</i>Tratamiento</span>
           <span><i class="legend-dot back1">−1</i>Cancelación</span>
           <span><i class="legend-dot back2">−2</i>Expediente</span>
-          <span><i class="legend-dot jail">⚖</i>Cárcel</span>
-          <span><i class="legend-dot vacation">✈</i>Vacaciones</span>
+          <span><i class="legend-dot back3">−3</i>Mal tratamiento</span>
+          <span><i class="legend-dot vacation">🏖</i>Vacaciones</span>
+          <span><i class="legend-dot tax">🧾</i>Impuestos</span>
+          <span><i class="legend-dot lawsuit">⚖</i>Demanda</span>
+          <span><i class="legend-dot jail">🔒</i>Cárcel</span>
+          <span><i class="legend-dot equipment">🛠</i>Equipo</span>
         </div>
       </section>
 
@@ -169,14 +173,18 @@
     <h2>Reglas del camino</h2>
     <div class="rules-grid">
       <div>🎲🎲 <b>Dos dados</b><span>Avanza la suma de ambos.</span></div>
-      <div>❓ <b>Pregunta</b><span>Incorrecta: retrocede 1.</span></div>
-      <div>📋 <b>Caso clínico</b><span>Excelente +2 · Buena +1 · Incorrecta −1.</span></div>
-      <div>📁 <b>Expediente</b><span>Retrocede 2.</span></div>
-      <div>⚖️ <b>Cárcel</b><span>Pierde 1 turno.</span></div>
-      <div>🏖️ <b>Vacaciones</b><span>Regresa al inicio.</span></div>
-      <div>✅ <b>Diagnóstico</b><span>Avanza 1.</span></div>
-      <div>🏁 <b>Tratamiento</b><span>Avanza 2.</span></div>
-      <div>📅 <b>Cancelación</b><span>Retrocede 1.</span></div>
+      <div>❓ <b>Pregunta</b><span>Incorrecta: retrocede 1. La casilla nueva también se resuelve.</span></div>
+      <div>📋 <b>Caso clínico</b><span>Excelente +2 · Buena +1 · Incorrecta −1. La nueva casilla también cuenta.</span></div>
+      <div>✅ <b>Diagnóstico</b><span>Avanza 1 y resuelve la casilla donde caigas.</span></div>
+      <div>🏁 <b>Tratamiento concluido</b><span>Avanza 2 y resuelve la casilla donde caigas.</span></div>
+      <div>📅 <b>Cancelación</b><span>Retrocede 1 y resuelve la nueva casilla.</span></div>
+      <div>📁 <b>Expediente perdido</b><span>Retrocede 2 y resuelve la nueva casilla.</span></div>
+      <div>⚠️ <b>Tratamiento salió mal</b><span>Retrocede 3 y resuelve la nueva casilla.</span></div>
+      <div>🏖️ <b>Vacaciones</b><span>Pierdes 1 turno.</span></div>
+      <div>🧾 <b>Impuestos</b><span>No declaraste: pierdes 1 turno.</span></div>
+      <div>🛠️ <b>Equipo descompuesto</b><span>Pierdes 1 turno.</span></div>
+      <div>⚖️ <b>Demanda</b><span>Tu paciente te demandó: vas a la cárcel.</span></div>
+      <div>🔒 <b>Cárcel</b><span>Primera vez: pierdes 2 turnos. Segunda y posteriores: 3.</span></div>
       <div>🏆 <b>Victoria</b><span>Gana quien llega o supera la casilla 100.</span></div>
     </div>
   </div>
