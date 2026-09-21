@@ -1,0 +1,141 @@
+name: Build Play Store AAB
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/playstore-aab.yml'
+
+jobs:
+  build-playstore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Validate web sources
+        shell: bash
+        run: |
+          node --check app-v10.js
+          node --check android-navigation.js
+          node --check teacher.js
+          node --check exam.js
+          node --check legacy-difficulty-audit.js
+          node --check legacy-case-grading-audit.js
+
+      - name: Install Capacitor 8 for Android 16
+        run: |
+          npm install --package-lock=false --no-save --legacy-peer-deps \
+            @capacitor/core@8.5.2 \
+            @capacitor/android@8.5.2 \
+            @capacitor/cli@8.5.2 \
+            @capacitor/app@8.1.1
+
+      - name: Prepare production web bundle
+        shell: bash
+        run: |
+          rm -rf www android
+          mkdir -p www
+          cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js \
+             legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js \
+             styles-v10.css app-v10.js android-navigation.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js \
+             fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
+             crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
+          cp -r brand www/
+
+      - name: Set permanent Play Store package
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('capacitor.config.json')
+          d=json.loads(p.read_text())
+          d['appId']='com.yomismtz.elcaminodental'
+          d['appName']='El Camino Dental'
+          d['webDir']='www'
+          p.write_text(json.dumps(d,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Create Android project
+        run: npx cap add android
+
+      - name: Sync native plugins and web assets
+        run: npx cap sync android
+
+      - name: Configure Android 16, release identity and branding
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/res/drawable
+          cp brand/ic_launcher_custom.xml android/app/src/main/res/drawable/ic_launcher_custom.xml
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          manifest=Path('android/app/src/main/AndroidManifest.xml')
+          x=manifest.read_text()
+          x=x.replace('android:exported="true"','android:exported="true" android:keepScreenOn="true"',1)
+          x=x.replace('android:icon="@mipmap/ic_launcher"','android:icon="@drawable/ic_launcher_custom"')
+          x=x.replace('android:roundIcon="@mipmap/ic_launcher_round"','android:roundIcon="@drawable/ic_launcher_custom"')
+          manifest.write_text(x)
+
+          strings=Path('android/app/src/main/res/values/strings.xml')
+          x=strings.read_text()
+          x=re.sub(r'<string name="app_name">.*?</string>','<string name="app_name">El Camino Dental</string>',x)
+          x=re.sub(r'<string name="title_activity_main">.*?</string>','<string name="title_activity_main">El Camino Dental</string>',x)
+          strings.write_text(x)
+
+          gradle=Path('android/app/build.gradle')
+          g=gradle.read_text()
+          g=re.sub(r'versionCode\s+\d+','versionCode 37',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.0"',g)
+          gradle.write_text(g)
+
+          variables=Path('android/variables.gradle')
+          if variables.exists():
+              v=variables.read_text()
+              v=re.sub(r'compileSdkVersion\s*=\s*\d+','compileSdkVersion = 36',v)
+              v=re.sub(r'targetSdkVersion\s*=\s*\d+','targetSdkVersion = 36',v)
+              variables.write_text(v)
+          PY
+          grep -nE 'compileSdkVersion|targetSdkVersion|minSdkVersion' android/variables.gradle || true
+          grep -nE 'applicationId|versionCode|versionName' android/app/build.gradle
+
+      - name: Build unsigned release AAB
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease
+
+      - name: Collect Play Store bundle
+        shell: bash
+        run: |
+          cp android/app/build/outputs/bundle/release/app-release.aab ElCaminoDental-3.7.0-playstore-unsigned.aab
+          cat > playstore-build-info.txt <<'EOF'
+          App: El Camino Dental
+          Permanent package: com.yomismtz.elcaminodental
+          Version name: 3.7.0
+          Version code: 37
+          Target SDK: 36 (Android 16)
+          Build type: release AAB, unsigned
+          Capacitor Android/Core/CLI: 8.5.2
+          Capacitor App plugin: 8.1.1
+          EOF
+          sha256sum ElCaminoDental-3.7.0-playstore-unsigned.aab >> playstore-build-info.txt
+
+      - name: Upload Play Store artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ElCaminoDental-PlayStore-3.7.0
+          path: |
+            ElCaminoDental-3.7.0-playstore-unsigned.aab
+            playstore-build-info.txt
+          if-no-files-found: error
