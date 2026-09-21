@@ -39,3 +39,15 @@ dialog:fullscreen .run-card{width:min(1300px,96vw);max-width:none;min-height:cal
 
 /* v1.4 El Camino Dental branding */
 .brand-logo{display:block;width:230px;max-height:72px;object-fit:contain;object-position:left center}@media(max-width:650px){.brand-logo{width:200px}}
+
+
+/* v3.7 — sin deslizamiento horizontal */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important;overscroll-behavior-x:none;touch-action:pan-y}
+.topbar,.page,.card,.layout,.side,.editor,.hero,.classroom{min-width:0;max-width:100%}
+img,svg,canvas{max-width:100%}
+@media(max-width:650px){
+  .topbar{padding:10px 12px;gap:8px}
+  .topbar nav{max-width:100%;gap:7px}
+  .topbar nav a{font-size:11px}
+  .page{padding-left:10px;padding-right:10px}
+}
