@@ -851,7 +851,7 @@ body{position:fixed!important;inset:0!important}
 @media (orientation:portrait) and (max-width:900px){
   :root{
     --play-topbar:43px;
-    --play-safe-bottom:max(env(safe-area-inset-bottom,0px),24px);
+    --play-safe-bottom:max(env(safe-area-inset-bottom,0px),32px);
   }
   .brand-logo{width:126px!important;max-width:39vw!important;max-height:34px!important}
   .top-actions{gap:3px!important}
