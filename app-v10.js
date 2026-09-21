@@ -581,6 +581,39 @@ function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!
 function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;clearComputerTimer();stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function playAgain(){$('winnerDialog').close();clearComputerTimer();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+function returnToSetupFromGame(){
+  clearComputerTimer();
+  stopTimer();
+  stopBackgroundMusic(true);
+  state&&(state.locked=false);
+  saveGame();
+  showScreen($('setup'));
+  updateGameModeUI();
+  resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)
+}
+window.handleElCaminoBack=function(){
+  if(rulesDialog?.open){rulesDialog.close();return true}
+  if(questionDialog?.open||eventDialog?.open||$('winnerDialog')?.open){
+    tone('ui');
+    return true
+  }
+  const active=screens.find(x=>x?.classList.contains('active'));
+  if(active?.id==='game'){
+    returnToSetupFromGame();
+    return true
+  }
+  if(active?.id==='characters'){
+    if(draft?.pickerIndex>0){draft.pickerIndex--;renderPicker()}
+    else showScreen($('setup'));
+    return true
+  }
+  if(active?.id==='loadingScreen')return true;
+  if(active?.id==='setup'){
+    location.href='index.html';
+    return true
+  }
+  return false
+};
 playerCount.onchange=()=>{if(!computerSetupEnabled())buildNameInputs();tone('select')};
 if(gameMode)gameMode.onchange=()=>{updateGameModeUI();tone('select')};
 if(aiLevel)aiLevel.onchange=()=>tone('select');
