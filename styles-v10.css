@@ -728,3 +728,13 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
   .character-shell>.actions{min-height:48px}
   .character-shell>.actions .btn{min-height:44px}
 }
+
+
+/* v3.3 — dificultad como filtro del juego, no como categoría de azar */
+.difficulty-selector{margin-bottom:14px}
+.difficulty-selector select{font-weight:850;color:#5b438a;background:linear-gradient(145deg,#fff,#f5efff)}
+@media (max-width:720px) and (orientation:portrait){
+  .module-selector,.difficulty-selector{margin-bottom:0}
+  .setup-form>label+label{margin-top:4px}
+  .setup-form select{min-height:30px;padding:6px 8px}
+}
