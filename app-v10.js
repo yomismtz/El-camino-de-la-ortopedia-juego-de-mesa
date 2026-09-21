@@ -90,6 +90,17 @@ const $=id=>document.getElementById(id);
 const screens=['setup','characters','loadingScreen','game'].map($);
 const board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),gameModule=$('gameModule'),gameDifficulty=$('gameDifficulty'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),statusText=$('statusText');
 const questionDialog=$('questionDialog'),eventDialog=$('eventDialog'),rulesDialog=$('rulesDialog');
+function syncVisualViewport(){
+  const vv=window.visualViewport;
+  const h=Math.max(240,Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight||640));
+  const w=Math.max(280,Math.round(vv?.width||window.innerWidth||document.documentElement.clientWidth||360));
+  document.documentElement.style.setProperty('--app-height',h+'px');
+  document.documentElement.style.setProperty('--app-width',w+'px')
+}
+syncVisualViewport();
+window.addEventListener('resize',syncVisualViewport,{passive:true});
+window.addEventListener('orientationchange',()=>setTimeout(syncVisualViewport,80),{passive:true});
+window.visualViewport?.addEventListener('resize',syncVisualViewport,{passive:true});
 function showScreen(el){screens.forEach(x=>x?.classList.remove('active'));el.classList.add('active');const playing=el?.id==='game';document.body.classList.toggle('game-playing',playing);if(playing)window.scrollTo(0,0)}
 function esc(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function ruleForCell(n){if(n===0)return{type:'start'};if(n>=100)return{type:'finish'};for(const [type,set] of Object.entries(CELL_TYPES))if(set.has(n)){if(type==='question')return{type,deck:(n%3)+1};if(type==='case')return{type,deck:(n%5)+1};return{type}}return{type:'neutral'}}
