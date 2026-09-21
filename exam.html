@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <link rel="icon" href="brand/icon-el-camino-dental.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0a6fae">
+  <meta name="color-scheme" content="light">
+  <title>Modo Examen | El Camino Dental</title>
+  <meta name="description" content="Modo Examen de El Camino Dental: evalúa conocimientos por módulo, dificultad y número de preguntas.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="exam.css">
+</head>
+<body>
+  <div class="exam-bg" aria-hidden="true"></div>
+  <main class="exam-app">
+    <header class="exam-topbar">
+      <a class="exam-brand" href="./" aria-label="El Camino Dental">
+        <img src="brand/logo-el-camino-dental.svg" alt="El Camino Dental">
+      </a>
+      <nav class="exam-nav" aria-label="Navegación">
+        <a class="nav-chip" href="play.html">🎲 Juego</a>
+        <a class="nav-chip" href="teacher.html">🎓 Docente</a>
+      </nav>
+    </header>
+
+    <section id="examSetup" class="exam-screen active">
+      <div class="setup-grid">
+        <div class="intro-card panel">
+          <span class="eyebrow">📝 MODO EXAMEN</span>
+          <h1>Evalúa lo aprendido sin pistas inmediatas.</h1>
+          <p>Selecciona un módulo, dificultad y extensión. Durante el examen no se revela si una respuesta es correcta. Al finalizar obtienes porcentaje, aciertos, errores, desempeño por tema, áreas débiles y revisión.</p>
+          <div class="exam-features">
+            <span>🔒 Sin retroalimentación inmediata</span>
+            <span>📊 Resultado por tema</span>
+            <span>🔎 Revisión de errores</span>
+            <span>📱 Adaptado a celular</span>
+          </div>
+        </div>
+
+        <form id="examForm" class="config-card panel">
+          <label>Módulo
+            <select id="examModule">
+              <option value="fundamentos_oclusion">Fundamentos de la oclusión</option>
+              <option value="fisiologia_funcion">Fisiología + Alteraciones de la función</option>
+              <option value="crecimiento_desarrollo">Crecimiento y desarrollo craneofacial</option>
+              <option value="habitos_parafunciones">Hábitos y parafunciones</option>
+              <option value="steiner">Cefalometría de Steiner</option>
+              <option value="ortopedia_general">Ortopedia / banco general</option>
+            </select>
+          </label>
+
+          <label>Dificultad
+            <select id="examDifficulty">
+              <option value="all">Todas las dificultades</option>
+            </select>
+            <small id="difficultyHint">Este módulo aún no tiene dificultad pedagógica auditada.</small>
+          </label>
+
+          <label>Número de preguntas
+            <select id="examLength">
+              <option value="20">20 preguntas</option>
+              <option value="50">50 preguntas</option>
+              <option value="100">100 preguntas</option>
+            </select>
+            <small id="lengthHint">Disponibles: 100 preguntas.</small>
+          </label>
+
+          <button class="primary-btn" type="submit">Comenzar examen →</button>
+          <a class="secondary-btn" href="play.html">← Volver al juego</a>
+        </form>
+      </div>
+    </section>
+
+    <section id="examRun" class="exam-screen">
+      <div class="run-card panel">
+        <div class="exam-progress-head">
+          <div>
+            <span id="runModule" class="module-pill"></span>
+            <strong id="runCounter">Pregunta 1 de 20</strong>
+          </div>
+          <div class="answered-count"><span id="answeredCount">0</span> respondidas</div>
+        </div>
+        <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+
+        <article class="question-panel">
+          <div class="question-meta">
+            <span id="questionTopic"></span>
+            <span id="questionDifficulty"></span>
+          </div>
+          <h2 id="examQuestionText"></h2>
+          <div id="examOptions" class="exam-options"></div>
+        </article>
+
+        <div class="run-actions">
+          <button id="prevQuestionBtn" class="secondary-btn" type="button">← Anterior</button>
+          <button id="nextQuestionBtn" class="primary-btn" type="button">Siguiente →</button>
+          <button id="finishExamBtn" class="primary-btn finish-btn" type="button" hidden>Finalizar examen ✓</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="examResults" class="exam-screen">
+      <div class="results-card panel">
+        <div class="results-head">
+          <div>
+            <span class="eyebrow">📊 RESULTADOS</span>
+            <h1 id="resultTitle">Resultado del examen</h1>
+            <p id="resultSummary"></p>
+          </div>
+          <div class="score-ring" id="scoreRing"><strong id="scorePercent">0%</strong><span>calificación</span></div>
+        </div>
+
+        <div class="result-stats">
+          <div><strong id="correctCount">0</strong><span>Correctas</span></div>
+          <div><strong id="wrongCount">0</strong><span>Incorrectas</span></div>
+          <div><strong id="unansweredCount">0</strong><span>Sin responder</span></div>
+          <div><strong id="totalCount">0</strong><span>Total</span></div>
+        </div>
+
+        <section class="result-section">
+          <h2>Desempeño por tema</h2>
+          <div id="topicResults" class="topic-results"></div>
+        </section>
+
+        <section class="result-section">
+          <h2>Áreas a reforzar</h2>
+          <div id="weakAreas" class="weak-areas"></div>
+        </section>
+
+        <section class="result-section review-section">
+          <div class="section-row">
+            <h2>Revisión de respuestas</h2>
+            <button id="toggleReviewBtn" class="secondary-btn small-btn" type="button">Mostrar revisión</button>
+          </div>
+          <div id="reviewList" class="review-list" hidden></div>
+        </section>
+
+        <div class="result-actions">
+          <button id="repeatExamBtn" class="primary-btn" type="button">Repetir configuración</button>
+          <a class="secondary-btn" href="play.html">🎲 Ir al juego</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="finishConfirm" class="confirm-dialog">
+    <div class="confirm-card">
+      <h2>¿Finalizar el examen?</h2>
+      <p id="finishConfirmText"></p>
+      <div class="confirm-actions">
+        <button id="cancelFinishBtn" class="secondary-btn" type="button">Seguir respondiendo</button>
+        <button id="confirmFinishBtn" class="primary-btn" type="button">Finalizar y calificar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="questions.js"></script>
+  <script src="questions-extra-deck1.js"></script>
+  <script src="questions-extra-deck2.js"></script>
+  <script src="questions-extra-deck3.js"></script>
+  <script src="fundamentos-oclusion.js"></script>
+  <script src="steiner-questions.js"></script>
+  <script src="fisiologia-funcion-questions.js"></script>
+  <script src="crecimiento-desarrollo-questions.js"></script>
+  <script src="habitos-parafunciones-questions-1.js"></script>
+  <script src="habitos-parafunciones-questions-2.js"></script>
+  <script src="habitos-parafunciones-questions-3.js"></script>
+  <script src="habitos-parafunciones-questions-4.js"></script>
+  <script src="habitos-parafunciones-questions-5.js"></script>
+  <script src="exam.js"></script>
+</body>
+</html>
