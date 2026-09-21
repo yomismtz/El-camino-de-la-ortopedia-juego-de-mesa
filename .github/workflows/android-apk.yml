@@ -1,4 +1,4 @@
-name: Build Android APK v2.8
+name: Build Android APK v2.9
 on:
   workflow_dispatch:
   push:
@@ -13,6 +13,7 @@ on:
       - 'exam.html'
       - 'exam.css'
       - 'exam.js'
+      - 'legacy-difficulty-audit.js'
       - 'app-v10.js'
       - 'styles-v10.css'
       - 'sw.js'
@@ -53,6 +54,7 @@ jobs:
           node --check app-v10.js
           node --check teacher.js
           node --check exam.js
+          node --check legacy-difficulty-audit.js
           node --check fundamentos-oclusion.js
           node --check fundamentos-casos.js
           node --check steiner-questions.js
@@ -74,7 +76,7 @@ jobs:
         run: |
           rm -rf www android
           mkdir -p www
-          cp index.html play.html privacy.html teacher.html teacher.css teacher.js exam.html exam.css exam.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
+          cp index.html play.html privacy.html teacher.html teacher.css teacher.js exam.html exam.css exam.js legacy-difficulty-audit.js manifest.webmanifest sw.js styles-v10.css app-v10.js www/
           cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
           cp -r brand www/
 
@@ -107,7 +109,7 @@ jobs:
           g=gradle.read_text()
           import re
           g=re.sub(r'versionCode\s+\d+','versionCode 26',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.8"',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "2.9"',g)
           gradle.write_text(g)
           PY
 
@@ -122,11 +124,11 @@ jobs:
           done
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.8.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ElCaminoDental-v2.9.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-v2.8
-          path: ElCaminoDental-v2.8.apk
+          name: ElCaminoDental-v2.9
+          path: ElCaminoDental-v2.9.apk
           if-no-files-found: error
