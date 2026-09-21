@@ -157,7 +157,7 @@ function startCase(deck){const bank=activeCaseBank(),q=pickQueued(bank,'caseQueu
 function showQuestion(){stopTimer();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('timerDisplay').textContent='30';$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal()}
 function confirmAnswer(){if(selectedAnswer===null||!pendingQuestion)return;stopTimer();const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});let delta=0,heading='',detail='',snd='error';if(pendingQuestion.kind==='question'){const ok=selectedAnswer===pendingQuestion.correct;opts[pendingQuestion.correct]?.classList.add('correct');if(ok){heading='Correcta · permaneces en tu casilla';snd='correct'}else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.explanation||'Continúa el recorrido.'}else{const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');if(grade==='excellent'){delta=2;heading='Excelente · avanzas 2 casillas';snd='excellent'}else if(grade==='good'){delta=1;heading='Buena · avanzas 1 casilla';snd='correct'}else{delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.feedback?.[selectedAnswer]||'Revisa el razonamiento clínico.'}tone(snd);pendingQuestion.resultDelta=delta;$('feedback').hidden=false;$('feedback').innerHTML=`<strong>${esc(heading)}</strong><span>${esc(detail)}</span>`;$('confirmAnswerBtn').hidden=true;$('continueBtn').hidden=false}
 async function continueAfterQuestion(){stopTimer();const d=pendingQuestion?.resultDelta||0;pendingQuestion=null;questionDialog.close();if(d)await move(d);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);endTurn()}
-function startTimer(){if(timer)return;timerLeft=30;$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);if(timerLeft<=0){stopTimer();tone('alarm');$('timerBtn').textContent='Tiempo terminado'}},1000)}
+function startTimer(){if(timer)return;timerLeft=30;$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);if(timerLeft>0&&timerLeft<=5)tone('tick');if(timerLeft<=0){stopTimer();tone('alarm');$('timerBtn').textContent='Tiempo terminado'}},1000)}
 function stopTimer(){if(timer){clearInterval(timer);timer=null}}
 function movement(type,delta){const m=RULE_META[type];tone(type);showEvent(m.title,m.message,m.icon,async()=>{await move(delta);if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);endTurn()})}
 function vacation(){const m=RULE_META.vacation;tone('vacation');showEvent(m.title,m.message,m.icon,async()=>{state.players[state.current].position=0;render();await delay(350);endTurn()})}
@@ -270,11 +270,14 @@ function toggleSound(){
   soundEnabled=!soundEnabled;
   localStorage.setItem('elCaminoDentalSound',soundEnabled?'on':'off');
   if(soundEnabled){
+    const ctx=audioContext();
+    if(ctx&&sfxBus){const now=ctx.currentTime;sfxBus.gain.cancelScheduledValues(now);sfxBus.gain.setValueAtTime(1,now)}
     updateSoundButton();
     tone('select');
     if(state&&$('game')?.classList.contains('active'))startBackgroundMusic()
   }else{
     stopBackgroundMusic(false);
+    if(audioCtx&&sfxBus){const now=audioCtx.currentTime;sfxBus.gain.cancelScheduledValues(now);sfxBus.gain.setValueAtTime(.0001,now)}
     updateSoundButton()
   }
 }
@@ -287,6 +290,8 @@ function tone(kind='neutral'){
         beep(ctx,420,t,.045,.013,'sine',500);break;
       case 'answer':
         beep(ctx,690,t,.045,.017,'sine',760);break;
+      case 'tick':
+        beep(ctx,880,t,.035,.014,'sine');break;
       case 'select':
         beep(ctx,520,t,.07,.025,'sine',660);beep(ctx,760,t+.07,.08,.022,'sine');break;
       case 'start':
