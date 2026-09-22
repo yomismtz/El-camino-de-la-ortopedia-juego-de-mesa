@@ -164,7 +164,7 @@ jobs:
       - name: Collect AAB, ReTrace and native debug symbols
         shell: bash
         run: |
-          mkdir -p release-files/native-symbols
+          mkdir -p release-files
           cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.2-unsigned.aab
           test -s android/app/build/outputs/mapping/release/mapping.txt
           cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.2-retrace-mapping.txt
@@ -214,7 +214,7 @@ jobs:
           ReTrace: generado por R8 para esta misma compilación
           Símbolos nativos: generados para esta misma compilación
           EOF
-          sha256sum release-files/* > release-files/SHA256SUMS.txt
+          find release-files -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum > release-files/SHA256SUMS.txt
 
       - name: Upload complete Play Store set
         uses: actions/upload-artifact@v4
