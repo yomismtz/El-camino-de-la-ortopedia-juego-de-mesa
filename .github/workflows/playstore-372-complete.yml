@@ -21,13 +21,13 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - uses: android-actions/setup-android@v3
-
       - name: Install Android NDK and CMake
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
+          SDKMANAGER="/usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "ndk;27.0.12077973" "cmake;3.22.1"
 
       - name: Install Capacitor 8
         run: |
