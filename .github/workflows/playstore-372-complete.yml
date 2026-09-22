@@ -1,0 +1,222 @@
+name: Build Play Store 3.7.2 Complete Symbols
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/playstore-372-complete.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Android NDK and CMake
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
+
+      - name: Install Capacitor 8
+        run: |
+          npm install --package-lock=false --no-save --legacy-peer-deps \
+            @capacitor/core@8.5.2 \
+            @capacitor/android@8.5.2 \
+            @capacitor/cli@8.5.2 \
+            @capacitor/app@8.1.1
+
+      - name: Prepare web bundle
+        shell: bash
+        run: |
+          rm -rf www android
+          mkdir -p www
+          cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js \
+             exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js \
+             manifest.webmanifest sw.js styles-v10.css app-v10.js android-navigation.js www/
+          cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js \
+             steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js \
+             fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
+             crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
+          cp -r brand www/
+
+      - name: Configure permanent package
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('capacitor.config.json')
+          d=json.loads(p.read_text())
+          d['appId']='com.yomismtz.elcaminodental'
+          d['appName']='El Camino Dental'
+          d['webDir']='www'
+          p.write_text(json.dumps(d,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Create Android project
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Add minimal native library and production settings
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/cpp android/app/src/main/res/drawable
+          cp brand/ic_launcher_custom.xml android/app/src/main/res/drawable/ic_launcher_custom.xml
+
+          cat > android/app/src/main/cpp/native_symbols.cpp <<'CPP'
+          #include <jni.h>
+          extern "C" JNIEXPORT jint JNICALL
+          Java_com_yomismtz_elcaminodental_MainActivity_nativeBuildMarker(
+              JNIEnv*, jobject) {
+            return 372;
+          }
+          CPP
+
+          cat > android/app/src/main/cpp/CMakeLists.txt <<'CMAKE'
+          cmake_minimum_required(VERSION 3.22.1)
+          project(elcamino_symbols LANGUAGES CXX)
+          add_library(elcamino_symbols SHARED native_symbols.cpp)
+          set_target_properties(elcamino_symbols PROPERTIES
+              CXX_STANDARD 17
+              CXX_STANDARD_REQUIRED YES)
+          CMAKE
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          manifest=Path('android/app/src/main/AndroidManifest.xml')
+          x=manifest.read_text()
+          x=x.replace('android:exported="true"','android:exported="true" android:keepScreenOn="true"',1)
+          x=x.replace('android:icon="@mipmap/ic_launcher"','android:icon="@drawable/ic_launcher_custom"')
+          x=x.replace('android:roundIcon="@mipmap/ic_launcher_round"','android:roundIcon="@drawable/ic_launcher_custom"')
+          manifest.write_text(x)
+
+          strings=Path('android/app/src/main/res/values/strings.xml')
+          x=strings.read_text()
+          x=re.sub(r'<string name="app_name">.*?</string>','<string name="app_name">El Camino Dental</string>',x)
+          x=re.sub(r'<string name="title_activity_main">.*?</string>','<string name="title_activity_main">El Camino Dental</string>',x)
+          strings.write_text(x)
+
+          gradle=Path('android/app/build.gradle')
+          g=gradle.read_text()
+          g=re.sub(r'versionCode\s+\d+','versionCode 39',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.2"',g)
+          g=g.replace('minifyEnabled false','minifyEnabled true')
+          if 'minifyEnabled true' not in g:
+              g=g.replace('release {','release {\n            minifyEnabled true',1)
+
+          default_marker='defaultConfig {'
+          if default_marker in g and 'debugSymbolLevel' not in g:
+              g=g.replace(default_marker, default_marker + '''
+                  ndk {
+                      debugSymbolLevel 'FULL'
+                      abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+                  }
+                  externalNativeBuild {
+                      cmake {
+                          cppFlags ''
+                      }
+                  }''', 1)
+
+          build_marker='    buildTypes {'
+          if 'path file("src/main/cpp/CMakeLists.txt")' not in g and build_marker in g:
+              g=g.replace(build_marker, '''    externalNativeBuild {
+                  cmake {
+                      path file("src/main/cpp/CMakeLists.txt")
+                      version "3.22.1"
+                  }
+              }
+          ''' + build_marker, 1)
+
+          gradle.write_text(g)
+
+          variables=Path('android/variables.gradle')
+          if variables.exists():
+              v=variables.read_text()
+              v=re.sub(r'compileSdkVersion\s*=\s*\d+','compileSdkVersion = 36',v)
+              v=re.sub(r'targetSdkVersion\s*=\s*\d+','targetSdkVersion = 36',v)
+              variables.write_text(v)
+          PY
+
+          echo "=== build.gradle relevant settings ==="
+          grep -nE 'applicationId|versionCode|versionName|minifyEnabled|debugSymbolLevel|externalNativeBuild|abiFilters|CMakeLists' android/app/build.gradle
+
+      - name: Build release AAB
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease
+
+      - name: Collect AAB, ReTrace and native debug symbols
+        shell: bash
+        run: |
+          mkdir -p release-files/native-symbols
+          cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.2-unsigned.aab
+          test -s android/app/build/outputs/mapping/release/mapping.txt
+          cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.2-retrace-mapping.txt
+
+          SYMBOL_ZIP=$(find android/app/build/outputs/native-debug-symbols -type f -name 'native-debug-symbols.zip' 2>/dev/null | head -1 || true)
+          if [ -n "$SYMBOL_ZIP" ]; then
+            cp "$SYMBOL_ZIP" release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
+          else
+            python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import re
+          roots=[]
+          for p in Path('android/app/build/intermediates').rglob('libelcamino_symbols.so'):
+              s=str(p)
+              if '/obj/' in s or '/RelWithDebInfo/' in s:
+                  roots.append(p)
+          if not roots:
+              roots=list(Path('android/app/build').rglob('libelcamino_symbols.so'))
+          if not roots:
+              raise SystemExit('No native .so found for symbols archive')
+          out=Path('release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip')
+          seen=set()
+          with ZipFile(out,'w',ZIP_DEFLATED) as z:
+              for p in roots:
+                  m=re.search(r'/(arm64-v8a|armeabi-v7a|x86_64|x86)/',str(p))
+                  if not m: continue
+                  arc=f"{m.group(1)}/{p.name}"
+                  if arc in seen: continue
+                  seen.add(arc)
+                  z.write(p,arc)
+          if not seen:
+              raise SystemExit('Native libraries found, but ABI could not be determined')
+          print('symbols:',sorted(seen))
+          PY
+          fi
+
+          test -s release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
+          unzip -l release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
+
+          printf '3.7.2\n' > release-files/NOMBRE-DE-LA-VERSION.txt
+          cat > release-files/DETALLES-DE-VERSION.txt <<'EOF'
+          Nombre de la versión: 3.7.2
+          Código de versión: 39
+          Nombre del paquete: com.yomismtz.elcaminodental
+          Target SDK: 36
+          ReTrace: generado por R8 para esta misma compilación
+          Símbolos nativos: generados para esta misma compilación
+          EOF
+          sha256sum release-files/* > release-files/SHA256SUMS.txt
+
+      - name: Upload complete Play Store set
+        uses: actions/upload-artifact@v4
+        with:
+          name: ElCaminoDental-3.7.2-Complete
+          path: release-files/
+          if-no-files-found: error
