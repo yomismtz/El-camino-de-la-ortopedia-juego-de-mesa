@@ -8,6 +8,7 @@
     crecimiento_desarrollo:{label:'Crecimiento y desarrollo',icon:'🦴',get:()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[]},
     habitos_parafunciones:{label:'Hábitos y parafunciones',icon:'🧠',get:()=>window.HABITOS_PARAFUNCIONES_QUESTIONS||[]},
     primer_parcial:{label:'Juega y aprueba',icon:'🎯',get:()=>window.PRIMER_PARCIAL_QUESTIONS||[]},
+    nomenclatura_etimologia:{label:'Nomenclatura y etimología médica',icon:'🔤',get:()=>window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[]},
     steiner:{label:'Cefalometría de Steiner',icon:'📐',get:()=>window.STEINER_QUESTIONS||[]},
     ortopedia_general:{label:'Ortopedia / banco general',icon:'🦷',get:()=>window.QUESTIONS||[]}
   };
