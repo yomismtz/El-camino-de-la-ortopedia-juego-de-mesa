@@ -5,7 +5,8 @@ name: Build Play Store 3.7.3 Complete Symbols
 # Rebuild after visual consistency polish
 # Rebuild after full visual and answer audit
 # Rebuild after final Juega y aprueba label cleanup
-# Rebuild after source-feedback label cleanup\n# Rebuild after habits case concatenation fix
+# Rebuild after source-feedback label cleanup
+# Rebuild after habits case concatenation fix
 on:
   workflow_dispatch:
   push:
@@ -229,4 +230,5 @@ jobs:
           name: ElCaminoDental-3.7.3-Complete
           path: release-files/
           if-no-files-found: error
-\n# Rebuild after final habits syntax fix\n
+
+# Rebuild after final habits syntax fix
