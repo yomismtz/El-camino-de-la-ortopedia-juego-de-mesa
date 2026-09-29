@@ -1,6 +1,22 @@
 const BOARD_END=100;
 const STORAGE_KEY='ortopediaGameV10';
 const DICE=['⚀','⚁','⚂','⚃','⚄','⚅'];
+const FAVORITE_CHARACTER_KEY='elCaminoDentalFavoriteCharacterV1';
+const TUTORIAL_KEY='elCaminoDentalTutorialV1';
+const CHARACTER_PERSONAS=[
+  {correct:'¡Excelente! Sonrisa aprobada.',wrong:'Revisemos el concepto y seguimos.',win:'¡Meta alcanzada, gran recorrido!',tone:523},
+  {correct:'Diagnóstico correcto.',wrong:'Analicemos otra vez el caso.',win:'¡Caso cerrado y meta conseguida!',tone:494},
+  {correct:'¡Lo recordé!',wrong:'Esto también cuenta como aprendizaje.',win:'¡Estudiar sí rindió frutos!',tone:587},
+  {correct:'¡Entendido!',wrong:'Anotado para la siguiente.',win:'¡Reto completado!',tone:440},
+  {correct:'La evidencia coincide.',wrong:'Necesitamos revisar la evidencia.',win:'Resultado confirmado: victoria.',tone:659},
+  {correct:'Muy bien razonado.',wrong:'Volvamos paso a paso.',win:'Lección completada con éxito.',tone:392},
+  {correct:'Exacto, continúa.',wrong:'Observa la clave del razonamiento.',win:'¡Excelente recorrido!',tone:554},
+  {correct:'¡Sí pude!',wrong:'Lo intento otra vez.',win:'¡Llegué a la meta!',tone:698},
+  {correct:'¡Listo!',wrong:'La próxima sale mejor.',win:'¡Misión cumplida!',tone:466},
+  {correct:'¡Brackets perfectos!',wrong:'Ajustamos y seguimos.',win:'¡Sonrisa de campeonato!',tone:622},
+  {correct:'¡Súper respuesta!',wrong:'Un héroe también repasa.',win:'¡Súper victoria!',tone:740},
+  {correct:'Todo en orden.',wrong:'Reorganizamos y continuamos.',win:'¡Equipo listo, meta lograda!',tone:415}
+];
 const CHARACTERS=[
   {name:'La Doctora',role:'Odontóloga',spriteX:'0%',spriteY:'0%',emoji:'👩🏻‍⚕️',pawnEmoji:'👩🏻‍⚕️',color:'#2f8df5',anim:'wink',reaction:'¡Lista para cuidar sonrisas!',desc:'Clínica, segura y orientada al diagnóstico.'},
   {name:'El Doctor',role:'Odontólogo',spriteX:'33.333%',spriteY:'0%',emoji:'👨🏻‍⚕️',pawnEmoji:'👨🏻‍⚕️',color:'#2864c7',anim:'pulse',reaction:'¡Revisemos el caso!',desc:'Confiable, analítico y cercano con sus pacientes.'},
@@ -109,6 +125,16 @@ function showScreen(el){screens.forEach(x=>x?.classList.remove('active'));el.cla
 function esc(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function ruleForCell(n){if(n===0)return{type:'start'};if(n>=100)return{type:'finish'};for(const [type,set] of Object.entries(CELL_TYPES))if(set.has(n)){if(type==='question')return{type,deck:(n%3)+1};if(type==='case')return{type,deck:(n%5)+1};return{type}}return{type:'neutral'}}
 function characterSprite(ch,extraClass=''){if(!ch)return '';return `<span class="character-sprite ${extraClass}" style="--sprite-x:${ch.spriteX||'0%'};--sprite-y:${ch.spriteY||'0%'}" aria-hidden="true"></span>`}
+function personaFor(index){return CHARACTER_PERSONAS[Math.max(0,Math.min(CHARACTER_PERSONAS.length-1,Number(index)||0))]||CHARACTER_PERSONAS[0]}
+function characterTone(index,kind='select'){
+  if(!soundEnabled)return;
+  const ctx=audioContext?.();if(!ctx)return;
+  const p=personaFor(index),base=p.tone||520,t=ctx.currentTime+.01;
+  if(kind==='error'){beep(ctx,Math.max(120,base*.58),t,.12,.025,'triangle');beep(ctx,Math.max(100,base*.45),t+.1,.16,.02,'sine')}
+  else if(kind==='win'){beep(ctx,base,t,.13,.032,'sine');beep(ctx,base*1.25,t+.12,.15,.03,'sine');beep(ctx,base*1.5,t+.25,.2,.026,'sine')}
+  else{beep(ctx,base,t,.10,.018,'sine');beep(ctx,base*1.18,t+.08,.11,.016,'sine')}
+}
+function characterFace(ch,extraClass=''){return characterSprite(ch,'token-character '+extraClass)}
 function tokenFace(p){const ch=CHARACTERS[p.character]||CHARACTERS[0];return ch.pawnEmoji||ch.emoji||'🦷'}
 function tokenShift(index,total){if(total<=1)return{x:0,y:0};const cols=Math.min(2,total),row=Math.floor(index/cols),col=index%cols,gap=19;return{x:(col-(cols-1)/2)*gap,y:(row-(Math.ceil(total/cols)-1)/2)*gap}}
 const AI_LEVELS={
@@ -162,6 +188,8 @@ function beginCharacterSelection(){
     characters:Array(count).fill(null),
     pickerIndex:0
   };
+  const favoriteCharacter=Number(localStorage.getItem(FAVORITE_CHARACTER_KEY));
+  if(Number.isInteger(favoriteCharacter)&&favoriteCharacter>=0&&favoriteCharacter<CHARACTERS.length)draft.characters[0]=favoriteCharacter;
   showScreen($('characters'));renderPicker();tone('select')
 }
 function renderPicker(){
@@ -176,10 +204,24 @@ function renderPicker(){
     b.className=`character-card${draft.characters[i]===idx?' selected':''}${taken.has(idx)?' taken':''}`;
     b.dataset.char=idx;b.style.setProperty('--accent',ch.color);
     b.innerHTML=`<div class="character-art">${characterSprite(ch,'pick-character')}</div><span class="character-bubble" hidden>${ch.reaction}</span><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p><span class="select-label">${taken.has(idx)?'En uso':draft.characters[i]===idx?'Seleccionado':'Seleccionar'}</span>`;
-    b.onclick=()=>{draft.characters[i]=idx;tone('select');renderPicker();requestAnimationFrame(()=>reactCharacter(idx))};
+    b.onclick=()=>{
+      draft.characters[i]=idx;
+      if(i===0)localStorage.setItem(FAVORITE_CHARACTER_KEY,String(idx));
+      tone('select');characterTone(idx,'select');renderPicker();requestAnimationFrame(()=>reactCharacter(idx))
+    };
     grid.appendChild(b)
   });
-  $('pickerNextBtn').disabled=draft.characters[i]===null;
+  const chosen=draft.characters[i];
+  const spotlight=$('characterSpotlight');
+  if(spotlight){
+    if(chosen===null){spotlight.hidden=true;spotlight.innerHTML=''}
+    else{
+      const ch=CHARACTERS[chosen],persona=personaFor(chosen);
+      spotlight.hidden=false;spotlight.style.setProperty('--accent',ch.color);
+      spotlight.innerHTML=`<div class="spotlight-art">${characterSprite(ch,'spotlight-character')}</div><div class="spotlight-copy"><span class="eyebrow">PERSONAJE SELECCIONADO</span><h2>${ch.name}</h2><b>${ch.role}</b><p>${ch.desc}</p><blockquote>“${persona.correct}”</blockquote></div>`
+    }
+  }
+  $('pickerNextBtn').disabled=chosen===null;
   $('pickerNextBtn').textContent=i===draft.pickerCount-1?'Comenzar partida →':'Siguiente →';
   const visible=draft.mode==='computer'
     ?draft.names.slice(0,draft.pickerCount).map((n,j)=>`<span>${esc(n)} · ${draft.characters[j]===null?'sin elegir':CHARACTERS[draft.characters[j]].name}</span>`).join('')+`<span>🤖 Dra. IA · ${AI_LEVELS[draft.aiLevel]?.label||'Medio'}</span>`
@@ -338,9 +380,9 @@ function randomizePresentedItem(item,kind){
   }
   return out
 }
-async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:13,mode:draft.mode||'local',module:draft.module||'fundamentos_oclusion',difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn()}
+async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:13,mode:draft.mode||'local',module:draft.module||'fundamentos_oclusion',difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null,quizStats:{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn();setTimeout(()=>showTutorial(false),500)}
 function buildBoard(){board.querySelectorAll('.cell,.start-marker').forEach(n=>n.remove());const start=document.createElement('div');start.className='start-marker';start.innerHTML='<b>INICIO</b><div class="start-tokens"></div>';board.appendChild(start);for(let n=1;n<=100;n++){const t=(n-1)/99,turns=4.6,theta=-Math.PI*.68+t*turns*2*Math.PI,rx=46-29*t,ry=44-27*t,x=50+rx*Math.cos(theta),y=50+ry*Math.sin(theta),r=ruleForCell(n),m=RULE_META[r.type]||RULE_META.neutral,c=document.createElement('div');c.className=`cell ${r.type}${n===100?' finish':''}${n%10===0&&n<100?' milestone':''}`;c.dataset.cell=n;c.style.left=`${x}%`;c.style.top=`${y}%`;c.style.zIndex=110-n;c.innerHTML=`<span class="cell-number">${n}</span>${r.type!=='neutral'&&r.type!=='finish'?`<span class="cell-icon">${m.icon}</span>`:''}<span class="tokens"></span>`;board.appendChild(c)}}
-function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,100));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${tokenFace(p)}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=100?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,p.position)}%"></i></div></div><strong>${Math.min(p.position,100)}/100</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';if($('turnPrompt'))$('turnPrompt').textContent=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='primer_parcial'?'🎯 Juega y aprueba':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
+function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,100));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${characterFace(CHARACTERS[p.character]||CHARACTERS[0])}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=100?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,p.position)}%"></i></div></div><strong>${Math.min(p.position,100)}/100</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';const turnAction=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');const turnDetail=`${currentCh.name} · ${current?.position===0?'Inicio':current?.position>=100?'Meta':`Casilla ${current?.position}`} · ${turnAction}`;if($('turnPrompt'))$('turnPrompt').textContent=turnDetail;if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='primer_parcial'?'🎯 Juega y aprueba':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
 async function rollDice(auto=false){
   if(!state||state.locked)return;
   const p=currentPlayer();
@@ -367,7 +409,38 @@ function resolveLanding(depth=0){if(!state)return;const p=state.players[state.cu
 function triggerCell(cell,depth=0){const r=ruleForCell(cell);if(r.type==='question')return startQuestion(r.deck,depth);if(r.type==='case')return startCase(r.deck,depth);if(r.type==='advance1')return movement('advance1',1,depth);if(r.type==='advance2')return movement('advance2',2,depth);if(r.type==='back1')return movement('back1',-1,depth);if(r.type==='back2')return movement('back2',-2,depth);if(r.type==='back3')return movement('back3',-3,depth);if(r.type==='vacation')return loseTurnEvent('vacation','Vacaciones',1);if(r.type==='tax')return loseTurnEvent('tax','Impuestos',1);if(r.type==='equipment')return loseTurnEvent('equipment','Equipo descompuesto',1);if(r.type==='lawsuit')return lawsuit(depth);if(r.type==='jail')return jail();if(r.type==='finish')return showWinner(state.players[state.current]);statusText.textContent='Casilla de descanso. Siguiente turno.';setTimeout(endTurn,420)}
 function startQuestion(deck,chainDepth=0){const bank=activeQuestionBank(),q=pickQueued(bank,'questionQueue','questionQueueSize','lastQuestionIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'question',chainDepth},'question');selectedAnswer=null;tone('question');saveGame();showQuestion()}
 function startCase(deck,chainDepth=0){const bank=activeCaseBank(),q=pickQueued(bank,'caseQueue','caseQueueSize','lastCaseIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'case',chainDepth},'case');selectedAnswer=null;tone('case');saveGame();showQuestion()}
-function showQuestion(){stopTimer();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='primer_parcial'?`🎯 Juega y aprueba · ${q.topic||'Repaso'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='primer_parcial'?`🎯 Juega y aprueba · ${q.topic||'Repaso'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion()}
+function renderQuestionCharacter(mode='neutral'){
+  const p=currentPlayer();if(!p)return;
+  const ch=CHARACTERS[p.character]||CHARACTERS[0],persona=personaFor(p.character);
+  const host=$('questionCharacter');if(!host)return;
+  const phrase=mode==='success'?persona.correct:mode==='error'?persona.wrong:ch.reaction;
+  host.style.setProperty('--accent',ch.color);
+  host.innerHTML=`<div class="question-character-art ${mode}">${characterSprite(ch,'question-companion')}</div><div class="question-character-speech"><b>${ch.name}</b><span>${esc(phrase)}</span></div>`;
+}
+function ensurePlayerStats(p){
+  if(!p)return null;
+  if(!p.quizStats||typeof p.quizStats!=='object')p.quizStats={attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}};
+  if(!p.quizStats.topics||typeof p.quizStats.topics!=='object')p.quizStats.topics={};
+  return p.quizStats
+}
+function recordMatchAnswer(outcome,q){
+  const p=currentPlayer(),st=ensurePlayerStats(p);if(!st)return;
+  st.attempts++;
+  const success=['correct','excellent','good'].includes(outcome);
+  if(success)st.correct++;else st.wrong++;
+  if(outcome==='excellent')st.excellent++;
+  if(outcome==='good')st.good++;
+  const topic=String(q?.topic||q?.module||'General');
+  const t=st.topics[topic]||(st.topics[topic]={attempts:0,correct:0});
+  t.attempts++;if(success)t.correct++;
+}
+function winnerLearningSummary(p){
+  const st=ensurePlayerStats(p),attempts=st?.attempts||0,accuracy=attempts?Math.round((st.correct||0)*100/attempts):0;
+  const topics=Object.entries(st?.topics||{}).map(([name,v])=>({name,attempts:v.attempts||0,correct:v.correct||0,rate:v.attempts?(v.correct/v.attempts):0})).filter(x=>x.attempts);
+  topics.sort((a,b)=>b.rate-a.rate||b.attempts-a.attempts);
+  return {attempts,accuracy,best:topics[0]?.name||'—',review:topics.length?topics[topics.length-1].name:'—',excellent:st?.excellent||0}
+}
+function showQuestion(){stopTimer();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='primer_parcial'?`🎯 Juega y aprueba · ${q.topic||'Repaso'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='primer_parcial'?`🎯 Juega y aprueba · ${q.topic||'Repaso'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());renderQuestionCharacter('neutral');const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion()}
 function runComputerQuestion(){
   const q=pendingQuestion,p=currentPlayer();
   if(!q||!p?.isComputer)return;
@@ -421,20 +494,23 @@ function confirmAnswer(){
   stopTimer();
   const opts=[...document.querySelectorAll('.option')];
   opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
-  let delta=0,heading='',snd='error';
+  let delta=0,heading='',snd='error',outcome='wrong';
   if(pendingQuestion.kind==='question'){
     const ok=selectedAnswer===pendingQuestion.correct;
     opts[pendingQuestion.correct]?.classList.add('correct');
     window.LearningTools?.record?.(state?.module,pendingQuestion,ok);
-    if(ok){heading=tr('Correcta · permaneces en tu casilla','Correct · stay on your space');snd='correct'}
-    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space')}
+    if(ok){heading=tr('Correcta · permaneces en tu casilla','Correct · stay on your space');snd='correct';outcome='correct'}
+    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space');outcome='wrong'}
   }else{
     const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';
     opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
-    if(grade==='excellent'){delta=2;heading=tr('Excelente · avanzas 2 casillas','Excellent · move forward 2 spaces');snd='excellent'}
-    else if(grade==='good'){delta=1;heading=tr('Buena · avanzas 1 casilla','Good · move forward 1 space');snd='correct'}
-    else{delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space')}
+    if(grade==='excellent'){delta=2;heading=tr('Excelente · avanzas 2 casillas','Excellent · move forward 2 spaces');snd='excellent';outcome='excellent'}
+    else if(grade==='good'){delta=1;heading=tr('Buena · avanzas 1 casilla','Good · move forward 1 space');snd='correct';outcome='good'}
+    else{delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space');outcome='wrong'}
   }
+  recordMatchAnswer(outcome,pendingQuestion);
+  renderQuestionCharacter(outcome==='wrong'?'error':'success');
+  characterTone(currentPlayer()?.character,outcome==='wrong'?'error':'select');
   tone(snd);
   pendingQuestion.resultDelta=delta;
   $('feedback').hidden=false;
@@ -457,6 +533,7 @@ function expireQuestionTimer(){
     window.LearningTools?.record?.(state?.module,pendingQuestion,false);
   }
   pendingQuestion.resultDelta=-1;selectedAnswer=null;
+  recordMatchAnswer('wrong',pendingQuestion);renderQuestionCharacter('error');characterTone(currentPlayer()?.character,'error');
   const heading=tr('⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla','⏱ Time is up · incorrect answer · move back 1 space');
   $('feedback').hidden=false;
   $('feedback').innerHTML=educationalFeedbackHtml(heading,pendingQuestion,null,pendingQuestion.kind,true);
@@ -470,10 +547,51 @@ function addSkipTurns(turns,reason){const p=state.players[state.current];p.skipT
 function loseTurnEvent(type,reason,turns=1){const m=RULE_META[type];tone(type);addSkipTurns(turns,reason);showEvent(m.title,m.message,m.icon,endTurn)}
 function lawsuit(depth=0){const m=RULE_META.lawsuit;tone('lawsuit');showEvent(m.title,m.message,m.icon,async()=>{const p=state.players[state.current];await move(JAIL_CELL-p.position);return resolveLanding(depth+1)})}
 function jail(){const m=RULE_META.jail,p=state.players[state.current];p.jailVisits=(p.jailVisits||0)+1;const turns=p.jailVisits===1?2:3;addSkipTurns(turns,'Cárcel');tone('jail');const text=p.jailVisits===1?'Primera vez en la cárcel: pierdes 2 turnos.':`Visita ${p.jailVisits} a la cárcel: pierdes 3 turnos.`;showEvent(m.title,text,m.icon,endTurn)}
+function renderCharacterBook(){
+  const host=$('characterBookGrid');if(!host)return;
+  host.innerHTML=CHARACTERS.map((ch,i)=>`<article class="character-book-item" style="--accent:${ch.color}"><div class="book-art">${characterSprite(ch,'book-character')}</div><div><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p><small>“${personaFor(i).correct}”</small></div></article>`).join('')
+}
+const TUTORIAL_STEPS=[
+  {title:'1. Elige qué practicar',text:'Selecciona el módulo, la dificultad y los jugadores. Tu progreso adaptativo prioriza los temas que necesiten más repaso.'},
+  {title:'2. Elige tu personaje',text:'Cada jugador toma un personaje distinto. Tu favorito queda preseleccionado la próxima vez, pero puedes cambiarlo cuando quieras.'},
+  {title:'3. Tira los dos dados',text:'Avanzas la suma de ambos dados. Tu personaje aparece en “Ahora juega” y su rostro identifica tu ficha en el tablero.'},
+  {title:'4. Resuelve cada casilla',text:'Azul = pregunta, morado = caso clínico. Las respuestas muestran explicación educativa y tu personaje reacciona al resultado.'}
+];
+let tutorialIndex=0;
+function renderTutorialStep(){
+  const step=TUTORIAL_STEPS[tutorialIndex]||TUTORIAL_STEPS[0],ch=CHARACTERS[0];
+  if($('tutorialGuide'))$('tutorialGuide').innerHTML=characterSprite(ch,'tutorial-character');
+  if($('tutorialStep'))$('tutorialStep').textContent=`Tutorial · ${tutorialIndex+1}/${TUTORIAL_STEPS.length}`;
+  if($('tutorialTitle'))$('tutorialTitle').textContent=step.title;
+  if($('tutorialText'))$('tutorialText').textContent=step.text;
+  if($('tutorialNextBtn'))$('tutorialNextBtn').textContent=tutorialIndex===TUTORIAL_STEPS.length-1?'Entendido ✓':'Siguiente →'
+}
+function showTutorial(force=true){
+  const dlg=$('tutorialDialog');if(!dlg||dlg.open)return;
+  if(!force&&localStorage.getItem(TUTORIAL_KEY)==='seen')return;
+  tutorialIndex=0;renderTutorialStep();dlg.showModal();characterTone(0,'select')
+}
+function closeTutorial(){
+  const dlg=$('tutorialDialog');if(dlg?.open)dlg.close();
+  localStorage.setItem(TUTORIAL_KEY,'seen')
+}
+function nextTutorial(){
+  if(tutorialIndex<TUTORIAL_STEPS.length-1){tutorialIndex++;renderTutorialStep();tone('ui')}
+  else closeTutorial()
+}
 function showEvent(title,text,icon,cb){$('eventIcon').textContent=icon;$('eventTitle').textContent=title;$('eventText').textContent=text;pendingAfterDialog=cb;const btn=$('eventContinueBtn'),cpu=isComputerTurn();btn.disabled=cpu;btn.textContent=cpu?'La computadora continúa…':'Continuar';eventDialog.showModal();if(cpu)queueComputerAction(()=>{if(eventDialog.open)closeEvent()},720)}
 function closeEvent(){eventDialog.close();const cb=pendingAfterDialog;pendingAfterDialog=null;cb?.()}
 function endTurn(){clearComputerTimer();state.current=(state.current+1)%state.players.length;state.turn++;let guard=0;const skipped=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*8){const p=state.players[state.current],reason=p.skipReason||'penalización';p.skipTurns--;skipped.push(`${p.name} pierde este turno por ${reason}.`);if(p.skipTurns<=0)p.skipReason='';state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;render();tone('turn');const prefix=skipped.length?skipped.join(' ')+' ':'';if(isComputerTurn()){statusText.textContent=prefix+`🤖 ${currentPlayer().name} está pensando…`;scheduleComputerTurn()}else statusText.textContent=prefix+`${currentPlayer().name}, tira los dos dados.`}
-function showWinner(p){clearComputerTimer();state.locked=true;p.position=100;render();stopBackgroundMusic(true);$('winnerTitle').textContent=p.isComputer?'🤖 La computadora ganó':'¡Llegaste a la META!';$('winnerText').textContent=p.isComputer?`${p.name} llegó primero a la meta con razonamiento ${AI_LEVELS[p.aiLevel]?.label||'Medio'}.`:`${p.name} completó las 100 casillas de El Camino Dental.`;$('winnerDialog').showModal();tone('win')}
+function showWinner(p){
+  clearComputerTimer();state.locked=true;p.position=100;render();stopBackgroundMusic(true);
+  const ch=CHARACTERS[p.character]||CHARACTERS[0],summary=winnerLearningSummary(p),persona=personaFor(p.character);
+  $('winnerTitle').textContent=p.isComputer?'🤖 La computadora ganó':'¡Llegaste a la META!';
+  $('winnerText').textContent=p.isComputer?`${p.name} llegó primero a la meta con razonamiento ${AI_LEVELS[p.aiLevel]?.label||'Medio'}.`:`${p.name} completó las 100 casillas. ${persona.win}`;
+  if($('winnerCharacter')){$('winnerCharacter').style.setProperty('--accent',ch.color);$('winnerCharacter').innerHTML=characterSprite(ch,'winner-character-sprite')}
+  if($('winnerStats'))$('winnerStats').innerHTML=`<div><b>${summary.accuracy}%</b><span>Aciertos</span></div><div><b>${summary.attempts}</b><span>Reactivos</span></div><div><b>${summary.excellent}</b><span>Excelentes</span></div><div><b>${esc(summary.best)}</b><span>Mejor tema</span></div><div><b>${esc(summary.review)}</b><span>Repasar</span></div>`;
+  if($('winnerConfetti'))$('winnerConfetti').innerHTML=Array.from({length:28},(_,i)=>`<i style="--i:${i}"></i>`).join('');
+  $('winnerDialog').showModal();tone('win');characterTone(p.character,'win')
+}
 let audioCtx=null,sfxBus=null,musicBus=null,musicTimer=null,musicActive=false,musicBar=0;
 function audioContext(){
   const AC=window.AudioContext||window.webkitAudioContext;
@@ -654,7 +772,7 @@ function tone(kind='neutral'){
 }
 function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
 function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.mode=s.players.some(p=>p.isComputer)?'computer':'local';s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
-function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.mode=state.players.some(p=>p.isComputer)?'computer':'local';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();if(isComputerTurn()){statusText.textContent=`Partida recuperada. 🤖 ${currentPlayer().name} continúa automáticamente.`;scheduleComputerTurn(650)}else statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
+function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null;p.quizStats=p.quizStats||{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.mode=state.players.some(p=>p.isComputer)?'computer':'local';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();if(isComputerTurn()){statusText.textContent=`Partida recuperada. 🤖 ${currentPlayer().name} continúa automáticamente.`;scheduleComputerTurn(650)}else statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
 function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;clearComputerTimer();stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function playAgain(){$('winnerDialog').close();clearComputerTimer();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -669,6 +787,8 @@ function returnToSetupFromGame(){
   resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)
 }
 window.handleElCaminoBack=function(){
+  if($('tutorialDialog')?.open){closeTutorial();return true}
+  if($('characterBookDialog')?.open){$('characterBookDialog').close();return true}
   if(rulesDialog?.open){rulesDialog.close();return true}
   if(questionDialog?.open||eventDialog?.open||$('winnerDialog')?.open){
     tone('ui');
@@ -708,10 +828,17 @@ $('timerBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');startTimer()}};
 $('resetBtn').onclick=resetGame;
 $('playAgainBtn').onclick=playAgain;
 $('soundBtn').onclick=toggleSound;
+$('characterBookBtn').onclick=()=>{tone('ui');renderCharacterBook();$('characterBookDialog').showModal()};
+$('closeCharacterBookBtn').onclick=()=>{tone('ui');$('characterBookDialog').close()};
+$('tutorialBtn').onclick=()=>{tone('ui');showTutorial(true)};
+$('tutorialNextBtn').onclick=nextTutorial;
+$('skipTutorialBtn').onclick=closeTutorial;
 $('rulesBtn').onclick=()=>{tone('ui');rulesDialog.showModal()};
 $('closeRulesBtn').onclick=()=>{tone('ui');rulesDialog.close()};
 questionDialog.addEventListener('cancel',e=>e.preventDefault());
 eventDialog.addEventListener('cancel',e=>e.preventDefault());
+$('tutorialDialog')?.addEventListener('cancel',e=>{e.preventDefault();closeTutorial()});
+$('characterBookDialog')?.addEventListener('cancel',e=>{e.preventDefault();$('characterBookDialog').close()});
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     clearComputerTimer();
