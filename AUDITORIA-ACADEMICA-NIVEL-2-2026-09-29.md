@@ -1,5 +1,8 @@
 # Auditoría académica de segundo nivel — 29 septiembre 2026
 
+> **Nota de estado actual (Paso 11):** estas auditorías documentan el origen y la revisión de los 200 reactivos de las cinco versiones fuente. La etiqueta histórica **“Juega y aprueba”** ya no corresponde a un módulo visible de la aplicación. Las 200 preguntas permanecen integradas al banco general/personalizado por clasificación. Las referencias al módulo en este documento se conservan únicamente como trazabilidad histórica de la auditoría.
+
+
 ## Alcance
 Revisión de los 800 reactivos y de los conceptos clínicos que sustentan los 355 casos de El Camino Dental.
 
