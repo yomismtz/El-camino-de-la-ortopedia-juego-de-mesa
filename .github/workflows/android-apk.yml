@@ -108,7 +108,7 @@ jobs:
           from pathlib import Path
           p=Path('android/app/src/main/AndroidManifest.xml')
           s=p.read_text()
-          s=s.replace('android:exported="true"','android:exported="true" android:keepScreenOn="true"',1)
+          s=s.replace('android:exported="true"','android:exported="true" android:keepScreenOn="true" android:screenOrientation="landscape"',1)
           s=s.replace('android:icon="@mipmap/ic_launcher"','android:icon="@drawable/ic_launcher_custom"')
           s=s.replace('android:roundIcon="@mipmap/ic_launcher_round"','android:roundIcon="@drawable/ic_launcher_custom"')
           p.write_text(s)
