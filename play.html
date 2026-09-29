@@ -222,26 +222,39 @@
 </dialog>
 
 <dialog id="rulesDialog" class="modal">
-  <div class="modal-card rules-card">
-    <div class="modal-head"><span class="category-pill">📖 Reglas</span><button id="closeRulesBtn" class="tiny-btn">Cerrar</button></div>
-    <h2>Reglas del camino</h2>
-    <div class="rules-grid">
-      <div>🎲🎲 <b>Dos dados</b><span>Avanza la suma de ambos.</span></div>
-      <div>🤖 <b>Contra la computadora</b><span>Elige razonamiento Bajo, Medio, Alto o Súper inteligente.</span></div>
-      <div>❓ <b>Pregunta</b><span>Incorrecta: retrocede 1. La casilla nueva también se resuelve.</span></div>
-      <div>📋 <b>Caso clínico</b><span>Excelente +2 · Buena +1 · Incorrecta −1. La nueva casilla también cuenta.</span></div>
-      <div>✅ <b>Diagnóstico</b><span>Avanza 1 y resuelve la casilla donde caigas.</span></div>
-      <div>🏁 <b>Tratamiento concluido</b><span>Avanza 2 y resuelve la casilla donde caigas.</span></div>
-      <div>📅 <b>Cancelación</b><span>Retrocede 1 y resuelve la nueva casilla.</span></div>
-      <div>📁 <b>Expediente perdido</b><span>Retrocede 2 y resuelve la nueva casilla.</span></div>
-      <div>⚠️ <b>Tratamiento salió mal</b><span>Retrocede 3 y resuelve la nueva casilla.</span></div>
-      <div>🏖️ <b>Vacaciones</b><span>Pierdes 1 turno.</span></div>
-      <div>🧾 <b>Impuestos</b><span>No declaraste: pierdes 1 turno.</span></div>
-      <div>🛠️ <b>Equipo descompuesto</b><span>Pierdes 1 turno.</span></div>
-      <div>⚖️ <b>Demanda</b><span>Tu paciente te demandó: vas a la cárcel.</span></div>
-      <div>🔒 <b>Cárcel</b><span>Primera vez: pierdes 2 turnos. Segunda y posteriores: 3.</span></div>
-      <div>🏆 <b>Victoria exacta</b><span>Solo ganas si terminas exactamente en la casilla 100.</span></div>
-      <div>↩️ <b>Rebote en la meta</b><span>Si el resultado de los dados supera la casilla 100, llegas a la meta y retrocedes las casillas sobrantes. Ejemplo: estás en 97 y sacas 8 → avanzas 3 hasta 100 y regresas 5 → terminas en 95; esa casilla se resuelve normalmente.</span></div>
+  <div class="modal-card rules-card rules-reference">
+    <div class="modal-head"><span class="category-pill">📖 Reglamento</span><button id="closeRulesBtn" class="tiny-btn">Cerrar</button></div>
+    <h2>Consulta las reglas de El Camino Dental</h2>
+    <p class="rules-intro">Puedes abrir este reglamento antes de comenzar o durante la partida. Consultarlo no modifica el turno ni el progreso.</p>
+    <nav class="rules-index" aria-label="Índice de reglas">
+      <a href="#rule-objective">🎯 Objetivo</a><a href="#rule-turn">🎲 Turnos</a><a href="#rule-academic">🧠 Preguntas y casos</a><a href="#rule-cells">🗺️ Casillas</a><a href="#rule-goal">🏆 Meta</a><a href="#rule-save">💾 Partida</a>
+    </nav>
+    <div class="rules-sections">
+      <section id="rule-objective"><h3>🎯 Objetivo y jugadores</h3><p>Participan de 2 a 5 jugadores locales o un jugador contra la computadora. Cada participante elige un personaje y recorre el tablero. El objetivo es ser el primero en terminar exactamente en la casilla 100.</p></section>
+      <section id="rule-turn"><h3>🎲 Turnos y movimiento</h3><p>En cada turno se lanzan dos dados y se avanza la suma de ambos. Al terminar el movimiento se resuelve la casilla de llegada. Los movimientos provocados por preguntas, casos o eventos también obligan a resolver la nueva casilla.</p></section>
+      <section><h3>📚 Área y dificultad</h3><p>Antes de jugar puedes elegir un módulo o seleccionar hasta 5 áreas en el juego personalizado. La dificultad puede configurarse como Básico, Intermedio, Clínico o Todas.</p></section>
+      <section id="rule-academic"><h3>❓ Preguntas</h3><p>La pregunta se narra antes de iniciar el tiempo. Después de la narración dispones de 30 segundos para responder. Los últimos 10 segundos incluyen una señal de urgencia. Una respuesta incorrecta o el tiempo agotado hacen retroceder 1 casilla; la nueva casilla se resuelve normalmente.</p></section>
+      <section><h3>📋 Casos clínicos</h3><p>Excelente: avanza 2 casillas. Buena: avanza 1. Incorrecta: retrocede 1. Después del movimiento se resuelve la nueva casilla.</p></section>
+      <section><h3>🔄 Encadenamiento</h3><p>Una casilla que mueve tu ficha puede llevarte a otra pregunta, caso o evento. Ese nuevo efecto también se aplica. La cadena continúa hasta llegar a una casilla que no produzca otro movimiento o hasta el límite de seguridad del juego.</p></section>
+      <section id="rule-cells"><h3>🗺️ Casillas especiales</h3>
+        <div class="rules-grid">
+          <div>✅ <b>Excelente diagnóstico</b><span>Avanza 1 y resuelve la nueva casilla.</span></div>
+          <div>🏁 <b>Tratamiento concluido</b><span>Avanza 2 y resuelve la nueva casilla.</span></div>
+          <div>📅 <b>Paciente canceló</b><span>Retrocede 1 y resuelve la nueva casilla.</span></div>
+          <div>📁 <b>Expediente perdido</b><span>Retrocede 2 y resuelve la nueva casilla.</span></div>
+          <div>⚠️ <b>Tratamiento salió mal</b><span>Retrocede 3 y resuelve la nueva casilla.</span></div>
+          <div>🏖️ <b>Vacaciones</b><span>Pierdes 1 turno.</span></div>
+          <div>🧾 <b>Impuestos</b><span>Pierdes 1 turno.</span></div>
+          <div>🛠️ <b>Equipo descompuesto</b><span>Pierdes 1 turno.</span></div>
+          <div>⚖️ <b>Demanda</b><span>Vas directamente a la cárcel.</span></div>
+          <div>🔒 <b>Cárcel</b><span>Primera visita: pierdes 2 turnos. Segunda y posteriores: 3.</span></div>
+          <div>🦷 <b>Descanso</b><span>No ocurre ningún efecto y continúa el siguiente turno.</span></div>
+        </div>
+      </section>
+      <section id="rule-goal" class="rule-goal-highlight"><h3>🏆 Victoria exacta y rebote en la META</h3><p>Solo ganas si tu movimiento termina exactamente en la casilla 100. Si la tirada supera la meta, avanzas hasta 100 y retrocedes las casillas sobrantes. La casilla donde termines el rebote se resuelve normalmente.</p><p><b>Ejemplo:</b> estás en 97 y sacas 8 → avanzas 3 hasta 100 → sobran 5 → regresas 5 → terminas en 95. En cambio, desde 97 con una tirada de 3 llegas exactamente a 100 y ganas.</p></section>
+      <section><h3>🤖 Contra la computadora</h3><p>La computadora realiza automáticamente sus turnos y respuestas según el nivel seleccionado: Bajo, Medio, Alto o Súper inteligente. Está sujeta a las mismas reglas de movimiento, casillas, cárcel y rebote en la meta.</p></section>
+      <section id="rule-save"><h3>💾 Guardado y reanudación</h3><p>La partida se guarda automáticamente. Si sales o Android suspende la aplicación, el progreso se conserva. Al regresar puedes continuar la partida guardada; cerrar la aplicación no permite evitar una resolución pendiente.</p></section>
+      <section><h3>📊 Final de la partida</h3><p>Al ganar se muestra un resumen académico con reactivos contestados, respuestas correctas e incorrectas y desempeño por tema.</p></section>
     </div>
   </div>
 </dialog>
