@@ -4,6 +4,7 @@ name: Build Play Store 3.7.3 Complete Symbols
 # Rebuild after Juega y aprueba rename
 # Rebuild after visual consistency polish
 # Rebuild after full visual and answer audit
+# Rebuild after final Juega y aprueba label cleanup
 on:
   workflow_dispatch:
   push:
