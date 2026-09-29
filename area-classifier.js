@@ -62,8 +62,8 @@ const MODULE_DEFAULTS={
   crecimiento_desarrollo:['crecimiento','ortopedia'],
   habitos_parafunciones:['habitos','odontopediatria'],
   nomenclatura_etimologia:['nomenclatura'],
-  ortopedia_general:['ortopedia','ortodoncia'],
-  primer_parcial:[]
+  ortopedia_general:['ortopedia','ortodoncia']
+
 };
 function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
 function unique(arr){return [...new Set(arr)]}
