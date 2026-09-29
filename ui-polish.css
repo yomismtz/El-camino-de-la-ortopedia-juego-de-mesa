@@ -986,3 +986,16 @@ html.a11y-reduce-motion *,html.a11y-reduce-motion *:before,html.a11y-reduce-moti
 .winner-report-empty{margin:0;color:#6d8093;font-size:12px}
 @media(max-width:600px){.winner-report-head{display:block}.winner-report-head span{display:block;margin-top:3px}.winner-topic-row{grid-template-columns:minmax(90px,1.3fr) minmax(70px,1.7fr) 38px}}
 @media (orientation:landscape) and (max-height:600px){.winner-learning-report{padding:9px;margin:8px 0}.winner-topic-results{max-height:120px}.winner-topic-row{gap:6px}}
+
+/* Reglamento consultable */
+.rules-reference{width:min(900px,94vw);scroll-behavior:smooth}
+.rules-intro{margin:4px 0 12px;color:#61758a;font-size:13px}
+.rules-index{position:sticky;top:-24px;z-index:7;display:flex;gap:7px;overflow-x:auto;padding:9px 0;background:#fff;border-bottom:1px solid #e5edf3}
+.rules-index a{flex:0 0 auto;text-decoration:none;color:#24557e;background:#f0f7fb;border:1px solid #d9e9f2;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800}
+.rules-sections{display:grid;gap:10px;padding-top:10px}
+.rules-sections>section{scroll-margin-top:64px;padding:12px 14px;border:1px solid #e1ebf1;border-radius:16px;background:#fbfdff}
+.rules-sections h3{margin:0 0 6px;color:#173d69;font-size:15px}
+.rules-sections p{margin:5px 0;color:#526a80;font-size:12px;line-height:1.55}
+.rule-goal-highlight{background:#fffaf0!important;border-color:#f0dba7!important}
+.rules-reference .rules-grid{margin-top:8px}
+@media (orientation:landscape) and (max-height:600px){.rules-reference{max-height:94dvh}.rules-index{top:-12px;padding:6px 0}.rules-sections{gap:7px}.rules-sections>section{padding:8px 10px}.rules-sections p{line-height:1.4}}
