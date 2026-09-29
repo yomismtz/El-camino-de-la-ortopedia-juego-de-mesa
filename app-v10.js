@@ -494,12 +494,27 @@ async function rollDice(auto=false){
   $('dice1').classList.remove('rolling');$('dice2').classList.remove('rolling');
   $('diceTotal').textContent=a+b;tone('dice');
   const edge=p?.isComputer&&p.aiLevel==='super'?' · modo implacable':'';
-  statusText.textContent=`${p.name} obtuvo ${a} + ${b} = ${a+b}${edge}.`;
-  await move(a+b);
-  if(state.players[state.current].position>=100)return showWinner(state.players[state.current]);
-  setTimeout(()=>triggerCell(state.players[state.current].position),180)
+  const total=a+b,start=p.position,rawTarget=start+total,overshoot=Math.max(0,rawTarget-BOARD_END);
+  statusText.textContent=`${p.name} obtuvo ${a} + ${b} = ${total}${edge}.`;
+  await moveWithFinishBounce(total);
+  if(state.players[state.current].position===BOARD_END)return showWinner(state.players[state.current]);
+  if(overshoot>0)statusText.textContent=`${p.name} llegó a la meta, se pasó por ${overshoot} y regresó hasta la casilla ${state.players[state.current].position}.`;
+  setTimeout(()=>triggerCell(state.players[state.current].position),overshoot>0?520:180)
 }
-async function move(delta){const p=state.players[state.current],target=Math.max(0,Math.min(100,p.position+delta)),step=target>=p.position?1:-1;while(p.position!==target){p.position+=step;render();tone('step');await delay(105)}const landed=document.querySelector(`[data-cell="${p.position}"]`);if(landed){landed.classList.add('landed');setTimeout(()=>landed.classList.remove('landed'),420)}}
+async function animateToPosition(p,target){const step=target>=p.position?1:-1;while(p.position!==target){p.position+=step;render();tone('step');await delay(105)}}
+async function moveWithFinishBounce(delta){
+  const p=state.players[state.current],raw=p.position+delta;
+  if(delta>0&&raw>BOARD_END){
+    await animateToPosition(p,BOARD_END);
+    tone('event');
+    await delay(180);
+    await animateToPosition(p,BOARD_END-(raw-BOARD_END));
+  }else{
+    await animateToPosition(p,Math.max(0,Math.min(BOARD_END,raw)));
+  }
+  const landed=document.querySelector(`[data-cell="${p.position}"]`);if(landed){landed.classList.add('landed');setTimeout(()=>landed.classList.remove('landed'),420)}
+}
+async function move(delta){const p=state.players[state.current];await animateToPosition(p,Math.max(0,Math.min(BOARD_END,p.position+delta)));const landed=document.querySelector(`[data-cell="${p.position}"]`);if(landed){landed.classList.add('landed');setTimeout(()=>landed.classList.remove('landed'),420)}}
 function resolveLanding(depth=0){if(!state)return;const p=state.players[state.current];if(p.position>=100)return showWinner(p);if(depth>=8){statusText.textContent='Cadena de eventos terminada. Siguiente turno.';return setTimeout(endTurn,420)}return triggerCell(p.position,depth)}
 function triggerCell(cell,depth=0){const r=ruleForCell(cell);if(r.type==='question')return startQuestion(r.deck,depth);if(r.type==='case')return state?.module==='nomenclatura_etimologia'?startQuestion(r.deck,depth):startCase(r.deck,depth);if(r.type==='advance1')return movement('advance1',1,depth);if(r.type==='advance2')return movement('advance2',2,depth);if(r.type==='back1')return movement('back1',-1,depth);if(r.type==='back2')return movement('back2',-2,depth);if(r.type==='back3')return movement('back3',-3,depth);if(r.type==='vacation')return loseTurnEvent('vacation','Vacaciones',1);if(r.type==='tax')return loseTurnEvent('tax','Impuestos',1);if(r.type==='equipment')return loseTurnEvent('equipment','Equipo descompuesto',1);if(r.type==='lawsuit')return lawsuit(depth);if(r.type==='jail')return jail();if(r.type==='finish')return showWinner(state.players[state.current]);statusText.textContent='Casilla de descanso. Siguiente turno.';setTimeout(endTurn,420)}
 function startQuestion(deck,chainDepth=0){if(state)state.pendingResolution={position:currentPlayer()?.position??0,depth:chainDepth};const bank=activeQuestionBank(),q=pickQueued(bank,'questionQueue','questionQueueSize','lastQuestionIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'question',chainDepth},'question');selectedAnswer=null;tone('question');saveGame();showQuestion()}
