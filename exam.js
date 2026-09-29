@@ -7,7 +7,6 @@
     fisiologia_funcion:{label:'Fisiología + función',icon:'🫁',get:()=>window.FISIOLOGIA_FUNCION_QUESTIONS||[]},
     crecimiento_desarrollo:{label:'Crecimiento y desarrollo',icon:'🦴',get:()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[]},
     habitos_parafunciones:{label:'Hábitos y parafunciones',icon:'🧠',get:()=>window.HABITOS_PARAFUNCIONES_QUESTIONS||[]},
-    primer_parcial:{label:'Juega y aprueba',icon:'🎯',get:()=>window.PRIMER_PARCIAL_QUESTIONS||[]},
     nomenclatura_etimologia:{label:'Nomenclatura y etimología médica',icon:'🔤',get:()=>window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[]},
     steiner:{label:'Cefalometría de Steiner',icon:'📐',get:()=>window.STEINER_QUESTIONS||[]},
     ortopedia_general:{label:'Ortopedia / banco general',icon:'🦷',get:()=>window.QUESTIONS||[]}
@@ -198,9 +197,9 @@
     $('resultTitle').textContent=mod.icon+' '+mod.label;
     const diff=exam.difficulty==='all'?'todas las dificultades':exam.difficulty;
     $('resultSummary').textContent=correct+' de '+exam.count+' correctas · '+diff+' · sin retroalimentación durante el examen.';
-    const partialFocus=exam.module==='primer_parcial';
+    const partialFocus=false;
     $('topicSection').classList.toggle('partial-topic-focus',partialFocus);
-    $('topicResultsTitle').textContent=partialFocus?'📚 Resultados de Juega y aprueba por materia':'Desempeño por tema';
+    $('topicResultsTitle').textContent='Desempeño por tema';
     $('topicResultsLead').hidden=!partialFocus;
     const topicResults=$('topicResults');topicResults.innerHTML='';
     [...topicMap.entries()].sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)||a[0].localeCompare(b[0])).forEach(([topic,stat])=>{
