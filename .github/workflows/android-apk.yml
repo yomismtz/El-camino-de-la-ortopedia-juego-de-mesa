@@ -39,6 +39,7 @@ on:
       - 'habitos-parafunciones-*.js'
       - 'cases*.js'
       - 'package.json'
+      - 'tests/**'
       - 'capacitor.config.json'
       - '.github/workflows/android-apk.yml'
 
@@ -95,6 +96,9 @@ jobs:
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
+
+      - name: Run game integrity tests
+        run: npm test
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
