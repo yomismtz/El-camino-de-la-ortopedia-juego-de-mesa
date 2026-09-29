@@ -136,7 +136,7 @@ function activeCaseBank(){
   if(state?.module==='personalizado')return filterByAreas(allStudyCases,state.selectedAreas);
   return moduleCaseBank(state?.module)
 }
-let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,soundEnabled=localStorage.getItem('elCaminoDentalSound')!=='off',timer=null,timerLeft=30,computerTimer=null;
+let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,soundEnabled=localStorage.getItem('elCaminoDentalSound')!=='off',timer=null,timerLeft=30,computerTimer=null,narrationToken=0,narrationActive=false;
 const $=id=>document.getElementById(id);
 const screens=['setup','characters','loadingScreen','game'].map($);
 const board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),gameModule=$('gameModule'),gameDifficulty=$('gameDifficulty'),gameMode=$('gameMode'),aiLevel=$('aiLevel'),playerCountLabel=$('playerCountLabel'),aiLevelLabel=$('aiLevelLabel'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),statusText=$('statusText'),areaPickerPanel=$('areaPickerPanel'),areaPickerGroups=$('areaPickerGroups'),areaSelectionCount=$('areaSelectionCount'),areaPoolSummary=$('areaPoolSummary');
@@ -540,7 +540,7 @@ function renderWinnerLearningReport(summary){
   if(!summary.topics.length){host.innerHTML='<p class="winner-report-empty">'+esc(tr('No hubo suficientes reactivos para generar un desglose por tema.','There were not enough items to generate a topic breakdown.'))+'</p>';return}
   host.innerHTML=summary.topics.map(t=>'<div class="winner-topic-row"><div class="winner-topic-name"><b>'+esc(t.name)+'</b><span>'+t.correct+'/'+t.attempts+' '+esc(tr('correctas','correct'))+'</span></div><div class="winner-topic-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+t.rate+'"><i style="width:'+t.rate+'%"></i></div><strong>'+t.rate+'%</strong></div>').join('')
 }
-function showQuestion(){stopTimer();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());renderQuestionCharacter('neutral');const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion()}
+function showQuestion(){stopTimer();stopQuestionNarration();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());renderQuestionCharacter('neutral');const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion();else setTimeout(narrateCurrentQuestion,180)}
 function runComputerQuestion(){
   const q=pendingQuestion,p=currentPlayer();
   if(!q||!p?.isComputer)return;
@@ -564,6 +564,36 @@ function runComputerQuestion(){
   },computerThinkDelay(p))
 }
 function tr(es,en){return window.I18N?.text?window.I18N.text(es,en):es}
+function stopQuestionNarration(){
+  narrationToken++;narrationActive=false;
+  try{window.speechSynthesis?.cancel()}catch{}
+}
+function questionNarrationText(q){
+  const intro=q?.kind==='case'?tr('Caso clínico.','Clinical case.'):tr('Pregunta.','Question.');
+  const options=(q?.options||[]).map((opt,i)=>String.fromCharCode(65+i)+'. '+opt).join('. ');
+  return [intro,q?.text||'',options].filter(Boolean).join(' ')
+}
+function beginQuestionCountdown(){
+  if(!pendingQuestion||!questionDialog?.open)return;
+  document.querySelectorAll('#questionOptions .option').forEach(o=>o.disabled=!!isComputerTurn());
+  $('timerBtn').disabled=true;$('timerBtn').textContent=tr('30 s en curso','30 s running');
+  startTimer()
+}
+function narrateCurrentQuestion(){
+  stopQuestionNarration();
+  if(!pendingQuestion||isComputerTurn())return beginQuestionCountdown();
+  const synth=window.speechSynthesis;
+  if(!synth||typeof SpeechSynthesisUtterance==='undefined')return beginQuestionCountdown();
+  const token=++narrationToken,utterance=new SpeechSynthesisUtterance(questionNarrationText(pendingQuestion));
+  narrationActive=true;
+  utterance.lang=window.I18N?.lang==='en'?'en-US':'es-MX';
+  utterance.rate=.94;utterance.pitch=1;utterance.volume=1;
+  const finish=()=>{if(token!==narrationToken)return;narrationActive=false;beginQuestionCountdown()};
+  utterance.onend=finish;utterance.onerror=finish;
+  document.querySelectorAll('#questionOptions .option').forEach(o=>o.disabled=true);
+  $('timerBtn').disabled=true;$('timerBtn').textContent=tr('🎙️ Leyendo…','🎙️ Reading…');
+  try{synth.speak(utterance)}catch{finish()}
+}
 function educationalFeedbackHtml(heading,q,selected,kind,timedOut=false){
   if(kind==='case'){
     const edu=window.LearningTools?.caseFeedback?.(q,selected,timedOut);
@@ -618,10 +648,10 @@ function confirmAnswer(){
   $('confirmAnswerBtn').hidden=true;
   $('continueBtn').hidden=false
 }
-async function continueAfterQuestion(){stopTimer();const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;pendingQuestion=null;if(state)state.pendingResolution=null;questionDialog.close();if(!d)return endTurn();await move(d);return resolveLanding(depth+1)}
+async function continueAfterQuestion(){stopQuestionNarration();stopTimer();const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;pendingQuestion=null;if(state)state.pendingResolution=null;questionDialog.close();if(!d)return endTurn();await move(d);return resolveLanding(depth+1)}
 function expireQuestionTimer(){
   if(!pendingQuestion||!questionDialog?.open)return;
-  stopTimer();tone('alarm');timerLeft=0;
+  stopQuestionNarration();stopTimer();tone('alarm');timerLeft=0;
   $('timerDisplay').textContent='0';
   $('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low');
   $('timerDisplay').closest('.timer-wrap')?.classList.add('timer-expired');
@@ -640,7 +670,7 @@ function expireQuestionTimer(){
   $('confirmAnswerBtn').hidden=true;$('confirmAnswerBtn').disabled=true;
   $('continueBtn').hidden=false;$('continueBtn').disabled=false;$('continueBtn').textContent=tr('Continuar','Continue')
 }
-function startTimer(){if(timer||!pendingQuestion)return;timerLeft=30;$('timerDisplay').textContent='30';$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);const tw=$('timerDisplay').closest('.timer-wrap');if(timerLeft>0&&timerLeft<=5){tw?.classList.add('timer-low');tone('tick')}else tw?.classList.remove('timer-low');if(timerLeft<=0)expireQuestionTimer()},1000)}
+function startTimer(){if(timer||!pendingQuestion||narrationActive)return;timerLeft=30;$('timerDisplay').textContent='30';$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);const tw=$('timerDisplay').closest('.timer-wrap');if(timerLeft>0&&timerLeft<=10){tw?.classList.add('timer-low');tone('tick')}else tw?.classList.remove('timer-low');if(timerLeft<=0)expireQuestionTimer()},1000)}
 function stopTimer(){if(timer){clearInterval(timer);timer=null}}
 function movement(type,delta,depth=0){const m=RULE_META[type];tone(type);showEvent(m.title,m.message,m.icon,async()=>{await move(delta);return resolveLanding(depth+1)})}
 function addSkipTurns(turns,reason){const p=state.players[state.current];p.skipTurns=(p.skipTurns||0)+turns;p.skipReason=reason||p.skipReason||'Evento';render()}
@@ -879,6 +909,7 @@ function playAgain(){$('winnerDialog').close();clearComputerTimer();stopBackgrou
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
 function returnToSetupFromGame(){
   clearComputerTimer();
+  stopQuestionNarration();
   stopTimer();
   stopBackgroundMusic(true);
   state&&(state.locked=false);
@@ -927,7 +958,7 @@ rollBtn.onclick=()=>rollDice(false);
 $('confirmAnswerBtn').onclick=()=>{if(!isComputerTurn())confirmAnswer()};
 $('continueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');continueAfterQuestion()}};
 $('eventContinueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');closeEvent()}};
-$('timerBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');startTimer()}};
+$('timerBtn').onclick=()=>{if(!isComputerTurn()&&!narrationActive){tone('ui');startTimer()}};
 $('resetBtn').onclick=resetGame;
 const exitGameBtn=$('exitGameBtn');if(exitGameBtn)exitGameBtn.onclick=()=>{tone('ui');returnToSetupFromGame()};
 $('playAgainBtn').onclick=playAgain;
