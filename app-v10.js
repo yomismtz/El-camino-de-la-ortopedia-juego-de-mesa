@@ -185,8 +185,10 @@ function areaPoolCounts(areas=setupSelectedAreas){
 }
 function renderAreaPicker(){
   if(!areaPickerPanel||!areaPickerGroups)return;
-  areaPickerPanel.hidden=!customModeEnabled();
-  if(!customModeEnabled())return;
+  const custom=customModeEnabled();
+  areaPickerPanel.hidden=!custom;
+  const choose=$('chooseCharactersBtn');
+  if(!custom){if(choose)choose.disabled=false;return}
   const areas=window.AreaClassifier?.areas||[],groups=[...new Set(areas.map(a=>a.group))];
   areaPickerGroups.innerHTML=groups.map(group=>{
     const cards=areas.filter(a=>a.group===group).map(a=>{
@@ -207,7 +209,7 @@ function renderAreaPicker(){
   if(areaPoolSummary)areaPoolSummary.innerHTML=setupSelectedAreas.length
     ?`<b>${selectedAreaLabelList(setupSelectedAreas).join(' · ')}</b><span>${totals.questions} preguntas + ${totals.cases} casos clínicos disponibles</span>`
     :'Selecciona al menos un área.';
-  const choose=$('chooseCharactersBtn');if(choose)choose.disabled=customModeEnabled()&&(!setupSelectedAreas.length||totals.questions===0)
+  if(choose)choose.disabled=!setupSelectedAreas.length||totals.questions===0
 }
 function chooseRandomAreas(){
   const ids=(window.AreaClassifier?.areas||[]).filter(a=>areaPoolCounts([a.id]).questions>0).map(a=>a.id);
