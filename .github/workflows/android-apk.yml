@@ -86,7 +86,11 @@ jobs:
           assert 'moveWithFinishBounce' in js, 'Falta lógica de rebote en meta'
           assert "elcamino:native-pause" in js, 'Falta pausa nativa segura'
           assert "stopQuestionNarration();" in js and "stopTimer();" in js, 'Falta pausa de narración/cronómetro'
-          print('Android gameplay integrity checks: OK')
+          visible='\n'.join(Path(p).read_text() for p in ['README.md','index.html','play.html','i18n.js','exam.html','exam.js','teacher.html'])
+          obsolete=['900 preguntas','🧠 900','2 a 6 jugadores','2–6 jugadores','38 casillas','37 casillas','llega o supera','🎯 Juega y aprueba','Juega y aprueba · 200']
+          found=[term for term in obsolete if term in visible]
+          assert not found, f'Textos obsoletos detectados: {found}'
+          print('Android gameplay + documentation integrity checks: OK')
           PY
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
