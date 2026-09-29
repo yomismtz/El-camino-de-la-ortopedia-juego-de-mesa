@@ -986,6 +986,24 @@ questionDialog.addEventListener('cancel',e=>e.preventDefault());
 eventDialog.addEventListener('cancel',e=>e.preventDefault());
 $('tutorialDialog')?.addEventListener('cancel',e=>{e.preventDefault();closeTutorial()});
 $('characterBookDialog')?.addEventListener('cancel',e=>{e.preventDefault();$('characterBookDialog').close()});
+window.addEventListener('elcamino:native-pause',()=>{
+  clearComputerTimer();
+  stopQuestionNarration();
+  stopTimer();
+  if(state)saveGame();
+  if(musicActive)stopBackgroundMusic(false);
+});
+window.addEventListener('elcamino:native-resume',()=>{
+  if(!state||!$('game')?.classList.contains('active'))return;
+  render();
+  if(questionDialog?.open&&pendingQuestion){
+    $('timerBtn').disabled=false;
+    $('timerBtn').textContent=tr('Reanudar 30 s','Resume 30 s');
+    statusText.textContent=tr('Partida reanudada. Reinicia el tiempo cuando estés listo.','Game resumed. Restart the timer when ready.');
+  }else if(isComputerTurn()&&!state.locked){
+    scheduleComputerTurn(650);
+  }
+});
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     clearComputerTimer();
