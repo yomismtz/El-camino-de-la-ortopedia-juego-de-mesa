@@ -121,7 +121,9 @@
     const source=filteredBank();
     if(!source.length)return;
     const count=Math.min(requested,source.length);
-    const questions=shuffle(source).slice(0,count).map(randomizeQuestionOptions);
+    const adaptive=window.LearningTools?.sample?.(source,count,module);
+    const selected=Array.isArray(adaptive)&&adaptive.length===count?adaptive:shuffle(source).slice(0,count);
+    const questions=selected.map(randomizeQuestionOptions);
     exam={module,difficulty,count,questions,answers:Array(count).fill(null),index:0,startedAt:Date.now()};
     const mod=MODULES[module];
     $('runModule').textContent=mod.icon+' '+mod.label;
@@ -182,6 +184,7 @@
       const answer=exam.answers[i];
       const ok=answer===q.correct;
       if(answer===null)unanswered++; else if(ok)correct++; else wrong++;
+      if(answer!==null)window.LearningTools?.record?.(exam.module,q,ok);
       const topic=topicOf(q);
       if(!topicMap.has(topic))topicMap.set(topic,{total:0,correct:0});
       const stat=topicMap.get(topic);stat.total++;if(ok)stat.correct++;
@@ -218,7 +221,12 @@
       const item=document.createElement('article');item.className='review-item '+status;
       const your=answer===null?'Sin responder':String.fromCharCode(65+answer)+'. '+q.options[answer];
       const right=String.fromCharCode(65+q.correct)+'. '+q.options[q.correct];
-      item.innerHTML='<h3>'+(i+1)+'. '+esc(q.text)+'</h3><p class="your-answer"><strong>Tu respuesta:</strong> '+esc(your)+'</p><p class="right-answer"><strong>Correcta:</strong> '+esc(right)+'</p>'+(q.explanation?'<p class="review-explanation">'+esc(q.explanation)+'</p>':'');
+      const edu=window.LearningTools?.questionFeedback?.(q,answer,false);
+      const why=edu?.explanation||q.explanation||'La respuesta correcta es la que mejor corresponde al concepto evaluado.';
+      const distractor=answer!==null&&!ok&&edu?.distractor
+        ?'<p class="review-distractor"><strong>Por qué tu opción no:</strong> '+esc(edu.distractor)+'</p>'
+        :'';
+      item.innerHTML='<h3>'+(i+1)+'. '+esc(q.text)+'</h3><p class="your-answer"><strong>Tu respuesta:</strong> '+esc(your)+'</p><p class="right-answer"><strong>Respuesta correcta:</strong> '+esc(right)+'</p><p class="review-explanation"><strong>Por qué:</strong> '+esc(why)+'</p>'+distractor;
       host.appendChild(item);
     });
   }
