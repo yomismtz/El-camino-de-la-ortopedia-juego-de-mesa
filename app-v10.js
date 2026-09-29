@@ -91,26 +91,57 @@ function moduleQuestionBank(module){
   if(module==='steiner')return steinerQuestions;
   return questions
 }
+function moduleCaseBank(module){
+  if(module==='fundamentos_oclusion')return fundamentalsCases;
+  if(module==='fisiologia_funcion')return physiologyFunctionCases;
+  if(module==='crecimiento_desarrollo')return growthDevelopmentCases;
+  if(module==='habitos_parafunciones')return habitsParafunctionsCases;
+  if(module==='primer_parcial')return firstPartialCases;
+  if(module==='steiner')return steinerCases;
+  return clinicalCases
+}
+const MASTER_QUESTION_SOURCES=[
+  ['ortopedia_general',questions],['fundamentos_oclusion',fundamentalsQuestions],['steiner',steinerQuestions],
+  ['fisiologia_funcion',physiologyFunctionQuestions],['crecimiento_desarrollo',growthDevelopmentQuestions],
+  ['habitos_parafunciones',habitsParafunctionsQuestions],['primer_parcial',firstPartialQuestions],
+  ['nomenclatura_etimologia',nomenclatureEtymologyQuestions]
+];
+const MASTER_CASE_SOURCES=[
+  ['ortopedia_general',clinicalCases],['fundamentos_oclusion',fundamentalsCases],['steiner',steinerCases],
+  ['fisiologia_funcion',physiologyFunctionCases],['crecimiento_desarrollo',growthDevelopmentCases],
+  ['habitos_parafunciones',habitsParafunctionsCases],['primer_parcial',firstPartialCases]
+];
+function dedupeItems(sources){
+  const seen=new Set(),out=[];
+  for(const [sourceModule,items] of sources)for(const item of items||[]){
+    const key=String(item?.id??'')+'|'+String(item?.text??'');
+    if(seen.has(key))continue;seen.add(key);
+    out.push({...item,_sourceModule:sourceModule})
+  }
+  return out
+}
+const allStudyQuestions=dedupeItems(MASTER_QUESTION_SOURCES);
+const allStudyCases=dedupeItems(MASTER_CASE_SOURCES);
+function filterByAreas(items,areas){
+  const ac=window.AreaClassifier;
+  if(!ac||!Array.isArray(areas)||!areas.length)return [];
+  return items.filter(x=>ac.matches(x,areas,x._sourceModule||x.module||''))
+}
 function activeQuestionBank(){
-  const bank=moduleQuestionBank(state?.module);
   const difficulty=state?.difficulty||'all';
+  let bank=state?.module==='personalizado'?filterByAreas(allStudyQuestions,state.selectedAreas):moduleQuestionBank(state?.module);
   if(difficulty==='all')return bank;
   const filtered=bank.filter(q=>q.difficulty===difficulty);
   return filtered.length?filtered:bank
 }
 function activeCaseBank(){
-  if(state?.module==='fundamentos_oclusion')return fundamentalsCases;
-  if(state?.module==='fisiologia_funcion')return physiologyFunctionCases;
-  if(state?.module==='crecimiento_desarrollo')return growthDevelopmentCases;
-  if(state?.module==='habitos_parafunciones')return habitsParafunctionsCases;
-  if(state?.module==='primer_parcial')return firstPartialCases;
-  if(state?.module==='steiner')return steinerCases;
-  return clinicalCases
+  if(state?.module==='personalizado')return filterByAreas(allStudyCases,state.selectedAreas);
+  return moduleCaseBank(state?.module)
 }
 let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,soundEnabled=localStorage.getItem('elCaminoDentalSound')!=='off',timer=null,timerLeft=30,computerTimer=null;
 const $=id=>document.getElementById(id);
 const screens=['setup','characters','loadingScreen','game'].map($);
-const board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),gameModule=$('gameModule'),gameDifficulty=$('gameDifficulty'),gameMode=$('gameMode'),aiLevel=$('aiLevel'),playerCountLabel=$('playerCountLabel'),aiLevelLabel=$('aiLevelLabel'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),statusText=$('statusText');
+const board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),gameModule=$('gameModule'),gameDifficulty=$('gameDifficulty'),gameMode=$('gameMode'),aiLevel=$('aiLevel'),playerCountLabel=$('playerCountLabel'),aiLevelLabel=$('aiLevelLabel'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),statusText=$('statusText'),areaPickerPanel=$('areaPickerPanel'),areaPickerGroups=$('areaPickerGroups'),areaSelectionCount=$('areaSelectionCount'),areaPoolSummary=$('areaPoolSummary');
 const questionDialog=$('questionDialog'),eventDialog=$('eventDialog'),rulesDialog=$('rulesDialog');
 function syncVisualViewport(){
   const vv=window.visualViewport;
@@ -145,6 +176,45 @@ const AI_LEVELS={
   high:{label:'Alto',questionAccuracy:.86,excellent:.82,good:.15,thinkMin:600,thinkMax:1000,rollAdvantage:1},
   super:{label:'Súper inteligente',questionAccuracy:1,excellent:1,good:0,thinkMin:420,thinkMax:760,rollAdvantage:3}
 };
+let setupSelectedAreas=[];
+function customModeEnabled(){return gameModule?.value==='personalizado'}
+function areaMeta(id){return window.AreaClassifier?.areas?.find(a=>a.id===id)}
+function selectedAreaLabelList(areas){return (areas||[]).map(id=>areaMeta(id)?.label||id)}
+function areaPoolCounts(areas=setupSelectedAreas){
+  return {questions:filterByAreas(allStudyQuestions,areas).length,cases:filterByAreas(allStudyCases,areas).length}
+}
+function renderAreaPicker(){
+  if(!areaPickerPanel||!areaPickerGroups)return;
+  areaPickerPanel.hidden=!customModeEnabled();
+  if(!customModeEnabled())return;
+  const areas=window.AreaClassifier?.areas||[],groups=[...new Set(areas.map(a=>a.group))];
+  areaPickerGroups.innerHTML=groups.map(group=>{
+    const cards=areas.filter(a=>a.group===group).map(a=>{
+      const selected=setupSelectedAreas.includes(a.id),counts=areaPoolCounts([a.id]);
+      return `<button type="button" class="area-choice${selected?' selected':''}" data-area="${a.id}" aria-pressed="${selected}"><span>${a.icon}</span><b>${a.label}</b><small>${counts.questions} preguntas · ${counts.cases} casos</small></button>`
+    }).join('');
+    return `<section class="area-group"><h4>${group}</h4><div class="area-choice-grid">${cards}</div></section>`
+  }).join('');
+  areaPickerGroups.querySelectorAll('[data-area]').forEach(btn=>btn.onclick=()=>{
+    const id=btn.dataset.area,idx=setupSelectedAreas.indexOf(id);
+    if(idx>=0)setupSelectedAreas.splice(idx,1);
+    else if(setupSelectedAreas.length<5)setupSelectedAreas.push(id);
+    else{btn.classList.add('limit-hit');setTimeout(()=>btn.classList.remove('limit-hit'),380)}
+    tone('select');renderAreaPicker()
+  });
+  if(areaSelectionCount)areaSelectionCount.textContent=`${setupSelectedAreas.length}/5`;
+  const totals=areaPoolCounts(setupSelectedAreas);
+  if(areaPoolSummary)areaPoolSummary.innerHTML=setupSelectedAreas.length
+    ?`<b>${selectedAreaLabelList(setupSelectedAreas).join(' · ')}</b><span>${totals.questions} preguntas + ${totals.cases} casos clínicos disponibles</span>`
+    :'Selecciona al menos un área.';
+  const choose=$('chooseCharactersBtn');if(choose)choose.disabled=customModeEnabled()&&!setupSelectedAreas.length
+}
+function chooseRandomAreas(){
+  const ids=(window.AreaClassifier?.areas||[]).map(a=>a.id);
+  for(let i=ids.length-1;i>0;i--){const j=secureRandomIndex(i+1);[ids[i],ids[j]]=[ids[j],ids[i]]}
+  setupSelectedAreas=ids.slice(0,5);renderAreaPicker();tone('select')
+}
+function clearAreas(){setupSelectedAreas=[];renderAreaPicker();tone('ui')}
 function computerSetupEnabled(){return gameMode?.value==='computer'}
 function updateGameModeUI(){
   const cpu=computerSetupEnabled();
@@ -184,7 +254,8 @@ function beginCharacterSelection(){
     pickerCount:humanCount,
     mode:cpu?'computer':'local',
     aiLevel:cpu?(aiLevel?.value||'medium'):null,
-    module:gameModule?.value||'fundamentos_oclusion',
+    module:gameModule?.value||'personalizado',
+    selectedAreas:customModeEnabled()?[...setupSelectedAreas]:[],
     difficulty:gameDifficulty?.value||'all',
     names,
     characters:Array(count).fill(null),
@@ -325,13 +396,35 @@ function shuffledIndices(length,lastIndex=null){
 function recentOrderKey(){
   return 'elCaminoDentalOrder:'+String(state?.module||'general')+':'+String(state?.difficulty||'all')
 }
+function balancedPersonalizedOrder(pool){
+  const areas=state?.selectedAreas||[];if(areas.length<2)return null;
+  const buckets=new Map(areas.map(a=>[a,[]]));
+  pool.forEach((item,idx)=>{
+    const matches=window.AreaClassifier?.infer(item,item._sourceModule||item.module||'').filter(a=>buckets.has(a))||[];
+    if(!matches.length)return;
+    matches.sort((a,b)=>buckets.get(a).length-buckets.get(b).length);
+    buckets.get(matches[0]).push(idx)
+  });
+  for(const [area,indices] of buckets){
+    const sub=indices.map(i=>pool[i]);
+    const adaptive=window.LearningTools?.orderIndices?.(sub,'personalizado:'+area);
+    if(Array.isArray(adaptive)&&adaptive.length===indices.length)buckets.set(area,adaptive.map(i=>indices[i]));
+    else{
+      for(let i=indices.length-1;i>0;i--){const j=secureRandomIndex(i+1);[indices[i],indices[j]]=[indices[j],indices[i]]}
+    }
+  }
+  const out=[];let more=true;
+  while(more){more=false;for(const a of areas){const b=buckets.get(a);if(b?.length){out.push(b.shift());more=true}}}
+  return out.length===pool.length?out:null
+}
 function freshQuestionQueue(pool){
   if(!pool.length)return [];
   let previous=[];
   try{previous=JSON.parse(localStorage.getItem(recentOrderKey())||'[]')}catch{}
   let queue=[],presented=[];
   for(let attempt=0;attempt<12;attempt++){
-    const adaptive=window.LearningTools?.orderIndices?.(pool,state?.module);
+    const balanced=state?.module==='personalizado'?balancedPersonalizedOrder(pool):null;
+    const adaptive=balanced||window.LearningTools?.orderIndices?.(pool,state?.module);
     queue=Array.isArray(adaptive)&&adaptive.length===pool.length?[...adaptive].reverse():shuffledIndices(pool.length);
     presented=[...queue].reverse().map(i=>String(pool[i]?.id??i));
     const compare=Math.min(previous.length,presented.length,10);
@@ -382,9 +475,9 @@ function randomizePresentedItem(item,kind){
   }
   return out
 }
-async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:13,mode:draft.mode||'local',module:draft.module||'fundamentos_oclusion',difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null,quizStats:{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn();setTimeout(()=>showTutorial(false),500)}
+async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:14,mode:draft.mode||'local',module:draft.module||'personalizado',selectedAreas:[...(draft.selectedAreas||[])],difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null,quizStats:{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn();setTimeout(()=>showTutorial(false),500)}
 function buildBoard(){board.querySelectorAll('.cell,.start-marker').forEach(n=>n.remove());const start=document.createElement('div');start.className='start-marker';start.innerHTML='<b>INICIO</b><div class="start-tokens"></div>';board.appendChild(start);for(let n=1;n<=100;n++){const t=(n-1)/99,turns=4.6,theta=-Math.PI*.68+t*turns*2*Math.PI,rx=46-29*t,ry=44-27*t,x=50+rx*Math.cos(theta),y=50+ry*Math.sin(theta),r=ruleForCell(n),m=RULE_META[r.type]||RULE_META.neutral,c=document.createElement('div');c.className=`cell ${r.type}${n===100?' finish':''}${n%10===0&&n<100?' milestone':''}`;c.dataset.cell=n;c.style.left=`${x}%`;c.style.top=`${y}%`;c.style.zIndex=110-n;c.innerHTML=`<span class="cell-number">${n}</span>${r.type!=='neutral'&&r.type!=='finish'?`<span class="cell-icon">${m.icon}</span>`:''}<span class="tokens"></span>`;board.appendChild(c)}}
-function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,100));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${characterFace(CHARACTERS[p.character]||CHARACTERS[0])}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=100?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,p.position)}%"></i></div></div><strong>${Math.min(p.position,100)}/100</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';const turnAction=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');const turnDetail=`${currentCh.name} · ${current?.position===0?'Inicio':current?.position>=100?'Meta':`Casilla ${current?.position}`} · ${turnAction}`;if($('turnPrompt'))$('turnPrompt').textContent=turnDetail;if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='primer_parcial'?'🎯 Juega y aprueba':state.module==='nomenclatura_etimologia'?'🔤 Nomenclatura y etimología':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
+function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,100));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${characterFace(CHARACTERS[p.character]||CHARACTERS[0])}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=100?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,p.position)}%"></i></div></div><strong>${Math.min(p.position,100)}/100</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';const turnAction=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');const turnDetail=`${currentCh.name} · ${current?.position===0?'Inicio':current?.position>=100?'Meta':`Casilla ${current?.position}`} · ${turnAction}`;if($('turnPrompt'))$('turnPrompt').textContent=turnDetail;if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='personalizado'?`🎯 ${selectedAreaLabelList(state.selectedAreas).join(' + ')}`:state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='primer_parcial'?'🎯 Juega y aprueba':state.module==='nomenclatura_etimologia'?'🔤 Nomenclatura y etimología':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
 async function rollDice(auto=false){
   if(!state||state.locked)return;
   const p=currentPlayer();
@@ -410,7 +503,7 @@ async function move(delta){const p=state.players[state.current],target=Math.max(
 function resolveLanding(depth=0){if(!state)return;const p=state.players[state.current];if(p.position>=100)return showWinner(p);if(depth>=8){statusText.textContent='Cadena de eventos terminada. Siguiente turno.';return setTimeout(endTurn,420)}return triggerCell(p.position,depth)}
 function triggerCell(cell,depth=0){const r=ruleForCell(cell);if(r.type==='question')return startQuestion(r.deck,depth);if(r.type==='case')return state?.module==='nomenclatura_etimologia'?startQuestion(r.deck,depth):startCase(r.deck,depth);if(r.type==='advance1')return movement('advance1',1,depth);if(r.type==='advance2')return movement('advance2',2,depth);if(r.type==='back1')return movement('back1',-1,depth);if(r.type==='back2')return movement('back2',-2,depth);if(r.type==='back3')return movement('back3',-3,depth);if(r.type==='vacation')return loseTurnEvent('vacation','Vacaciones',1);if(r.type==='tax')return loseTurnEvent('tax','Impuestos',1);if(r.type==='equipment')return loseTurnEvent('equipment','Equipo descompuesto',1);if(r.type==='lawsuit')return lawsuit(depth);if(r.type==='jail')return jail();if(r.type==='finish')return showWinner(state.players[state.current]);statusText.textContent='Casilla de descanso. Siguiente turno.';setTimeout(endTurn,420)}
 function startQuestion(deck,chainDepth=0){const bank=activeQuestionBank(),q=pickQueued(bank,'questionQueue','questionQueueSize','lastQuestionIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'question',chainDepth},'question');selectedAnswer=null;tone('question');saveGame();showQuestion()}
-function startCase(deck,chainDepth=0){const bank=activeCaseBank(),q=pickQueued(bank,'caseQueue','caseQueueSize','lastCaseIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'case',chainDepth},'case');selectedAnswer=null;tone('case');saveGame();showQuestion()}
+function startCase(deck,chainDepth=0){const bank=activeCaseBank();if(!bank.length&&state?.module==='personalizado')return startQuestion(deck,chainDepth);const q=pickQueued(bank,'caseQueue','caseQueueSize','lastCaseIndex');if(!q)return endTurn();pendingQuestion=randomizePresentedItem({...q,kind:'case',chainDepth},'case');selectedAnswer=null;tone('case');saveGame();showQuestion()}
 function renderQuestionCharacter(mode='neutral'){
   const p=currentPlayer();if(!p)return;
   const ch=CHARACTERS[p.character]||CHARACTERS[0],persona=personaFor(p.character);
@@ -774,7 +867,7 @@ function tone(kind='neutral'){
 }
 function saveGame(){if(state)localStorage.setItem(STORAGE_KEY,JSON.stringify(state));resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY)}
 function migrate(){if(localStorage.getItem(STORAGE_KEY))return;const old=localStorage.getItem('ortopediaGameV05');if(!old)return;try{const s=JSON.parse(old);if(!s.players?.length)return;s.version=10;s.players=s.players.slice(0,5);s.players.forEach((p,i)=>{p.position=Math.min(99,Math.round((p.position||0)/38*100));p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null});s.usedQuestionIds=s.usedQuestionIds||[];s.usedCaseIds=s.usedCaseIds||[];s.current=Math.min(s.current||0,s.players.length-1);s.mode=s.players.some(p=>p.isComputer)?'computer':'local';s.locked=false;localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}catch{}}
-function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null;p.quizStats=p.quizStats||{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.difficulty=state.difficulty||'all';state.mode=state.players.some(p=>p.isComputer)?'computer':'local';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();if(isComputerTurn()){statusText.textContent=`Partida recuperada. 🤖 ${currentPlayer().name} continúa automáticamente.`;scheduleComputerTurn(650)}else statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
+function loadGame(){try{state=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!state?.players?.length)return;state.players=state.players.slice(0,5);state.players.forEach((p,i)=>{p.character=Math.min(CHARACTERS.length-1,typeof p.character==='number'?p.character:i%CHARACTERS.length);p.color=CHARACTERS[p.character].color;p.skipTurns=p.skipTurns||0;p.skipReason=p.skipReason||'';p.jailVisits=p.jailVisits||0;p.isComputer=!!p.isComputer;p.aiLevel=p.isComputer?(p.aiLevel||'medium'):null;p.quizStats=p.quizStats||{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}});state.usedQuestionIds=state.usedQuestionIds||[];state.usedCaseIds=state.usedCaseIds||[];state.module=state.module||'ortopedia_general';state.selectedAreas=Array.isArray(state.selectedAreas)?state.selectedAreas:[];state.difficulty=state.difficulty||'all';state.mode=state.players.some(p=>p.isComputer)?'computer':'local';state.locked=false;ensureRandomQueues(false);showScreen($('game'));buildBoard();render();startBackgroundMusic();if(isComputerTurn()){statusText.textContent=`Partida recuperada. 🤖 ${currentPlayer().name} continúa automáticamente.`;scheduleComputerTurn(650)}else statusText.textContent=`Partida recuperada. ${state.players[state.current].name}, tira los dos dados.`}catch{localStorage.removeItem(STORAGE_KEY)}}
 function resetGame(){if(!confirm('¿Reiniciar la partida?'))return;clearComputerTimer();stopBackgroundMusic(true);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function playAgain(){$('winnerDialog').close();clearComputerTimer();stopBackgroundMusic(false);localStorage.removeItem(STORAGE_KEY);state=null;showScreen($('setup'));updateGameModeUI()}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -816,9 +909,11 @@ window.handleElCaminoBack=function(){
 playerCount.onchange=()=>{if(!computerSetupEnabled())buildNameInputs();tone('select')};
 if(gameMode)gameMode.onchange=()=>{updateGameModeUI();tone('select')};
 if(aiLevel)aiLevel.onchange=()=>tone('select');
-if(gameModule)gameModule.onchange=()=>tone('select');
+if(gameModule)gameModule.onchange=()=>{tone('select');renderAreaPicker()};
 if(gameDifficulty)gameDifficulty.onchange=()=>tone('select');
-$('chooseCharactersBtn').onclick=()=>{tone('ui');beginCharacterSelection()};
+$('randomAreasBtn').onclick=chooseRandomAreas;
+$('clearAreasBtn').onclick=clearAreas;
+$('chooseCharactersBtn').onclick=()=>{if(customModeEnabled()&&!setupSelectedAreas.length){renderAreaPicker();return}tone('ui');beginCharacterSelection()};
 $('pickerNextBtn').onclick=()=>{tone('ui');pickerNext()};
 $('pickerBackBtn').onclick=()=>{tone('ui');pickerBack()};
 resumeBtn.onclick=()=>{tone('ui');loadGame()};
@@ -853,4 +948,4 @@ document.addEventListener('visibilitychange',()=>{
 });
 const requestedModule=new URLSearchParams(location.search).get('module');
 if(gameModule&&requestedModule&&[...gameModule.options].some(o=>o.value===requestedModule))gameModule.value=requestedModule;
-migrate();updateGameModeUI();buildBoard();updateSoundButton();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+migrate();updateGameModeUI();renderAreaPicker();buildBoard();updateSoundButton();resumeBtn.hidden=!localStorage.getItem(STORAGE_KEY);if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
