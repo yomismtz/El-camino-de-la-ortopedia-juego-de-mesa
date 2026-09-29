@@ -45,7 +45,8 @@
       <div class="setup-form">
         <label class="module-selector">Módulo de preguntas
           <select id="gameModule">
-            <option value="fundamentos_oclusion" selected>Fundamentos de la oclusión · 100 preguntas + 30 casos</option>
+            <option value="personalizado" selected>🎯 Juego personalizado · elige hasta 5 áreas</option>
+            <option value="fundamentos_oclusion">Fundamentos de la oclusión · 100 preguntas + 30 casos</option>
             <option value="primer_parcial">🎯 Juega y aprueba · 200 reactivos</option>
             <option value="nomenclatura_etimologia">🔤 Nomenclatura y etimología · 100 preguntas</option>
             <option value="fisiologia_funcion">Fisiología + Alteraciones de la función · 100 preguntas + 60 casos</option>
@@ -55,6 +56,18 @@
             <option value="ortopedia_general">Ortopedia / banco general</option>
           </select>
         </label>
+        <section id="areaPickerPanel" class="area-picker-panel">
+          <div class="area-picker-head">
+            <div><span class="eyebrow">JUEGO PERSONALIZADO</span><h3>Elige qué quieres practicar</h3><p>Selecciona entre 1 y 5 áreas. Las preguntas y los casos clínicos se mezclarán respetando tu selección.</p></div>
+            <strong id="areaSelectionCount">0/5</strong>
+          </div>
+          <div class="area-picker-actions">
+            <button id="randomAreasBtn" type="button" class="tiny-btn">🎲 Elegir 5 al azar</button>
+            <button id="clearAreasBtn" type="button" class="tiny-btn">Limpiar</button>
+          </div>
+          <div id="areaPickerGroups" class="area-picker-groups"></div>
+          <div id="areaPoolSummary" class="area-pool-summary">Selecciona al menos un área.</div>
+        </section>
         <label class="mode-selector">Modo de juego
           <select id="gameMode">
             <option value="local" selected>Jugadores locales</option>
@@ -242,6 +255,7 @@
 </dialog>
 <script src="i18n.js"></script>
 <script src="learning-tools.js"></script>
+<script src="area-classifier.js"></script>
 <script src="accessibility.js"></script>
 <script src="primer-parcial-questions.js"></script>
 <script src="nomenclatura-etimologia-questions.js"></script>
