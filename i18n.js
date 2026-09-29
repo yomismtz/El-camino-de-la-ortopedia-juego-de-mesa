@@ -49,6 +49,14 @@
     'Hábitos y parafunciones · 100 preguntas + 60 casos':'Habits and parafunctions · 100 questions + 60 cases',
     'Cefalometría de Steiner · 100 preguntas + 60 casos':'Steiner cephalometrics · 100 questions + 60 cases',
     'Ortopedia / banco general':'Orthopedics / general bank',
+    'Fundamentos de la oclusión':'Fundamentals of occlusion',
+    'Fisiología + función':'Physiology + function',
+    'Fisiología + Alteraciones de la función':'Physiology + Functional alterations',
+    'Crecimiento y desarrollo':'Growth and development',
+    'Crecimiento y desarrollo craneofacial':'Craniofacial growth and development',
+    'Hábitos y parafunciones':'Habits and parafunctions',
+    'Cefalometría de Steiner':'Steiner cephalometrics',
+    'Juega y aprueba el primer parcial':'Play and pass the first midterm',
     'Modo de juego':'Game mode',
     'Jugadores locales':'Local players',
     'Contra la computadora 🤖':'Against the computer 🤖',
@@ -105,6 +113,17 @@
     'Equipo descompuesto':'Broken equipment',
     'Victoria':'Victory',
     'Jugar otra vez':'Play again',
+    'Correcta · permaneces en tu casilla':'Correct · stay on your space',
+    'Incorrecta · retrocedes 1 casilla':'Incorrect · move back 1 space',
+    'Excelente · avanzas 2 casillas':'Excellent · move forward 2 spaces',
+    'Buena · avanzas 1 casilla':'Good · move forward 1 space',
+    'Tiempo terminado':'Time is up',
+    '⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla':'⏱ Time is up · incorrect answer · move back 1 space',
+    'La computadora continúa…':'The computer continues…',
+    'Continúa el recorrido.':'Continue along the path.',
+    'Revisa el razonamiento clínico.':'Review the clinical reasoning.',
+    'Se agotó el tiempo. Revisa la respuesta correcta antes de continuar.':'Time is up. Review the correct answer before continuing.',
+    'Se agotó el tiempo. Revisa el razonamiento clínico antes de continuar.':'Time is up. Review the clinical reasoning before continuing.',
 
     'MODO EXAMEN':'EXAM MODE',
     'Evalúa lo aprendido sin pistas inmediatas.':'Assess what you learned without immediate hints.',
@@ -179,7 +198,14 @@
     [/^Disponibles: (\d+) preguntas\.$/,'Available: $1 questions.'],
     [/^(\d+) de (\d+) correctas$/,'$1 of $2 correct'],
     [/^Casilla (\d+)$/,'Space $1'],
-    [/^Pregunta (\d+)$/,'Question $1']
+    [/^Pregunta (\d+)$/,'Question $1'],
+    [/^(.+), tira los dos dados\.$/,'$1, roll the two dice.'],
+    [/^🤖 (.+) está pensando…$/,'🤖 $1 is thinking…'],
+    [/^Partida recuperada\. (.+), tira los dos dados\.$/,'Game restored. $1, roll the two dice.'],
+    [/^Partida recuperada\. 🤖 (.+) continúa automáticamente\.$/,'Game restored. 🤖 $1 continues automatically.'],
+    [/^(.+): tirar dados$/,'$1: roll dice'],
+    [/^🤖 (.+): juega automáticamente$/,'🤖 $1: plays automatically'],
+    [/^(.+) de (\d+) respuestas correctas \((\d+)%\)\.$/,'$1: $2 correct answers ($3%).']
   ];
 
   const attrMap={
