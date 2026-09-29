@@ -390,7 +390,19 @@ function runComputerQuestion(){
 }
 function confirmAnswer(){if(selectedAnswer===null||!pendingQuestion)return;stopTimer();const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});let delta=0,heading='',detail='',snd='error';if(pendingQuestion.kind==='question'){const ok=selectedAnswer===pendingQuestion.correct;opts[pendingQuestion.correct]?.classList.add('correct');if(ok){heading='Correcta · permaneces en tu casilla';snd='correct'}else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.explanation||'Continúa el recorrido.'}else{const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');if(grade==='excellent'){delta=2;heading='Excelente · avanzas 2 casillas';snd='excellent'}else if(grade==='good'){delta=1;heading='Buena · avanzas 1 casilla';snd='correct'}else{delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.feedback?.[selectedAnswer]||'Revisa el razonamiento clínico.'}tone(snd);pendingQuestion.resultDelta=delta;$('feedback').hidden=false;$('feedback').innerHTML=`<strong>${esc(heading)}</strong><span>${esc(detail)}</span>`;$('confirmAnswerBtn').hidden=true;$('continueBtn').hidden=false}
 async function continueAfterQuestion(){stopTimer();const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;pendingQuestion=null;questionDialog.close();if(!d)return endTurn();await move(d);return resolveLanding(depth+1)}
-function startTimer(){if(timer)return;timerLeft=30;$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);if(timerLeft>0&&timerLeft<=5)tone('tick');if(timerLeft<=0){stopTimer();tone('alarm');$('timerBtn').textContent='Tiempo terminado'}},1000)}
+function expireQuestionTimer(){
+  if(!pendingQuestion||!questionDialog?.open)return;
+  stopTimer();tone('alarm');timerLeft=0;$('timerDisplay').textContent='0';$('timerBtn').textContent='Tiempo terminado';$('timerBtn').disabled=true;
+  const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
+  if(pendingQuestion.kind==='question')opts[pendingQuestion.correct]?.classList.add('correct');
+  pendingQuestion.resultDelta=-1;selectedAnswer=null;
+  const detail=pendingQuestion.kind==='question'
+    ?(pendingQuestion.explanation||'Se agotó el tiempo. Revisa la respuesta correcta antes de continuar.')
+    :(pendingQuestion.feedback?.find(Boolean)||'Se agotó el tiempo. Revisa el razonamiento clínico antes de continuar.');
+  $('feedback').hidden=false;$('feedback').innerHTML='<strong>⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla</strong><span>'+esc(detail)+'</span>';
+  $('confirmAnswerBtn').hidden=true;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=false;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar'
+}
+function startTimer(){if(timer||!pendingQuestion)return;timerLeft=30;$('timerDisplay').textContent='30';$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);if(timerLeft>0&&timerLeft<=5)tone('tick');if(timerLeft<=0)expireQuestionTimer()},1000)}
 function stopTimer(){if(timer){clearInterval(timer);timer=null}}
 function movement(type,delta,depth=0){const m=RULE_META[type];tone(type);showEvent(m.title,m.message,m.icon,async()=>{await move(delta);return resolveLanding(depth+1)})}
 function addSkipTurns(turns,reason){const p=state.players[state.current];p.skipTurns=(p.skipTurns||0)+turns;p.skipReason=reason||p.skipReason||'Evento';render()}
