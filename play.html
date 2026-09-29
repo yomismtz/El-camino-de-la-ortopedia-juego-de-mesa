@@ -10,6 +10,7 @@
   <meta name="description" content="El Camino Dental: juego educativo con tablero espiral de 100 casillas, preguntas, casos clínicos y Modo Docente.">
   <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles-v10.css">
+    <link rel="stylesheet" href="ui-polish.css">
 
 </head>
 <body>
@@ -120,8 +121,9 @@
           <div class="board-decoration deco-a">🌿</div><div class="board-decoration deco-b">🌸</div><div class="board-decoration deco-c">🪴</div>
           <div class="goal"><span>🦷</span><strong>META</strong><b>100</b></div>
         </div>
+        <details class="legend-panel"><summary>⌄ Ver significado de casillas</summary>
         <div class="legend">
-          <span><i class="legend-dot question">?</i>Pregunta</span>
+  <span><i class="legend-dot question">?</i>Pregunta</span>
           <span><i class="legend-dot case">📋</i>Caso</span>
           <span><i class="legend-dot advance1">+1</i>Avanza</span>
           <span><i class="legend-dot advance2">+2</i>Tratamiento</span>
@@ -134,6 +136,7 @@
           <span><i class="legend-dot jail">🔒</i>Cárcel</span>
           <span><i class="legend-dot equipment">🛠</i>Equipo</span>
         </div>
+      </details>
       </section>
 
       <aside class="side-stack">
@@ -209,6 +212,7 @@
 <dialog id="winnerDialog" class="modal">
   <div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p><button id="playAgainBtn" class="btn primary">Jugar otra vez</button></div>
 </dialog>
+<script src="i18n.js"></script>
 <script src="primer-parcial-questions.js"></script>
 <script src="questions.js"></script>
 <script src="fundamentos-oclusion.js"></script>
