@@ -196,7 +196,7 @@
     $('resultSummary').textContent=correct+' de '+exam.count+' correctas · '+diff+' · sin retroalimentación durante el examen.';
     const partialFocus=exam.module==='primer_parcial';
     $('topicSection').classList.toggle('partial-topic-focus',partialFocus);
-    $('topicResultsTitle').textContent=partialFocus?'📚 Resultado del primer parcial por materia':'Desempeño por tema';
+    $('topicResultsTitle').textContent=partialFocus?'📚 Resultados de Juega y aprueba por materia':'Desempeño por tema';
     $('topicResultsLead').hidden=!partialFocus;
     const topicResults=$('topicResults');topicResults.innerHTML='';
     [...topicMap.entries()].sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)||a[0].localeCompare(b[0])).forEach(([topic,stat])=>{
