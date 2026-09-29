@@ -1,4 +1,4 @@
-name: Build Play Store 3.7.2 Complete Symbols
+name: Build Play Store 3.7.3 Complete Symbols
 on:
   workflow_dispatch:
   push:
@@ -48,7 +48,7 @@ jobs:
           cp questions*.js cases*.js fundamentos-oclusion.js fundamentos-casos.js \
              steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js \
              fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
-             crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
+             crecimiento-desarrollo-cases.js habitos-parafunciones-*.js primer-parcial-questions.js www/
           cp -r brand www/
 
       - name: Configure permanent package
@@ -81,7 +81,7 @@ jobs:
           extern "C" JNIEXPORT jint JNICALL
           Java_com_yomismtz_elcaminodental_MainActivity_nativeBuildMarker(
               JNIEnv*, jobject) {
-            return 372;
+            return 373;
           }
           CPP
 
@@ -113,8 +113,8 @@ jobs:
 
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
-          g=re.sub(r'versionCode\s+\d+','versionCode 39',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.2"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 40',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.3"',g)
           g=g.replace('minifyEnabled false','minifyEnabled true')
           if 'minifyEnabled true' not in g:
               g=g.replace('release {','release {\n            minifyEnabled true',1)
@@ -165,13 +165,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p release-files
-          cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.2-unsigned.aab
+          cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.3-unsigned.aab
           test -s android/app/build/outputs/mapping/release/mapping.txt
-          cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.2-retrace-mapping.txt
+          cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.3-retrace-mapping.txt
 
           SYMBOL_ZIP=$(find android/app/build/outputs/native-debug-symbols -type f -name 'native-debug-symbols.zip' 2>/dev/null | head -1 || true)
           if [ -n "$SYMBOL_ZIP" ]; then
-            cp "$SYMBOL_ZIP" release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
+            cp "$SYMBOL_ZIP" release-files/El-Camino-Dental-3.7.3-native-debug-symbols.zip
           else
             python3 - <<'PY'
           from pathlib import Path
@@ -186,7 +186,7 @@ jobs:
               roots=list(Path('android/app/build').rglob('libelcamino_symbols.so'))
           if not roots:
               raise SystemExit('No native .so found for symbols archive')
-          out=Path('release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip')
+          out=Path('release-files/El-Camino-Dental-3.7.3-native-debug-symbols.zip')
           seen=set()
           with ZipFile(out,'w',ZIP_DEFLATED) as z:
               for p in roots:
@@ -202,13 +202,13 @@ jobs:
           PY
           fi
 
-          test -s release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
-          unzip -l release-files/El-Camino-Dental-3.7.2-native-debug-symbols.zip
+          test -s release-files/El-Camino-Dental-3.7.3-native-debug-symbols.zip
+          unzip -l release-files/El-Camino-Dental-3.7.3-native-debug-symbols.zip
 
-          printf '3.7.2\n' > release-files/NOMBRE-DE-LA-VERSION.txt
+          printf '3.7.3\n' > release-files/NOMBRE-DE-LA-VERSION.txt
           cat > release-files/DETALLES-DE-VERSION.txt <<'EOF'
-          Nombre de la versión: 3.7.2
-          Código de versión: 39
+          Nombre de la versión: 3.7.3
+          Código de versión: 40
           Nombre del paquete: com.yomismtz.elcaminodental
           Target SDK: 36
           ReTrace: generado por R8 para esta misma compilación
@@ -219,6 +219,6 @@ jobs:
       - name: Upload complete Play Store set
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-3.7.2-Complete
+          name: ElCaminoDental-3.7.3-Complete
           path: release-files/
           if-no-files-found: error
