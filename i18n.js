@@ -319,6 +319,7 @@
     'Sonido y música apagados':'Sound and music off',
     '1. Elige qué practicar':'1. Choose what to practice',
     'Selecciona el módulo, la dificultad y los jugadores. Tu progreso adaptativo prioriza los temas que necesiten más repaso.':'Select the module, difficulty, and players. Your adaptive progress prioritizes the topics that need more review.',
+    'En Juego personalizado selecciona de 1 a 5 áreas, además de dificultad y jugadores. El sistema mezcla preguntas y casos clínicos de esas áreas y prioriza lo que necesites repasar.':'In Custom game, select 1 to 5 areas, plus difficulty and players. The system mixes questions and clinical cases from those areas and prioritizes what you need to review.',
     '2. Elige tu personaje':'2. Choose your character',
     'Cada jugador toma un personaje distinto. Tu favorito queda preseleccionado la próxima vez, pero puedes cambiarlo cuando quieras.':'Each player chooses a different character. Your favorite is preselected next time, but you can change it whenever you want.',
     '3. Tira los dos dados':'3. Roll both dice',
