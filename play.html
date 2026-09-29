@@ -23,6 +23,8 @@
     </a>
     <div class="top-actions">
       <button id="soundBtn" class="icon-btn" aria-label="Apagar sonidos y música" title="Sonido y música activados">🔊</button>
+      <button id="characterBookBtn" class="icon-btn" aria-label="Conoce a los personajes" title="Conoce a los personajes">🎭</button>
+      <button id="tutorialBtn" class="icon-btn" aria-label="Tutorial" title="Tutorial">💡</button>
       <button id="rulesBtn" class="icon-btn" aria-label="Reglas">📖</button>
       <a class="icon-btn link-btn" href="exam.html" aria-label="Modo Examen">📝</a>
       <a class="icon-btn link-btn" href="teacher.html" aria-label="Modo Docente">🎓</a>
@@ -99,6 +101,7 @@
         <h1 id="pickerTitle">Elige tu personaje</h1>
         <p id="pickerHint"></p>
       </div>
+      <div id="characterSpotlight" class="character-spotlight" hidden aria-live="polite"></div>
       <div id="characterGrid" class="character-grid"></div>
       <div id="pickedSummary" class="picked-summary"></div>
       <div class="actions centered">
@@ -164,9 +167,26 @@
   </section>
 </main>
 
+<dialog id="characterBookDialog" class="modal">
+  <div class="modal-card character-book-card">
+    <div class="modal-head"><span class="category-pill">🎭 Conoce a los personajes</span><button id="closeCharacterBookBtn" class="tiny-btn">Cerrar</button></div>
+    <p class="character-book-intro">Cada personaje tiene identidad visual, frase y reacción propia. Ninguno modifica la dificultad ni otorga ventajas académicas.</p>
+    <div id="characterBookGrid" class="character-book-grid"></div>
+  </div>
+</dialog>
+
+<dialog id="tutorialDialog" class="modal">
+  <div class="modal-card tutorial-card">
+    <div id="tutorialGuide" class="tutorial-guide"></div>
+    <div class="tutorial-copy"><span id="tutorialStep" class="category-pill">Tutorial</span><h2 id="tutorialTitle"></h2><p id="tutorialText"></p></div>
+    <div class="modal-actions"><button id="skipTutorialBtn" class="btn ghost">Omitir</button><button id="tutorialNextBtn" class="btn primary">Siguiente →</button></div>
+  </div>
+</dialog>
+
 <dialog id="questionDialog" class="modal">
   <form method="dialog" class="modal-card question-card" id="questionForm">
     <div class="modal-head"><span id="questionCategory" class="category-pill">Pregunta</span><span id="questionNumber"></span><span class="timer-wrap">⏱ <b id="timerDisplay">30</b>s</span></div>
+    <div id="questionCharacter" class="question-character" aria-live="polite"></div>
     <h2 id="questionText"></h2>
     <div id="questionMedia" class="question-media" hidden></div>
     <div id="questionOptions" class="options"></div>
@@ -212,7 +232,12 @@
 </dialog>
 
 <dialog id="winnerDialog" class="modal">
-  <div class="modal-card winner-card"><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p><button id="playAgainBtn" class="btn primary">Jugar otra vez</button></div>
+  <div class="modal-card winner-card">
+    <div id="winnerConfetti" class="winner-confetti" aria-hidden="true"></div>
+    <div class="winner-hero"><div id="winnerCharacter" class="winner-character"></div><div><div class="trophy">🏆</div><h2 id="winnerTitle">¡Llegaste a la meta!</h2><p id="winnerText"></p></div></div>
+    <div id="winnerStats" class="winner-stats"></div>
+    <button id="playAgainBtn" class="btn primary">Jugar otra vez</button>
+  </div>
 </dialog>
 <script src="i18n.js"></script>
 <script src="learning-tools.js"></script>
