@@ -1,5 +1,6 @@
 name: Build Play Store 3.7.4 Complete Symbols
 # Translation audit + Play update v41
+# Final translation-audited Play Console update
 # Character experience build final v64
 # Rebuild after nomenclature module
 # Rebuild after 12 character 3D integration
@@ -217,10 +218,10 @@ jobs:
           test -s release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip
           unzip -l release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip
 
-          printf '3.7.3\n' > release-files/NOMBRE-DE-LA-VERSION.txt
+          printf '3.7.4\n' > release-files/NOMBRE-DE-LA-VERSION.txt
           cat > release-files/DETALLES-DE-VERSION.txt <<'EOF'
-          Nombre de la versión: 3.7.3
-          Código de versión: 40
+          Nombre de la versión: 3.7.4
+          Código de versión: 41
           Nombre del paquete: com.yomismtz.elcaminodental
           Target SDK: 36
           ReTrace: generado por R8 para esta misma compilación
