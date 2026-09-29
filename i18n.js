@@ -134,6 +134,8 @@
     '📱 Adaptado a celular':'📱 Mobile friendly',
     'Módulo':'Module',
     'Dificultad':'Difficulty',
+    '🧠 Adaptativo: los temas que más falles aparecerán antes en futuras preguntas.':'🧠 Adaptive: topics you miss more often will appear earlier in future questions.',
+    '🧠 Adaptativo: los temas con más errores reciben mayor prioridad en futuros exámenes.':'🧠 Adaptive: topics with more errors receive higher priority in future exams.',
     'Todas las dificultades':'All difficulties',
     'Número de preguntas':'Number of questions',
     '20 preguntas':'20 questions','40 preguntas · simulación de una versión':'40 questions · version simulation','50 preguntas':'50 questions','100 preguntas':'100 questions','200 preguntas · banco completo':'200 questions · full bank',
