@@ -229,3 +229,4 @@ jobs:
           name: ElCaminoDental-3.7.3-Complete
           path: release-files/
           if-no-files-found: error
+\n# Rebuild after final habits syntax fix\n
