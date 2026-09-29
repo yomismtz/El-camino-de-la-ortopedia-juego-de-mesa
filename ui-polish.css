@@ -803,3 +803,92 @@ html.a11y-reduce-motion *,html.a11y-reduce-motion *:before,html.a11y-reduce-moti
   .pawn{top:170px!important}
 }
 
+
+
+/* v3.8 personajes activos */
+.character-spotlight{
+  display:grid;grid-template-columns:minmax(180px,270px) minmax(0,1fr);align-items:center;gap:24px;
+  margin:14px auto 18px;padding:18px 22px;max-width:860px;border-radius:28px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 10%,white),#fff 62%);
+  border:1px solid color-mix(in srgb,var(--accent) 30%,#dceaf1);
+  box-shadow:0 18px 44px rgba(23,52,92,.10);overflow:hidden;position:relative
+}
+.character-spotlight[hidden]{display:none}
+.character-spotlight:after{content:"";position:absolute;right:-90px;top:-110px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 14%,transparent),transparent 68%);pointer-events:none}
+.spotlight-art{min-height:250px;display:grid;place-items:end center}
+.spotlight-character{width:220px;height:275px;filter:drop-shadow(0 18px 18px rgba(23,52,92,.16));animation:spotlightIn .4s cubic-bezier(.2,.8,.2,1)}
+.spotlight-copy{position:relative;z-index:1}.spotlight-copy h2{font-size:clamp(30px,4vw,46px);margin:4px 0 3px;letter-spacing:-.04em}.spotlight-copy>b{color:var(--accent)}.spotlight-copy p{color:#667b90;max-width:52ch}.spotlight-copy blockquote{margin:14px 0 0;padding:11px 14px;border-left:4px solid var(--accent);background:#fff;border-radius:0 14px 14px 0;font-weight:850;color:#294c70}
+@keyframes spotlightIn{from{opacity:.25;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+
+.character-card{min-height:330px!important}
+.character-card.selected{z-index:3;transform:translateY(-7px) scale(1.025)!important}
+.character-card.selected .pick-character{animation:selectedIdle 2.4s ease-in-out infinite}
+@keyframes selectedIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.character-card.taken{filter:grayscale(.7);opacity:.38!important}
+
+.question-character{
+  display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:center;
+  margin:8px 0 4px;padding:8px 12px;border-radius:18px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent,#2f8df5) 9%,white),#fff);
+  border:1px solid color-mix(in srgb,var(--accent,#2f8df5) 20%,#dceaf1)
+}
+.question-character-art{height:88px;display:grid;place-items:center;overflow:hidden;border-radius:16px}
+.question-companion{width:78px;height:98px;transform-origin:50% 85%}
+.question-character-art.success .question-companion{animation:answerCelebrate .75s cubic-bezier(.2,.8,.2,1)}
+.question-character-art.error .question-companion{animation:answerThink .75s ease}
+.question-character-speech b,.question-character-speech span{display:block}.question-character-speech b{color:var(--accent,#2f8df5);font-size:13px}.question-character-speech span{font-weight:850;color:#294c70;margin-top:3px}
+@keyframes answerCelebrate{0%,100%{transform:none}35%{transform:translateY(-8px) rotate(-3deg) scale(1.05)}65%{transform:translateY(-2px) rotate(2deg)}}
+@keyframes answerThink{0%,100%{transform:none}35%{transform:translateX(-3px) rotate(-2deg)}70%{transform:translateX(3px) rotate(2deg)}}
+
+.turn-callout{grid-template-columns:58px minmax(0,1fr)!important;min-height:76px}
+.turn-avatar{width:56px!important;height:56px!important;overflow:hidden!important;padding:0!important}
+.turn-character{width:48px;height:60px;transform:scale(1.24);transform-origin:50% 22%}
+.turn-copy small{line-height:1.25!important}
+
+.board-token{overflow:hidden!important}
+.token-face{display:block;width:100%;height:100%;overflow:hidden;border-radius:50%}
+.token-character{display:block;width:100%!important;height:125%!important;transform:translateY(-2px) scale(1.62);transform-origin:50% 16%}
+.board-token.active .token-character{transform:translateY(-2px) scale(1.72)}
+
+.character-avatar{overflow:hidden!important;padding:0!important}
+.mini-character{width:36px!important;height:45px!important;transform:scale(1.5);transform-origin:50% 18%}
+.game-playing .mini-character{width:27px!important;height:34px!important}
+
+.character-book-card{max-width:980px!important}
+.character-book-intro{color:#65788d;margin:8px 0 18px}
+.character-book-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-height:68vh;overflow:auto;padding:3px}
+.character-book-item{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:center;padding:10px;border-radius:18px;border:1px solid #dfeaf0;background:#fff;box-shadow:0 6px 16px rgba(23,52,92,.05)}
+.character-book-item .book-art{width:90px;height:112px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:color-mix(in srgb,var(--accent) 7%,white)}
+.book-character{width:84px;height:105px}
+.character-book-item h3{margin:0 0 2px;color:#17345c}.character-book-item b{font-size:11px;color:var(--accent)}.character-book-item p{font-size:11px;color:#677b90;margin:5px 0}.character-book-item small{font-weight:850;color:#385877}
+
+.tutorial-card{max-width:760px!important;display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;align-items:center}
+.tutorial-guide{min-height:260px;display:grid;place-items:end center;background:linear-gradient(180deg,#eef8ff,#fff);border-radius:22px;overflow:hidden}
+.tutorial-character{width:195px;height:244px;animation:tutorialGuide 2.7s ease-in-out infinite}
+.tutorial-copy h2{font-size:34px;letter-spacing:-.03em;margin:12px 0 8px}.tutorial-copy p{font-size:16px;line-height:1.55;color:#5f7489}
+.tutorial-card .modal-actions{grid-column:1/-1}
+@keyframes tutorialGuide{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+.winner-card{max-width:820px!important;position:relative;overflow:hidden}
+.winner-hero{display:grid;grid-template-columns:260px minmax(0,1fr);align-items:center;gap:20px;text-align:left}
+.winner-character{height:290px;display:grid;place-items:end center;border-radius:28px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent,#f3b423) 10%,white),#fff);overflow:hidden}
+.winner-character-sprite{width:230px;height:288px;animation:winnerBounce 1.25s ease-in-out infinite}
+.winner-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0}
+.winner-stats>div{padding:10px 8px;border-radius:14px;background:#f5f9fc;border:1px solid #e1ebf0;text-align:center;min-width:0}.winner-stats b,.winner-stats span{display:block}.winner-stats b{font-size:18px;color:#17345c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.winner-stats span{font-size:10px;color:#73869a;margin-top:3px}
+@keyframes winnerBounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-9px) rotate(-1.5deg)}}
+.winner-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.winner-confetti i{position:absolute;left:calc((var(--i) * 37) % 100 * 1%);top:-15px;width:8px;height:14px;border-radius:3px;background:hsl(calc(var(--i)*47),75%,58%);animation:confettiFall calc(2.2s + (var(--i) % 5)*.18s) linear infinite;animation-delay:calc((var(--i) % 8)*-.19s);transform:rotate(calc(var(--i)*19deg))}
+@keyframes confettiFall{to{transform:translateY(620px) rotate(620deg)}}
+
+@media(max-width:760px){
+  .character-spotlight{grid-template-columns:130px minmax(0,1fr);gap:12px;padding:12px}.spotlight-art{min-height:165px}.spotlight-character{width:128px;height:160px}.spotlight-copy h2{font-size:26px}.spotlight-copy p{font-size:12px}.spotlight-copy blockquote{font-size:11px;padding:8px 10px}
+  .character-book-grid{grid-template-columns:1fr 1fr}.character-book-item{grid-template-columns:70px minmax(0,1fr)}.character-book-item .book-art{width:66px;height:82px}.book-character{width:62px;height:78px}
+  .tutorial-card{grid-template-columns:125px minmax(0,1fr);gap:12px}.tutorial-guide{min-height:175px}.tutorial-character{width:125px;height:156px}.tutorial-copy h2{font-size:24px}.tutorial-copy p{font-size:13px}
+  .winner-hero{grid-template-columns:150px minmax(0,1fr)}.winner-character{height:190px}.winner-character-sprite{width:150px;height:188px}.winner-stats{grid-template-columns:repeat(2,1fr)}
+  .question-character{grid-template-columns:70px minmax(0,1fr)}.question-character-art{height:68px}.question-companion{width:58px;height:73px}
+}
+@media(max-width:520px){
+  .character-book-grid{grid-template-columns:1fr}
+  .tutorial-card{grid-template-columns:1fr}.tutorial-guide{display:none}
+  .winner-hero{grid-template-columns:1fr;text-align:center}.winner-character{height:210px}.winner-character-sprite{width:165px;height:206px}
+}
