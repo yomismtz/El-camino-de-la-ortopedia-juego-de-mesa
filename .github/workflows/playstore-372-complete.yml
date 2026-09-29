@@ -3,6 +3,7 @@ name: Build Play Store 3.7.5 Complete Symbols
 # Final translation-audited Play Console update
 # Personalized areas build v42
 # Final custom study-area build v42
+# Stability audit final build
 # Character experience build final v64
 # Rebuild after nomenclature module
 # Rebuild after 12 character 3D integration
@@ -65,6 +66,34 @@ jobs:
              fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
              crecimiento-desarrollo-cases.js habitos-parafunciones-*.js primer-parcial-questions.js www/
           cp -r brand www/
+
+      - name: Audit bundled JavaScript and HTML references
+        shell: bash
+        run: |
+          set -e
+          for f in www/*.js; do
+            node --check "$f" >/dev/null
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          class P(HTMLParser):
+              def __init__(self): super().__init__(); self.scripts=[]
+              def handle_starttag(self, tag, attrs):
+                  if tag!='script': return
+                  d=dict(attrs)
+                  if d.get('src'): self.scripts.append(d['src'].split('?')[0])
+          root=Path('www')
+          missing=[]
+          for html in root.glob('*.html'):
+              p=P(); p.feed(html.read_text(errors='ignore'))
+              for src in p.scripts:
+                  if src.startswith(('http://','https://')): continue
+                  if not (html.parent/src).exists(): missing.append((html.name,src))
+          if missing:
+              raise SystemExit('Missing script references: '+repr(missing))
+          print('JS syntax and HTML script references: OK')
+          PY
 
       - name: Configure permanent package
         shell: bash
