@@ -926,3 +926,49 @@ html.a11y-reduce-motion *,html.a11y-reduce-motion *:before,html.a11y-reduce-moti
  .area-choice-grid{grid-template-columns:1fr}
  .area-choice{grid-template-columns:30px minmax(0,1fr)}
 }
+
+
+/* v3.7.6 Android landscape / touch hardening */
+.top-actions{min-width:0;max-width:calc(100vw - 270px);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:3px 2px;overscroll-behavior-x:contain}
+.top-actions::-webkit-scrollbar{display:none}
+.language-switcher{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;min-height:44px;padding:4px 6px;border-radius:999px;background:#fff;box-shadow:0 7px 18px rgba(44,76,126,.14);font-weight:900}
+.language-switcher span{font-size:16px}
+.language-switcher select{width:48px;min-height:34px;border:0;background:transparent;color:#173d69;font:800 12px/1 system-ui;outline:none}
+.exit-game-btn{flex:0 0 auto}
+.game-playing .exit-game-btn{display:grid!important}
+.icon-btn,.tiny-btn,.btn,.option{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.game-playing .topbar{padding-left:max(5px,env(safe-area-inset-left));padding-right:max(5px,env(safe-area-inset-right))}
+.game-playing .game-screen.active{padding-bottom:env(safe-area-inset-bottom)}
+.modal-card{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain}
+.question-card{display:flex;flex-direction:column}
+.question-card .modal-head{flex:0 0 auto;position:sticky;top:-24px;z-index:8;background:#fff;padding:10px 0 7px}
+.question-card .modal-actions{position:sticky;bottom:-24px;z-index:8;background:#fff;padding:9px 0 4px}
+.option{min-height:52px}
+.btn{min-height:44px}.tiny-btn{min-height:40px}
+@media (orientation:landscape) and (max-height:600px){
+  .game-playing .top-actions{max-width:calc(100vw - 155px);gap:3px}
+  .game-playing .language-switcher{min-height:34px;padding:2px 4px}
+  .game-playing .language-switcher select{min-height:28px;width:43px;font-size:11px}
+  .game-playing .modal{max-width:min(920px,97vw)}
+  .game-playing .modal-card{max-height:94dvh;padding:12px 14px;border-radius:18px}
+  .game-playing .question-card .modal-head{top:-12px;padding:6px 0}
+  .game-playing .question-card .modal-actions{bottom:-12px;padding:6px 0 2px}
+  .game-playing .question-card h2{font-size:clamp(18px,3.8vh,25px);margin:7px 0}
+  .game-playing .question-character{grid-template-columns:54px minmax(0,1fr);margin:3px 0;padding:4px 8px}
+  .game-playing .question-character-art{height:50px}.game-playing .question-companion{width:43px;height:54px}
+  .game-playing .question-character-speech span{font-size:11px}
+  .game-playing .options{gap:6px}
+  .game-playing .option{min-height:44px;padding:7px 9px;border-radius:13px;grid-template-columns:32px 1fr;font-size:12px}
+  .game-playing .option span:first-child{width:29px;height:29px}
+  .game-playing .feedback{margin-top:6px;padding:8px;font-size:11px}
+  .game-playing .modal-actions{margin-top:6px}
+  .game-playing .modal-actions .btn{min-height:40px;padding:8px 12px;font-size:12px}
+}
+@media (orientation:landscape) and (max-height:430px){
+  .game-playing .topbar .brand{min-width:112px}
+  .game-playing .brand-logo{width:108px}
+  .game-playing .top-actions{max-width:calc(100vw - 120px)}
+  .game-playing .icon-btn{width:32px;height:32px;min-width:32px}
+  .game-playing .question-character{display:none}
+  .game-playing .question-card h2{font-size:17px}
+}
