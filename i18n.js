@@ -35,7 +35,7 @@
     '🎲🎲 2 dados · 100 casillas · Meta al centro':'🎲🎲 2 dice · 100 spaces · Goal at the center',
     'Aprender ortopedia dental jugando.':'Learn dentofacial orthopedics by playing.',
     'Forma de 2 a 5 jugadores o equipos. Cada participante elige un personaje distinto y recorre un tablero circular de 100 casillas hasta llegar a la meta.':'Create a game with 2 to 5 players or teams. Each participant chooses a different character and moves through a 100-space circular board to reach the goal.',
-    '🧠 800 preguntas':'🧠 900 questions',
+    '🧠 900 preguntas':'🧠 900 questions',
     '📋 355 casos clínicos':'📋 355 clinical cases',
     '🤖 Vs computadora':'🤖 Vs computer',
     '🎵 Música + efectos':'🎵 Music + effects',
