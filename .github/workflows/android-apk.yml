@@ -77,6 +77,17 @@ jobs:
           for f in habitos-parafunciones-*.js; do node --check "$f"; done
           node --check area-classifier.js
           node --check primer-parcial-questions.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('play.html').read_text()
+          js=Path('app-v10.js').read_text()
+          assert 'id="rulesDialog"' in html, 'Falta el reglamento consultable'
+          assert 'Victoria exacta y rebote en la META' in html, 'Falta regla de rebote'
+          assert 'moveWithFinishBounce' in js, 'Falta lógica de rebote en meta'
+          assert "elcamino:native-pause" in js, 'Falta pausa nativa segura'
+          assert "stopQuestionNarration();" in js and "stopTimer();" in js, 'Falta pausa de narración/cronómetro'
+          print('Android gameplay integrity checks: OK')
+          PY
           test -f brand/logo-el-camino-dental.svg
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
