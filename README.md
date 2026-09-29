@@ -21,14 +21,14 @@ Rutas principales:
 
 ## Estado actual
 
-**Versión 0.5 — visual, multimedia y sitio público.**
+**Versión 3.7 — juego educativo, módulos académicos, multimedia y sitio público.**
 
 Incluye:
 
-- 2 a 6 jugadores locales.
-- Tablero de 37 casillas numeradas + FIN y reglas originales.
-- **100 preguntas** y **60 casos clínicos**.
-- Pantalla de selección de 6 personajes/fichas.
+- 2 a 5 jugadores locales.
+- Tablero de 100 casillas con meta central y reglas educativas.
+- **800 preguntas** y **355 casos clínicos** distribuidos entre el banco general y módulos especializados.
+- Pantalla de selección de 12 personajes/fichas.
 - Temporizador opcional de 30 segundos.
 - Sonidos de interfaz generados mediante Web Audio como respaldo offline.
 - Guardado automático y recuperación de partida mediante `localStorage`.
@@ -82,7 +82,7 @@ play.html                      Juego interactivo
 privacy.html                   Política de Privacidad pública
 PRIVACY.md                     Política de Privacidad del repositorio
 styles.css                     Diseño del juego
-app.js                         Motor del juego v0.5
+app.js                         Motor base del juego
 questions.js                   Banco base de preguntas
 questions-extra-deck*.js       Ampliación hasta 100 preguntas
 cases.js                       Inicializador de casos
