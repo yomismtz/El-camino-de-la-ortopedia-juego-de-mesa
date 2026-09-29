@@ -1,93 +1,106 @@
-# El camino de la ortopedia dental 🎲🦷
+# El Camino Dental 🎲🦷
 
-Versión digital del juego de mesa educativo originalmente desarrollado en PowerPoint por **Mtra. Yomira Salgado Martinez**.
-
-## Sitio web
-
-El proyecto cuenta con una página pública en GitHub Pages con:
-
-- portada oficial del proyecto;
-- acceso directo al juego;
-- explicación de características y reglas;
-- Política de Privacidad pública;
-- enlace al repositorio y canal de contacto mediante Issues.
-
-Rutas principales:
-
-- `index.html` — sitio oficial / landing page.
-- `play.html` — juego interactivo.
-- `privacy.html` — Política de Privacidad pública.
-- `PRIVACY.md` — copia de la política dentro del repositorio.
+Juego educativo digital de odontología y ortopedia dentofacial desarrollado por **Mtra. Yomira Salgado Martinez**.
 
 ## Estado actual
 
-**Versión 3.7 — juego educativo, módulos académicos, multimedia y sitio público.**
+**Versión 3.7 — web/PWA y Android.**
 
-Incluye:
+El proyecto incluye:
 
-- 2 a 5 jugadores locales.
-- Tablero de 100 casillas con meta central y reglas educativas.
-- **800 preguntas** y **355 casos clínicos** distribuidos entre el banco general y módulos especializados.
-- Pantalla de selección de 12 personajes/fichas.
-- Temporizador opcional de 30 segundos.
-- Sonidos de interfaz generados mediante Web Audio como respaldo offline.
-- Guardado automático y recuperación de partida mediante `localStorage`.
-- PWA con orientación horizontal.
-- Caché offline de portada, juego, política de privacidad y bancos educativos.
+- tablero de **100 casillas** y dos dados;
+- partidas de **2 a 5 jugadores**;
+- juego local y contra la computadora;
+- **800 preguntas** integradas al banco académico;
+- **355 casos clínicos** conservados en las fuentes del proyecto; los bancos activos dependen del módulo seleccionado;
+- 12 personajes;
+- selección de módulo, áreas y dificultad;
+- narración de reactivos y cronómetro de 30 segundos coordinado con la voz;
+- Modo Examen y Modo Docente;
+- guardado automático y recuperación de partidas;
+- resumen académico al finalizar;
+- PWA y compilación Android en orientación horizontal;
+- reglamento consultable antes y durante la partida.
+
+## Reglas principales
+
+En cada turno se lanzan dos dados y se avanza la suma. La casilla de llegada debe resolverse.
+
+- **Pregunta:** correcta, conserva la posición; incorrecta o tiempo agotado, retrocede 1.
+- **Caso clínico:** Excelente +2 · Buena +1 · Incorrecta −1.
+- **Excelente diagnóstico:** avanza 1.
+- **Tratamiento concluido:** avanza 2.
+- **Paciente canceló:** retrocede 1.
+- **Expediente perdido:** retrocede 2.
+- **Tratamiento salió mal:** retrocede 3.
+- **Vacaciones, impuestos o equipo descompuesto:** pierde 1 turno.
+- **Demanda:** envía a la cárcel.
+- **Cárcel:** primera visita, pierde 2 turnos; segunda y posteriores, pierde 3.
+
+Los movimientos derivados de preguntas, casos y eventos resuelven también la nueva casilla.
+
+### Victoria exacta y rebote
+
+Solo se gana terminando **exactamente en la casilla 100**.
+
+Si una tirada supera la meta, la ficha llega al 100 y retrocede las casillas sobrantes. La casilla final del rebote se resuelve normalmente.
+
+Ejemplo: desde la casilla 97, una tirada de 8 lleva al jugador hasta 100 y luego 5 casillas hacia atrás, terminando en la 95. Desde 97, una tirada de 3 termina exactamente en 100 y gana.
+
+## Contenido académico
+
+Los 200 reactivos procedentes de las cinco versiones fuente que antes se identificaban internamente como **“Primer parcial / Juega y aprueba”** se conservan como fuente académica, pero **no constituyen un módulo visible independiente**. Sus preguntas se integran al banco general y personalizado según su clasificación.
+
+Los 25 casos derivados de esa fuente se conservan en el repositorio para trazabilidad académica, pero no forman parte del módulo visible eliminado.
+
+Módulos visibles actuales:
+
+- Juego personalizado (1 a 5 áreas).
+- Fundamentos de la oclusión.
+- Nomenclatura y etimología médica.
+- Fisiología + alteraciones de la función.
+- Crecimiento y desarrollo craneofacial.
+- Hábitos y parafunciones.
+- Cefalometría de Steiner.
+- Ortopedia / banco general.
+
+## Android
+
+La compilación Android se genera mediante GitHub Actions con Capacitor. La versión Android fuerza orientación horizontal, mantiene la pantalla activa durante la partida, usa navegación Atrás integrada y guarda el estado cuando la aplicación pasa a segundo plano.
+
+El flujo de APK de prueba genera el artefacto **ElCaminoDental-v3.7**. El repositorio también contiene un flujo independiente para compilaciones destinadas a Play Store.
 
 ## Privacidad
 
-El juego no requiere cuenta, no incluye publicidad ni analítica propia y no envía a un servidor propio los nombres de jugadores, respuestas o progreso. El estado de la partida se almacena localmente en el dispositivo mediante `localStorage`.
+El juego no requiere cuenta, no incluye publicidad ni analítica propia y no envía a un servidor propio los nombres de jugadores, respuestas o progreso. La partida y el contenido del Modo Docente se almacenan localmente en el dispositivo mediante `localStorage`.
 
-La versión web utiliza GitHub Pages. GitHub puede procesar datos técnicos asociados a la visita, incluida la dirección IP, conforme a sus propias políticas de privacidad.
+La versión web utiliza GitHub Pages, cuyo proveedor puede procesar datos técnicos asociados a la visita conforme a sus propias políticas.
 
-Consulte [`PRIVACY.md`](PRIVACY.md) o la página pública `privacy.html`.
+Consulte `PRIVACY.md` o `privacy.html`.
 
-## Multimedia recuperada del PowerPoint
-
-Durante la migración se recuperaron personajes, tarjetas, GIF, 12 MP3, 1 WAV y 1 MP4. También se identificaron los clips asociados a correcto/error/excelente, countdown/alarma, las preguntas 2 y 10 y el video de la pregunta 35.
-
-La versión web pública utiliza efectos sintetizados como respaldo para no depender de binarios externos. El paquete multimedia recuperado se conserva para una compilación local/Android posterior.
-
-## Fidelidad al PowerPoint
-
-Las preguntas 1–36 y los casos C1–C20 conservan el texto, opciones y retroalimentación del archivo fuente. El contenido agregado posteriormente permanece marcado internamente como `origin: "new"`.
-
-Mecánicas originales:
-
-- Pregunta incorrecta: retrocede 1.
-- Caso clínico: Excelente +2 · Buena +1 · Incorrecta −1.
-- Expediente: retrocede 2.
-- Cárcel: pierde 1 turno.
-- Vacaciones: regresa al Inicio.
-- Excelente diagnóstico: avanza 1.
-- Tratamiento concluido: avanza 2.
-- Paciente cancela: retrocede 1.
-
-## Siguiente fase — primera APK
-
-1. Probar una partida completa en navegador y Android horizontal.
-2. Integrar el paquete multimedia recuperado como assets locales cuando sea apropiado.
-3. Integrar Capacitor y crear el proyecto Android.
-4. Añadir icono y pantalla de inicio.
-5. Generar una APK de prueba.
-6. Tras validar, generar APK/AAB firmado.
-
-## Estructura
+## Archivos principales
 
 ```text
-index.html                     Sitio oficial / landing page
-site.css                       Diseño del sitio y páginas legales
-play.html                      Juego interactivo
-privacy.html                   Política de Privacidad pública
-PRIVACY.md                     Política de Privacidad del repositorio
-styles.css                     Diseño del juego
-app.js                         Motor base del juego
-questions.js                   Banco base de preguntas
-questions-extra-deck*.js       Ampliación hasta 100 preguntas
-cases.js                       Inicializador de casos
-cases-deck*.js                 Casos originales y v0.3
-cases-extra-deck*.js           Ampliación hasta 60 casos
+index.html                     Portada pública
+play.html                      Juego y reglamento
+app-v10.js                     Motor activo del juego
+styles-v10.css                 Estilos base del juego
+ui-polish.css                  Ajustes visuales y Android
+character-art.css              Presentación de personajes
+android-navigation.js          Navegación y ciclo de vida Android
+area-classifier.js             Clasificación académica por áreas
+primer-parcial-questions.js    Fuente interna de 200 reactivos integrados
+questions*.js                  Bancos generales de preguntas
+cases*.js                      Bancos de casos clínicos
+exam.html / exam.js            Modo Examen
+teacher.html / teacher.js      Modo Docente
 manifest.webmanifest           Configuración PWA
 sw.js                          Caché offline
+.github/workflows/             Compilaciones y validaciones Android
 ```
+
+## Validación
+
+El flujo Android comprueba sintaxis JavaScript y elementos críticos de jugabilidad antes de construir la APK, incluidos el reglamento consultable, la lógica de rebote en la meta y el manejo seguro de pausa/reanudación.
+
+Las auditorías académicas y de contenido permanecen en el repositorio como registro de revisión y trazabilidad.
