@@ -50,7 +50,7 @@ assert(app.includes('async function moveWithFinishBounce'),'Falta función de re
 assert(app.includes('position===BOARD_END'),'La victoria por dados debe exigir meta exacta');
 assert(app.includes('triggerCell(state.players[state.current].position)'),'La casilla tras movimiento/rebote debe resolverse');
 
-const playerSelect=(html.match(/<select id="playerCount">([\\s\\S]*?)<\\/select>/)||[])[1]||'';
+const playerSelect=(html.match(new RegExp('<select id="playerCount">([\\\\s\\\\S]*?)</select>'))||[])[1]||'';
 const playerOptions=[...playerSelect.matchAll(/<option value="([2-5])"[^>]*>\\s*([2-5]) jugadores<\\/option>/g)].map(x=>Number(x[1]));
 assert.deepStrictEqual(playerOptions,[2,3,4,5],'La configuración debe permitir exactamente 2–5 jugadores');
 assert(html.includes('value="computer"'),'Debe existir modo contra computadora');
