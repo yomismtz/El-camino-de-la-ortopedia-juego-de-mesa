@@ -7,7 +7,7 @@
     fisiologia_funcion:{label:'Fisiología + función',icon:'🫁',get:()=>window.FISIOLOGIA_FUNCION_QUESTIONS||[]},
     crecimiento_desarrollo:{label:'Crecimiento y desarrollo',icon:'🦴',get:()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[]},
     habitos_parafunciones:{label:'Hábitos y parafunciones',icon:'🧠',get:()=>window.HABITOS_PARAFUNCIONES_QUESTIONS||[]},
-    primer_parcial:{label:'Juega y aprueba el primer parcial',icon:'🎯',get:()=>window.PRIMER_PARCIAL_QUESTIONS||[]},
+    primer_parcial:{label:'Juega y aprueba',icon:'🎯',get:()=>window.PRIMER_PARCIAL_QUESTIONS||[]},
     steiner:{label:'Cefalometría de Steiner',icon:'📐',get:()=>window.STEINER_QUESTIONS||[]},
     ortopedia_general:{label:'Ortopedia / banco general',icon:'🦷',get:()=>window.QUESTIONS||[]}
   };
