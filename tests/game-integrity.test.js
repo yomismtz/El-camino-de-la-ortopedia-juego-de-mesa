@@ -70,6 +70,40 @@ for(const stale of ['900 preguntas','2–6 jugadores','38 casillas','37 casillas
   assert(![html,i18n].some(x=>x.includes(stale)),'Texto obsoleto visible: '+stale);
 }
 
+
+const scriptSources=[...html.matchAll(/<script[^>]+src="([^"]+\\.js)"/g)].map(x=>x[1]);
+for(const src of scriptSources)assert(fs.existsSync(src),'play.html referencia un script inexistente: '+src);
+assert.strictEqual(new Set(scriptSources).size,scriptSources.length,'play.html no debe cargar scripts duplicados');
+
+for(const fragment of [
+  "if(r.type==='question')return startQuestion",
+  "if(r.type==='case')return",
+  "if(r.type==='advance1')return movement('advance1',1",
+  "if(r.type==='advance2')return movement('advance2',2",
+  "if(r.type==='back1')return movement('back1',-1",
+  "if(r.type==='back2')return movement('back2',-2",
+  "if(r.type==='back3')return movement('back3',-3",
+  "if(r.type==='vacation')return loseTurnEvent",
+  "if(r.type==='tax')return loseTurnEvent",
+  "if(r.type==='equipment')return loseTurnEvent",
+  "if(r.type==='lawsuit')return lawsuit",
+  "if(r.type==='jail')return jail"
+])assert(app.includes(fragment),'Falta resolución para: '+fragment);
+
+assert(app.includes("p.jailVisits===1?2:3"),'Cárcel debe penalizar 2 turnos la primera visita y 3 después');
+assert(app.includes("const JAIL_CELL=44;"),'Demanda debe poder enviar a cárcel 44');
+assert(app.includes("await move(JAIL_CELL-p.position)"),'La demanda debe mover a la cárcel');
+assert(app.includes("if(depth>=8)"),'Debe existir límite de seguridad para cadenas de eventos');
+assert(app.includes("grade==='excellent'")&&app.includes("delta=2"),'Caso excelente debe avanzar 2');
+assert(app.includes("grade==='good'")&&app.includes("delta=1"),'Caso bueno debe avanzar 1');
+assert(app.includes("delta=-1")&&app.includes("Incorrecta · retrocedes 1 casilla"),'Respuesta incorrecta debe retroceder 1');
+assert(app.includes("timerLeft=30"),'El cronómetro debe iniciar en 30 segundos');
+assert(app.includes("timerLeft>0&&timerLeft<=10"),'Los últimos 10 segundos deben activar urgencia');
+assert(app.includes("if(timerLeft<=0)expireQuestionTimer()"),'El tiempo agotado debe resolver el reactivo');
+assert(app.includes("questionAccuracy:1")&&app.includes("excellent:1"),'IA súper inteligente debe conservar precisión máxima configurada');
+assert(app.includes("if(questionDialog?.open&&pendingQuestion)"),'Reanudación debe reconocer preguntas pendientes');
+assert(app.includes("if(eventDialog?.open)"),'Automatización IA debe poder reanudar eventos pendientes');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
@@ -79,4 +113,5 @@ console.log('✓ Configuración: 2–5 jugadores, computadora y 4 niveles IA');
 console.log('✓ Persistencia: guardado, recuperación y resolución pendiente presentes');
 console.log('✓ Android: pausa segura de narración y cronómetro');
 console.log('✓ UI/documentación: reglamento y textos actuales');
-console.log('Paso 12: pruebas de integridad superadas.');
+console.log('✓ QA flujo: eventos, cárcel, cronómetro, IA y recursos cargados');
+console.log('Paso 13: QA automatizado de versión candidata superado.');
