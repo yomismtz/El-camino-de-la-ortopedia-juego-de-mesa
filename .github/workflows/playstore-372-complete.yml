@@ -1,4 +1,5 @@
 name: Build Play Store 3.7.3 Complete Symbols
+# Rebuild after timer/result corrections
 on:
   workflow_dispatch:
   push:
