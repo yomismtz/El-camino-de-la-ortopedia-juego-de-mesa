@@ -286,7 +286,8 @@ function freshQuestionQueue(pool){
   try{previous=JSON.parse(localStorage.getItem(recentOrderKey())||'[]')}catch{}
   let queue=[],presented=[];
   for(let attempt=0;attempt<12;attempt++){
-    queue=shuffledIndices(pool.length);
+    const adaptive=window.LearningTools?.orderIndices?.(pool,state?.module);
+    queue=Array.isArray(adaptive)&&adaptive.length===pool.length?[...adaptive].reverse():shuffledIndices(pool.length);
     presented=[...queue].reverse().map(i=>String(pool[i]?.id??i));
     const compare=Math.min(previous.length,presented.length,10);
     let same=0;
@@ -388,19 +389,78 @@ function runComputerQuestion(){
     },300)
   },computerThinkDelay(p))
 }
-function confirmAnswer(){if(selectedAnswer===null||!pendingQuestion)return;stopTimer();const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});let delta=0,heading='',detail='',snd='error';if(pendingQuestion.kind==='question'){const ok=selectedAnswer===pendingQuestion.correct;opts[pendingQuestion.correct]?.classList.add('correct');if(ok){heading='Correcta · permaneces en tu casilla';snd='correct'}else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.explanation||'Continúa el recorrido.'}else{const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');if(grade==='excellent'){delta=2;heading='Excelente · avanzas 2 casillas';snd='excellent'}else if(grade==='good'){delta=1;heading='Buena · avanzas 1 casilla';snd='correct'}else{delta=-1;heading='Incorrecta · retrocedes 1 casilla'}detail=pendingQuestion.feedback?.[selectedAnswer]||'Revisa el razonamiento clínico.'}tone(snd);pendingQuestion.resultDelta=delta;$('feedback').hidden=false;$('feedback').innerHTML=`<strong>${esc(heading)}</strong><span>${esc(detail)}</span>`;$('confirmAnswerBtn').hidden=true;$('continueBtn').hidden=false}
+function tr(es,en){return window.I18N?.text?window.I18N.text(es,en):es}
+function educationalFeedbackHtml(heading,q,selected,kind,timedOut=false){
+  if(kind==='case'){
+    const edu=window.LearningTools?.caseFeedback?.(q,selected,timedOut);
+    const best=edu?.bestText||q.options?.[q.grades?.indexOf('excellent')]||'';
+    const chosen=edu?.chosenText||'';
+    const why=edu?.explanation||'Revisa el razonamiento clínico.';
+    let extra='';
+    if(Number.isInteger(selected)&&edu?.grade!=='excellent'){
+      extra='<p class="feedback-distractor"><b>'+esc(tr('Tu opción:','Your answer:'))+'</b> '+esc(chosen)+'</p>';
+    }
+    return '<strong>'+esc(heading)+'</strong><div class="feedback-learning">'+
+      '<p class="feedback-correct"><b>'+esc(tr('Respuesta más completa:','Best answer:'))+'</b> '+esc(best)+'</p>'+
+      '<p class="feedback-why"><b>'+esc(tr('Por qué:','Why:'))+'</b> '+esc(why)+'</p>'+extra+'</div>';
+  }
+  const edu=window.LearningTools?.questionFeedback?.(q,selected,timedOut);
+  const correct=edu?.correctText||q.options?.[q.correct]||'';
+  const why=edu?.explanation||q.explanation||'Continúa el recorrido.';
+  let extra='';
+  if(Number.isInteger(selected)&&edu&&!edu.ok){
+    extra='<p class="feedback-distractor"><b>'+esc(tr('Por qué tu opción no:','Why your choice is not the best answer:'))+'</b> '+esc(edu.distractor||'Esta opción no coincide con el concepto evaluado.')+'</p>';
+  }
+  return '<strong>'+esc(heading)+'</strong><div class="feedback-learning">'+
+    '<p class="feedback-correct"><b>'+esc(tr('Respuesta correcta:','Correct answer:'))+'</b> '+esc(correct)+'</p>'+
+    '<p class="feedback-why"><b>'+esc(tr('Por qué:','Why:'))+'</b> '+esc(why)+'</p>'+extra+'</div>';
+}
+function confirmAnswer(){
+  if(selectedAnswer===null||!pendingQuestion)return;
+  stopTimer();
+  const opts=[...document.querySelectorAll('.option')];
+  opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
+  let delta=0,heading='',snd='error';
+  if(pendingQuestion.kind==='question'){
+    const ok=selectedAnswer===pendingQuestion.correct;
+    opts[pendingQuestion.correct]?.classList.add('correct');
+    window.LearningTools?.record?.(state?.module,pendingQuestion,ok);
+    if(ok){heading=tr('Correcta · permaneces en tu casilla','Correct · stay on your space');snd='correct'}
+    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space')}
+  }else{
+    const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';
+    opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
+    if(grade==='excellent'){delta=2;heading=tr('Excelente · avanzas 2 casillas','Excellent · move forward 2 spaces');snd='excellent'}
+    else if(grade==='good'){delta=1;heading=tr('Buena · avanzas 1 casilla','Good · move forward 1 space');snd='correct'}
+    else{delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space')}
+  }
+  tone(snd);
+  pendingQuestion.resultDelta=delta;
+  $('feedback').hidden=false;
+  $('feedback').innerHTML=educationalFeedbackHtml(heading,pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
+  $('confirmAnswerBtn').hidden=true;
+  $('continueBtn').hidden=false
+}
 async function continueAfterQuestion(){stopTimer();const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;pendingQuestion=null;questionDialog.close();if(!d)return endTurn();await move(d);return resolveLanding(depth+1)}
 function expireQuestionTimer(){
   if(!pendingQuestion||!questionDialog?.open)return;
-  stopTimer();tone('alarm');timerLeft=0;$('timerDisplay').textContent='0';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low');$('timerDisplay').closest('.timer-wrap')?.classList.add('timer-expired');$('timerBtn').textContent='Tiempo terminado';$('timerBtn').disabled=true;
-  const opts=[...document.querySelectorAll('.option')];opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
-  if(pendingQuestion.kind==='question')opts[pendingQuestion.correct]?.classList.add('correct');
+  stopTimer();tone('alarm');timerLeft=0;
+  $('timerDisplay').textContent='0';
+  $('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low');
+  $('timerDisplay').closest('.timer-wrap')?.classList.add('timer-expired');
+  $('timerBtn').textContent=tr('Tiempo terminado','Time is up');$('timerBtn').disabled=true;
+  const opts=[...document.querySelectorAll('.option')];
+  opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
+  if(pendingQuestion.kind==='question'){
+    opts[pendingQuestion.correct]?.classList.add('correct');
+    window.LearningTools?.record?.(state?.module,pendingQuestion,false);
+  }
   pendingQuestion.resultDelta=-1;selectedAnswer=null;
-  const detail=pendingQuestion.kind==='question'
-    ?(pendingQuestion.explanation||'Se agotó el tiempo. Revisa la respuesta correcta antes de continuar.')
-    :(pendingQuestion.feedback?.find(Boolean)||'Se agotó el tiempo. Revisa el razonamiento clínico antes de continuar.');
-  $('feedback').hidden=false;$('feedback').innerHTML='<strong>⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla</strong><span>'+esc(detail)+'</span>';
-  $('confirmAnswerBtn').hidden=true;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=false;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar'
+  const heading=tr('⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla','⏱ Time is up · incorrect answer · move back 1 space');
+  $('feedback').hidden=false;
+  $('feedback').innerHTML=educationalFeedbackHtml(heading,pendingQuestion,null,pendingQuestion.kind,true);
+  $('confirmAnswerBtn').hidden=true;$('confirmAnswerBtn').disabled=true;
+  $('continueBtn').hidden=false;$('continueBtn').disabled=false;$('continueBtn').textContent=tr('Continuar','Continue')
 }
 function startTimer(){if(timer||!pendingQuestion)return;timerLeft=30;$('timerDisplay').textContent='30';$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);const tw=$('timerDisplay').closest('.timer-wrap');if(timerLeft>0&&timerLeft<=5){tw?.classList.add('timer-low');tone('tick')}else tw?.classList.remove('timer-low');if(timerLeft<=0)expireQuestionTimer()},1000)}
 function stopTimer(){if(timer){clearInterval(timer);timer=null}}
