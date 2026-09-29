@@ -194,6 +194,10 @@
     $('resultTitle').textContent=mod.icon+' '+mod.label;
     const diff=exam.difficulty==='all'?'todas las dificultades':exam.difficulty;
     $('resultSummary').textContent=correct+' de '+exam.count+' correctas · '+diff+' · sin retroalimentación durante el examen.';
+    const partialFocus=exam.module==='primer_parcial';
+    $('topicSection').classList.toggle('partial-topic-focus',partialFocus);
+    $('topicResultsTitle').textContent=partialFocus?'📚 Resultado del primer parcial por materia':'Desempeño por tema';
+    $('topicResultsLead').hidden=!partialFocus;
     const topicResults=$('topicResults');topicResults.innerHTML='';
     [...topicMap.entries()].sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)||a[0].localeCompare(b[0])).forEach(([topic,stat])=>{
       const pct=Math.round((stat.correct/stat.total)*100);const row=document.createElement('div');row.className='topic-row';
