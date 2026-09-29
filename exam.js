@@ -7,6 +7,7 @@
     fisiologia_funcion:{label:'Fisiología + función',icon:'🫁',get:()=>window.FISIOLOGIA_FUNCION_QUESTIONS||[]},
     crecimiento_desarrollo:{label:'Crecimiento y desarrollo',icon:'🦴',get:()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[]},
     habitos_parafunciones:{label:'Hábitos y parafunciones',icon:'🧠',get:()=>window.HABITOS_PARAFUNCIONES_QUESTIONS||[]},
+    primer_parcial:{label:'Juega y aprueba el primer parcial',icon:'🎯',get:()=>window.PRIMER_PARCIAL_QUESTIONS||[]},
     steiner:{label:'Cefalometría de Steiner',icon:'📐',get:()=>window.STEINER_QUESTIONS||[]},
     ortopedia_general:{label:'Ortopedia / banco general',icon:'🦷',get:()=>window.QUESTIONS||[]}
   };
@@ -76,6 +77,8 @@
     const hint=$('difficultyHint');
     if(diffs.length===3){
       hint.textContent='Puedes filtrar por dificultad pedagógica auditada.';
+    }else if(diffs.length){
+      hint.textContent='Dificultades disponibles: '+diffs.join(', ')+'.';
     }else{
       hint.textContent='Este módulo aún no tiene dificultad pedagógica auditada; se evaluará como banco completo.';
       sel.value='all';
@@ -231,5 +234,9 @@
   $('toggleReviewBtn').addEventListener('click',toggleReview);
   $('repeatExamBtn').addEventListener('click',resetExam);
   $('finishConfirm').addEventListener('click',e=>{if(e.target===$('finishConfirm'))$('finishConfirm').close();});
+  const requestedModule=new URLSearchParams(location.search).get('module');
+  if(requestedModule&&MODULES[requestedModule]&&[...$('examModule').options].some(o=>o.value===requestedModule)){
+    $('examModule').value=requestedModule;
+  }
   updateDifficultyOptions();
 })();
