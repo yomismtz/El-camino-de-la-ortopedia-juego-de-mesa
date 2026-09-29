@@ -3773,7 +3773,7 @@
     ],
     "feedback": [
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
     ]
@@ -3800,7 +3800,7 @@
     ],
     "feedback": [
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
     ]
@@ -3826,7 +3826,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -3854,7 +3854,7 @@
     ],
     "feedback": [
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
     ]
@@ -3881,7 +3881,7 @@
     ],
     "feedback": [
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
     ]
@@ -3908,7 +3908,7 @@
     ],
     "feedback": [
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
     ]
@@ -3934,7 +3934,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -3961,7 +3961,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -3988,7 +3988,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4015,7 +4015,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4042,7 +4042,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4069,7 +4069,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4096,7 +4096,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4123,7 +4123,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
@@ -4150,7 +4150,7 @@
       "incorrect"
     ],
     "feedback": [
-      "Respuesta correcta según la guía del primer parcial.",
+      "Respuesta correcta según la guía del examen fuente.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía.",
       "Revisa el caso y compáralo con la respuesta correcta de la guía."
