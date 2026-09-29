@@ -877,10 +877,11 @@ html.a11y-reduce-motion *,html.a11y-reduce-motion *:before,html.a11y-reduce-moti
 .winner-stats>div{padding:10px 8px;border-radius:14px;background:#f5f9fc;border:1px solid #e1ebf0;text-align:center;min-width:0}.winner-stats b,.winner-stats span{display:block}.winner-stats b{font-size:18px;color:#17345c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.winner-stats span{font-size:10px;color:#73869a;margin-top:3px}
 @keyframes winnerBounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-9px) rotate(-1.5deg)}}
 .winner-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.winner-confetti i{position:absolute;left:calc((var(--i) * 37) % 100 * 1%);top:-15px;width:8px;height:14px;border-radius:3px;background:hsl(calc(var(--i)*47),75%,58%);animation:confettiFall calc(2.2s + (var(--i) % 5)*.18s) linear infinite;animation-delay:calc((var(--i) % 8)*-.19s);transform:rotate(calc(var(--i)*19deg))}
+.winner-confetti i{position:absolute;left:calc(var(--i) * 3.57%);top:-15px;width:8px;height:14px;border-radius:3px;background:hsl(calc(var(--i)*47),75%,58%);animation:confettiFall calc(2.2s + var(--i)*.015s) linear infinite;animation-delay:calc(var(--i)*-.07s);transform:rotate(calc(var(--i)*19deg))}
 @keyframes confettiFall{to{transform:translateY(620px) rotate(620deg)}}
 
 @media(max-width:760px){
+  .character-card{min-height:255px!important}
   .character-spotlight{grid-template-columns:130px minmax(0,1fr);gap:12px;padding:12px}.spotlight-art{min-height:165px}.spotlight-character{width:128px;height:160px}.spotlight-copy h2{font-size:26px}.spotlight-copy p{font-size:12px}.spotlight-copy blockquote{font-size:11px;padding:8px 10px}
   .character-book-grid{grid-template-columns:1fr 1fr}.character-book-item{grid-template-columns:70px minmax(0,1fr)}.character-book-item .book-art{width:66px;height:82px}.book-character{width:62px;height:78px}
   .tutorial-card{grid-template-columns:125px minmax(0,1fr);gap:12px}.tutorial-guide{min-height:175px}.tutorial-character{width:125px;height:156px}.tutorial-copy h2{font-size:24px}.tutorial-copy p{font-size:13px}
