@@ -1022,11 +1022,20 @@ window.addEventListener('elcamino:native-resume',()=>{
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     clearComputerTimer();
+    stopQuestionNarration();
+    stopTimer();
+    if(state)saveGame();
     if(musicActive)stopBackgroundMusic(false);
     if(audioCtx?.state==='running')audioCtx.suspend().catch(()=>{})
   }else if(state&&$('game')?.classList.contains('active')){
     if(soundEnabled){audioContext();startBackgroundMusic()}
-    if(isComputerTurn())resumeComputerAutomation()
+    if(questionDialog?.open&&pendingQuestion){
+      $('timerBtn').disabled=false;
+      $('timerBtn').textContent=tr('Reanudar 30 s','Resume 30 s');
+      statusText.textContent=tr('Partida reanudada. Reinicia el tiempo cuando estés listo.','Game resumed. Restart the timer when ready.');
+    }else if(isComputerTurn()){
+      resumeComputerAutomation()
+    }
   }
 });
 const requestedModule=new URLSearchParams(location.search).get('module');
