@@ -40,6 +40,7 @@ on:
       - 'cases*.js'
       - 'package.json'
       - 'tests/**'
+      - 'QA-RELEASE-CANDIDATE-*.md'
       - 'capacitor.config.json'
       - '.github/workflows/android-apk.yml'
 
@@ -97,7 +98,7 @@ jobs:
           test -f brand/icon-el-camino-dental.svg
           test -f brand/ic_launcher_custom.xml
 
-      - name: Run game integrity tests
+      - name: Run release candidate QA
         run: npm test
 
       - name: Install dependencies
