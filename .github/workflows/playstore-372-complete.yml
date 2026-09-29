@@ -1,6 +1,7 @@
-name: Build Play Store 3.7.4 Complete Symbols
+name: Build Play Store 3.7.5 Complete Symbols
 # Translation audit + Play update v41
 # Final translation-audited Play Console update
+# Personalized areas build v42
 # Character experience build final v64
 # Rebuild after nomenclature module
 # Rebuild after 12 character 3D integration
@@ -57,7 +58,7 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js \
              exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js \
-             manifest.webmanifest sw.js nomenclatura-etimologia-questions.js styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js accessibility.js app-v10.js android-navigation.js www/
+             manifest.webmanifest sw.js nomenclatura-etimologia-questions.js styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js area-classifier.js accessibility.js app-v10.js android-navigation.js www/
           cp questions*.js cases*.js nomenclatura-etimologia-questions.js fundamentos-oclusion.js fundamentos-casos.js \
              steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js \
              fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
@@ -94,7 +95,7 @@ jobs:
           extern "C" JNIEXPORT jint JNICALL
           Java_com_yomismtz_elcaminodental_MainActivity_nativeBuildMarker(
               JNIEnv*, jobject) {
-            return 373;
+            return 375;
           }
           CPP
 
@@ -126,8 +127,8 @@ jobs:
 
           gradle=Path('android/app/build.gradle')
           g=gradle.read_text()
-          g=re.sub(r'versionCode\s+\d+','versionCode 41',g)
-          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.4"',g)
+          g=re.sub(r'versionCode\s+\d+','versionCode 42',g)
+          g=re.sub(r'versionName\s+"[^"]+"','versionName "3.7.5"',g)
           g=g.replace('minifyEnabled false','minifyEnabled true')
           if 'minifyEnabled true' not in g:
               g=g.replace('release {','release {\n            minifyEnabled true',1)
@@ -178,13 +179,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p release-files
-          cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.4-unsigned.aab
+          cp android/app/build/outputs/bundle/release/app-release.aab release-files/El-Camino-Dental-3.7.5-unsigned.aab
           test -s android/app/build/outputs/mapping/release/mapping.txt
-          cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.4-retrace-mapping.txt
+          cp android/app/build/outputs/mapping/release/mapping.txt release-files/El-Camino-Dental-3.7.5-retrace-mapping.txt
 
           SYMBOL_ZIP=$(find android/app/build/outputs/native-debug-symbols -type f -name 'native-debug-symbols.zip' 2>/dev/null | head -1 || true)
           if [ -n "$SYMBOL_ZIP" ]; then
-            cp "$SYMBOL_ZIP" release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip
+            cp "$SYMBOL_ZIP" release-files/El-Camino-Dental-3.7.5-native-debug-symbols.zip
           else
             python3 - <<'PY'
           from pathlib import Path
@@ -199,7 +200,7 @@ jobs:
               roots=list(Path('android/app/build').rglob('libelcamino_symbols.so'))
           if not roots:
               raise SystemExit('No native .so found for symbols archive')
-          out=Path('release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip')
+          out=Path('release-files/El-Camino-Dental-3.7.5-native-debug-symbols.zip')
           seen=set()
           with ZipFile(out,'w',ZIP_DEFLATED) as z:
               for p in roots:
@@ -215,13 +216,13 @@ jobs:
           PY
           fi
 
-          test -s release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip
-          unzip -l release-files/El-Camino-Dental-3.7.4-native-debug-symbols.zip
+          test -s release-files/El-Camino-Dental-3.7.5-native-debug-symbols.zip
+          unzip -l release-files/El-Camino-Dental-3.7.5-native-debug-symbols.zip
 
-          printf '3.7.4\n' > release-files/NOMBRE-DE-LA-VERSION.txt
+          printf '3.7.5\n' > release-files/NOMBRE-DE-LA-VERSION.txt
           cat > release-files/DETALLES-DE-VERSION.txt <<'EOF'
-          Nombre de la versión: 3.7.4
-          Código de versión: 41
+          Nombre de la versión: 3.7.5
+          Código de versión: 42
           Nombre del paquete: com.yomismtz.elcaminodental
           Target SDK: 36
           ReTrace: generado por R8 para esta misma compilación
@@ -232,7 +233,7 @@ jobs:
       - name: Upload complete Play Store set
         uses: actions/upload-artifact@v4
         with:
-          name: ElCaminoDental-3.7.4-Complete
+          name: ElCaminoDental-3.7.5-Complete
           path: release-files/
           if-no-files-found: error
 
