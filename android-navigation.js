@@ -26,6 +26,15 @@
       const App=window.Capacitor?.Plugins?.App;
       if(!App?.addListener)return;
       await App.addListener('backButton',({canGoBack}={})=>fallbackBack(!!canGoBack));
+      await App.addListener('appStateChange',({isActive}={})=>{
+        try{
+          if(!isActive){
+            window.dispatchEvent(new CustomEvent('elcamino:native-pause'));
+          }else{
+            window.dispatchEvent(new CustomEvent('elcamino:native-resume'));
+          }
+        }catch{}
+      });
     }catch{}
   }
 
