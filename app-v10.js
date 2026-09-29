@@ -923,6 +923,7 @@ $('continueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');continueAfterQues
 $('eventContinueBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');closeEvent()}};
 $('timerBtn').onclick=()=>{if(!isComputerTurn()){tone('ui');startTimer()}};
 $('resetBtn').onclick=resetGame;
+const exitGameBtn=$('exitGameBtn');if(exitGameBtn)exitGameBtn.onclick=()=>{tone('ui');returnToSetupFromGame()};
 $('playAgainBtn').onclick=playAgain;
 $('soundBtn').onclick=toggleSound;
 $('characterBookBtn').onclick=()=>{tone('ui');renderCharacterBook();$('characterBookDialog').showModal()};
