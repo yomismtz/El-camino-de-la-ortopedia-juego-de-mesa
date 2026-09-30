@@ -123,8 +123,8 @@ assert(app.includes("state.caseQueue=shuffledIndices"),'Los casos deben usar col
 
 const expansionQuestions=fs.readFileSync('expansion-questions-2026.js','utf8');
 const expansionCases=fs.readFileSync('expansion-cases-2026.js','utf8');
-const expQIds=[...expansionQuestions.matchAll(/"id":"(EXP-Q-\\d{3})"/g)].map(x=>x[1]);
-const expCIds=[...expansionCases.matchAll(/"id":"(EXP-C-\\d{3})"/g)].map(x=>x[1]);
+const expQIds=[...expansionQuestions.matchAll(/"id":"(EXP-Q-\d{3})"/g)].map(x=>x[1]);
+const expCIds=[...expansionCases.matchAll(/"id":"(EXP-C-\d{3})"/g)].map(x=>x[1]);
 assert.strictEqual(expQIds.length,200,'La expansión debe aportar exactamente 200 preguntas');
 assert.strictEqual(new Set(expQIds).size,200,'Las 200 preguntas nuevas deben tener IDs únicos');
 assert.strictEqual(expCIds.length,145,'La expansión debe aportar exactamente 145 casos');
