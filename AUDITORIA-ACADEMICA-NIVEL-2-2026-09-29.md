@@ -101,3 +101,23 @@ Los valores 82°/80°/2°, SND, SN-GoGn, 1.NA, 1.NB y línea S se mantienen como
 
 ## Límite de la auditoría
 Esta revisión mejora el control académico del banco, pero no sustituye una revisión formal por pares de una facultad o comité académico. En afirmaciones clínicas con evidencia de baja certeza, la redacción se mantiene prudente y evita presentar asociaciones como causalidad o garantizar resultados terapéuticos.
+
+## Cierre de auditoría integral — 30 septiembre 2026
+
+### Alcance efectivo
+- 800/800 preguntas: clave, opciones, explicación y formulación clínica revisadas sobre la auditoría académica previa y revalidación temática actual.
+- 355/355 casos clínicos activos: escenario, opción Excelente, gradación y feedback incluidos en el alcance; los 25 casos A–E ya están incorporados al banco general.
+- Aleatorización: validada por QA. En preguntas se recalcula el índice correcto después de mezclar opciones; en casos se conservan sincronizados opción, grado y feedback.
+
+### Revalidación bibliográfica de áreas de mayor riesgo
+- AAPD, Management of the Developing Dentition and Occlusion in Pediatric Dentistry, revisión 2024 (Reference Manual 2026–2027): diagnóstico integral, hábitos, dentición en desarrollo, mantenimiento de espacio, mordidas cruzadas y Clases II/III.
+- AAPD, Policy on Obstructive Sleep Apnea, revisión 2026: tamizaje y referencia médica cuando esté indicado; no se trata un hallazgo dentofacial aislado como diagnóstico de OSA.
+- Verhoeff et al., International Consensus on Bruxism, 2025, PMID 40312776: terminología y evaluación actualizadas; se mantiene el enfoque contextual y no una etiqueta automática de enfermedad.
+- Hussain et al., CVM systematic review/meta-analysis, 2024, PMID 38669735: reproducibilidad satisfactoria con variabilidad; CVM se mantiene como indicador complementario, no predictor individual perfecto.
+- Barreneche-Calle et al., maxillary expansion systematic review/meta-analysis, 2024, PMID 38865748: efectos dependientes de técnica/anclaje; se evita presentar un protocolo universal.
+- Inchingolo et al., atypical swallowing systematic review, 2024, PMID 39275817: asociación/tratamiento con evidencia heterogénea; se conserva lenguaje no absoluto.
+- Santana et al., lip bumper systematic review, PMID 32241352: efectos principalmente dentoalveolares y evidencia de certeza baja; se mantienen cautelas clínicas.
+
+### Resultado
+No se identificó en esta revalidación una nueva contradicción que obligue a cambiar una clave académica ya auditada. Las correcciones históricas documentadas permanecen vigentes. La suite automática del commit 0e7ba86d75eff99b93e80ba5ce394e2132aec30d pasó completa y compiló APK correctamente. Cualquier futura edición de bancos deberá volver a ejecutar esta puerta QA.
+
