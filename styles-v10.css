@@ -1151,3 +1151,80 @@ html,body,.app-shell,.screen,.game-grid,.board-card,.side-stack{
   .modal{max-height:94dvh!important;overflow-y:auto!important;overscroll-behavior:contain;touch-action:pan-y}
   .modal-card{max-height:none!important}
 }
+
+/* v83 — Android touch/scroll hard fix. Overrides legacy v3.5 viewport lock outside gameplay. */
+@media (max-width:900px){
+  html{
+    position:static!important;
+    height:auto!important;
+    min-height:100%!important;
+    max-height:none!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-x:none!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body:not(.game-playing){
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100dvh!important;
+    max-height:none!important;
+    overflow-x:hidden!important;
+    overflow-y:visible!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:auto!important;
+  }
+  body:not(.game-playing) .app-shell{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100dvh!important;
+    max-height:none!important;
+    overflow:visible!important;
+    padding:5px!important;
+    touch-action:pan-y!important;
+  }
+  body:not(.game-playing) .topbar{height:auto!important;min-height:48px!important}
+  body:not(.game-playing) .screen{height:auto!important;max-height:none!important;overflow:visible!important}
+  body:not(.game-playing) .screen.active{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:calc(100dvh - 55px)!important;
+    max-height:none!important;
+    overflow:visible!important;
+    touch-action:pan-y!important;
+  }
+  body:not(.game-playing) .setup-card,
+  body:not(.game-playing) .setup-form,
+  body:not(.game-playing) .setup-copy,
+  body:not(.game-playing) .character-shell,
+  body:not(.game-playing) .character-grid{
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    touch-action:pan-y!important;
+  }
+  body:not(.game-playing) .glass-card{max-height:none!important}
+  body.game-playing{position:fixed!important;inset:0!important;overflow:hidden!important;touch-action:manipulation!important}
+  body.game-playing .app-shell{touch-action:manipulation!important}
+  dialog.modal{
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    touch-action:pan-y!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  dialog.modal .modal-card{
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    touch-action:pan-y!important;
+  }
+  button,input,select,label,.btn,.icon-btn,.tiny-btn,.option,.character-card,.area-choice{
+    pointer-events:auto!important;
+  }
+}
