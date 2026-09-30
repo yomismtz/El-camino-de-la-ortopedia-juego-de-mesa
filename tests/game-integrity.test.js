@@ -146,9 +146,12 @@ const css=fs.readFileSync('styles-v10.css','utf8');
 const androidTouch=fs.readFileSync('android-touch-v85.css','utf8');
 assert(html.includes('href="android-touch-v85.css"'),'play.html debe cargar el baseline Android al final');
 assert(html.lastIndexOf('android-touch-v85.css')>html.lastIndexOf('character-art.css'),'El baseline Android debe cargarse después de los estilos heredados');
-assert(androidTouch.includes('body:not(.game-playing){position:static!important'),'Fuera de partida Android debe usar scroll documental nativo');
+assert(androidTouch.includes('body:not(.game-playing){margin:0!important;position:static!important'),'Fuera de partida Android debe usar scroll documental nativo');
 assert(androidTouch.includes('overflow-y:auto!important'),'Android debe permitir desplazamiento vertical nativo');
 assert(androidTouch.includes('body.game-playing{position:fixed!important'),'Solo la partida conserva viewport fijo');
+assert(!css.includes('v3.4 — bloquear desplazamiento horizontal'),'No deben sobrevivir overrides legacy de viewport/touch');
+assert(!css.includes('v3.5 — interfaz completa sin desplazamiento'),'No debe sobrevivir el bloqueo global sin desplazamiento');
+assert(androidTouch.includes('@media (orientation:landscape) and (max-height:900px)'),'La política touch debe cubrir landscape Android');
 
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
