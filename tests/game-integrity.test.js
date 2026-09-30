@@ -143,9 +143,12 @@ assert(examHtml.includes('src="expansion-questions-2026.js"'),'Modo Examen debe 
 assert(classifier.includes("id:'anestesia'")&&classifier.includes("id:'implantologia'"),'El selector personalizado debe incluir Anestesia e Implantología');
 
 const css=fs.readFileSync('styles-v10.css','utf8');
-assert(css.includes('Android touch/scroll hard fix'),'Debe existir la corrección fuerte de touch/scroll Android');
-assert(css.includes('body:not(.game-playing){')&&css.includes('position:static!important'),'Pantallas fuera de partida deben liberar position:fixed');
-assert(css.includes('body.game-playing{position:fixed!important'),'Solo la partida debe conservar viewport fijo');
+const androidTouch=fs.readFileSync('android-touch-v85.css','utf8');
+assert(html.includes('href="android-touch-v85.css"'),'play.html debe cargar el baseline Android al final');
+assert(html.lastIndexOf('android-touch-v85.css')>html.lastIndexOf('character-art.css'),'El baseline Android debe cargarse después de los estilos heredados');
+assert(androidTouch.includes('body:not(.game-playing){position:static!important'),'Fuera de partida Android debe usar scroll documental nativo');
+assert(androidTouch.includes('overflow-y:auto!important'),'Android debe permitir desplazamiento vertical nativo');
+assert(androidTouch.includes('body.game-playing{position:fixed!important'),'Solo la partida conserva viewport fijo');
 
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
