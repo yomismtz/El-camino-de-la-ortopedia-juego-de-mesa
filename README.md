@@ -11,8 +11,8 @@ El proyecto incluye:
 - tablero de **100 casillas** y dos dados;
 - partidas de **2 a 5 jugadores**;
 - juego local y contra la computadora;
-- **800 preguntas** integradas al banco académico;
-- **355 casos clínicos** conservados en las fuentes del proyecto; los bancos activos dependen del módulo seleccionado;
+- **1000 preguntas** integradas al banco académico;
+- **500 casos clínicos** conservados en las fuentes del proyecto; los bancos activos dependen del módulo seleccionado;
 - 12 personajes;
 - selección de módulo, áreas y dificultad;
 - narración de reactivos y cronómetro de 30 segundos coordinado con la voz;
@@ -91,6 +91,8 @@ android-navigation.js          Navegación y ciclo de vida Android
 area-classifier.js             Clasificación académica por áreas
 primer-parcial-questions.js    Fuente interna de 200 reactivos integrados
 questions*.js                  Bancos generales de preguntas
+expansion-questions-2026.js   200 preguntas adicionales auditables
+expansion-cases-2026.js       145 casos clínicos adicionales auditables
 cases*.js                      Bancos de casos clínicos
 exam.html / exam.js            Modo Examen
 teacher.html / teacher.js      Modo Docente
