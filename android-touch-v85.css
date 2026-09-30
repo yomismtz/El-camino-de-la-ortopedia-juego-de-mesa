@@ -1,0 +1,16 @@
+/* Android touch baseline v85 — intentionally simple and loaded last. */
+@media (max-width:900px){
+html,body{margin:0!important;width:100%!important;max-width:100%!important;touch-action:auto!important}
+html{height:auto!important;min-height:100%!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:auto!important}
+body:not(.game-playing){position:static!important;inset:auto!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;overscroll-behavior:auto!important}
+body:not(.game-playing) .app-shell{display:block!important;position:static!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;padding:6px!important}
+body:not(.game-playing) .screen{position:static!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
+body:not(.game-playing) .screen.active{display:block!important;height:auto!important;min-height:calc(100dvh - 56px)!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
+body:not(.game-playing) .setup-card,body:not(.game-playing) .setup-copy,body:not(.game-playing) .setup-form,body:not(.game-playing) .character-shell,body:not(.game-playing) .character-grid{position:relative!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
+body:not(.game-playing) .glass-card{max-height:none!important}
+body:not(.game-playing) .character-card{touch-action:auto!important}
+body:not(.game-playing) button,body:not(.game-playing) input,body:not(.game-playing) select,body:not(.game-playing) .btn,body:not(.game-playing) .icon-btn,body:not(.game-playing) .tiny-btn{touch-action:manipulation!important}
+body.game-playing{position:fixed!important;inset:0!important;height:100dvh!important;overflow:hidden!important}
+dialog.modal[open]{max-height:94dvh!important;overflow-y:auto!important;touch-action:auto!important;-webkit-overflow-scrolling:touch!important}
+dialog.modal[open] .modal-card{height:auto!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
+}
