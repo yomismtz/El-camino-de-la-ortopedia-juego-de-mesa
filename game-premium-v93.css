@@ -170,3 +170,44 @@
   #questionDialog .option{padding:8px 10px!important}
   #questionDialog .feedback{margin-top:8px!important;padding:10px!important}
 }
+
+
+/* v95 — tablero orgánico, variado y menos cuadriculado */
+.game-screen .spiral-board{
+  background:
+    radial-gradient(circle at 12% 20%,rgba(72,194,178,.13),transparent 18%),
+    radial-gradient(circle at 78% 16%,rgba(255,199,92,.16),transparent 19%),
+    radial-gradient(circle at 88% 78%,rgba(161,126,224,.11),transparent 21%),
+    radial-gradient(circle at 28% 82%,rgba(238,121,151,.10),transparent 18%),
+    linear-gradient(145deg,#fbffff,#fffdf7)!important;
+}
+.game-screen .cell{
+  border:2px solid rgba(255,255,255,.92)!important;
+  box-shadow:0 3px 8px rgba(29,72,96,.13),inset 0 1px 0 rgba(255,255,255,.85)!important;
+  transition:transform .18s ease,filter .18s ease!important;
+}
+/* Ritmo pseudoaleatorio determinista: formas y tonos cambian sin mover la lógica. */
+.game-screen .cell:nth-child(11n+1){border-radius:16px 8px 14px 7px!important;transform:translate(-50%,-50%) rotate(-1.6deg)}
+.game-screen .cell:nth-child(11n+2){border-radius:8px 16px 8px 15px!important;transform:translate(-50%,-50%) rotate(1.2deg)}
+.game-screen .cell:nth-child(11n+3){border-radius:15px 11px 7px 13px!important}
+.game-screen .cell:nth-child(11n+4){border-radius:9px 14px 16px 8px!important;transform:translate(-50%,-50%) rotate(-.8deg)}
+.game-screen .cell:nth-child(11n+5){border-radius:17px 9px 12px 15px!important}
+.game-screen .cell:nth-child(11n+6){border-radius:8px 15px 13px 9px!important;transform:translate(-50%,-50%) rotate(1.4deg)}
+.game-screen .cell:nth-child(11n+7){border-radius:14px 7px 16px 11px!important}
+.game-screen .cell:nth-child(11n+8){border-radius:10px 16px 8px 14px!important;transform:translate(-50%,-50%) rotate(-1.1deg)}
+.game-screen .cell:nth-child(11n+9){border-radius:16px 12px 15px 8px!important}
+.game-screen .cell:nth-child(11n+10){border-radius:7px 14px 10px 16px!important;transform:translate(-50%,-50%) rotate(.9deg)}
+.game-screen .cell:nth-child(11n){border-radius:13px 8px 17px 10px!important}
+.game-screen .cell:nth-child(7n+1):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#dff5f1)!important}
+.game-screen .cell:nth-child(7n+2):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#e4f1ff)!important}
+.game-screen .cell:nth-child(7n+3):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#fff0c9)!important}
+.game-screen .cell:nth-child(7n+4):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#f3e7ff)!important}
+.game-screen .cell:nth-child(7n+5):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#ffe6ec)!important}
+.game-screen .cell:nth-child(7n+6):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#e9f6dc)!important}
+.game-screen .cell:nth-child(7n):not(.question):not(.case):not(.advance1):not(.advance2):not(.back1):not(.back2):not(.back3):not(.vacation):not(.tax):not(.lawsuit):not(.jail):not(.equipment){background:linear-gradient(145deg,#fff,#fce8d8)!important}
+.game-screen .cell.question{background:linear-gradient(145deg,#48b8e8,#278fc9)!important;color:#fff!important}
+.game-screen .cell.case{background:linear-gradient(145deg,#aa87e8,#7958c8)!important;color:#fff!important}
+.game-screen .cell.advance1,.game-screen .cell.advance2{background:linear-gradient(145deg,#69cf9a,#32aa72)!important;color:#fff!important}
+.game-screen .cell.back1,.game-screen .cell.back2,.game-screen .cell.back3{background:linear-gradient(145deg,#ff9a9e,#ed6d82)!important;color:#fff!important}
+.game-screen .cell.vacation,.game-screen .cell.tax,.game-screen .cell.lawsuit,.game-screen .cell.jail,.game-screen .cell.equipment{background:linear-gradient(145deg,#f2c96d,#d9a844)!important;color:#49350d!important}
+.game-screen .goal{border-radius:46% 54% 48% 52%/54% 45% 55% 46%!important}
