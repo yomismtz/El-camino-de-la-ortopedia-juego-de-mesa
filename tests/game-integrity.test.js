@@ -105,7 +105,7 @@ assert(app.includes("if(questionDialog?.open&&pendingQuestion)"),'Reanudación d
 assert(app.includes("if(eventDialog?.open)"),'Automatización IA debe poder reanudar eventos pendientes');
 
 const primerPartialSource=fs.readFileSync('primer-parcial-questions.js','utf8');
-const ppCasesBlock=primerPartialSource.match(/const CASES=\\[([\\s\\S]*?)\\];\\s*window\\.PRIMER_PARCIAL_QUESTIONS/);
+const ppCasesBlock=primerPartialSource.match(/const CASES=\[([\s\S]*?)\];\s*window\.PRIMER_PARCIAL_QUESTIONS/);
 assert(ppCasesBlock,'No se localizaron los casos históricos del Primer Parcial');
 const ppCaseIds=[...ppCasesBlock[1].matchAll(/"id"\\s*:\\s*"([^"]+)"/g)].map(x=>x[1]);
 assert.strictEqual(ppCaseIds.length,25,'Deben conservarse exactamente 25 casos históricos');
