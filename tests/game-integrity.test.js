@@ -133,6 +133,15 @@ assert(html.includes('src="expansion-questions-2026.js"'),'play.html debe cargar
 assert(html.includes('src="expansion-cases-2026.js"'),'play.html debe cargar los 145 casos nuevos');
 assert(html.includes('1000 preguntas')&&html.includes('500 casos clínicos'),'La interfaz debe mostrar los nuevos totales');
 
+
+assert(html.includes('1000 preguntas')&&html.includes('500 casos clínicos'),'play.html debe mostrar 1000 preguntas y 500 casos');
+const home=fs.readFileSync('index.html','utf8');
+const examHtml=fs.readFileSync('exam.html','utf8');
+assert(home.includes('1000 preguntas')&&home.includes('500 casos clínicos'),'La portada debe mostrar los totales 1000/500');
+assert(!home.includes('800 preguntas')&&!home.includes('355 casos clínicos'),'La portada no debe conservar totales anteriores');
+assert(examHtml.includes('src="expansion-questions-2026.js"'),'Modo Examen debe cargar las 200 preguntas nuevas');
+assert(classifier.includes("id:'anestesia'")&&classifier.includes("id:'implantologia'"),'El selector personalizado debe incluir Anestesia e Implantología');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
