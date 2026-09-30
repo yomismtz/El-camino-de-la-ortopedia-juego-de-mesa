@@ -19,3 +19,16 @@
   body:not(.game-playing) .setup-card{grid-template-columns:minmax(0,1fr) minmax(300px,.85fr)!important;gap:14px!important;align-items:start!important}
   body:not(.game-playing) .character-grid{grid-template-columns:repeat(4,minmax(150px,1fr))!important;grid-template-rows:none!important}
 }
+
+/* Low-resource landscape profile: prioritize responsiveness over decoration. */
+@media (orientation:landscape) and (max-height:600px){
+  body:not(.game-playing) .glass-card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  body:not(.game-playing) .character-card{min-height:190px!important}
+  body:not(.game-playing) .character-grid{grid-template-columns:repeat(4,minmax(135px,1fr))!important;gap:8px!important}
+  .game-playing .glass-card,.game-playing .modal::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .game-playing .board-token.active,.game-playing .cell.landed,.game-playing .icon-btn.music-on{animation:none!important}
+  .game-playing .character-art,.game-playing .board-token,.game-playing .cell{transition:none!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
