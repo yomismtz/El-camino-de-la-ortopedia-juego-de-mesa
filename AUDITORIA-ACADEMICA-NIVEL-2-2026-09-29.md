@@ -24,6 +24,14 @@ No se modificaron silenciosamente las claves de los cinco exámenes fuente de **
 | Juega y aprueba | 200 | Revisado contra claves fuente + revisión conceptual externa |
 | **Total** | **800** | **Revisado** |
 
+## Revalidación posterior a integración de casos — 30 septiembre 2026
+
+- Los 25 casos derivados de las versiones A–E se incorporaron al banco clínico general; ya no quedan separados del juego activo.
+- El banco documentado queda en **800 preguntas y 355 casos clínicos activos/conservados**, sujeto a los filtros del módulo personalizado.
+- La selección de preguntas y casos es aleatoria mediante colas barajadas.
+- En preguntas, al barajar opciones se recalcula el índice `correct`; en casos se barajan conjuntamente `options`, `grades` y `feedback`. Por ello la posición visual aleatoria no altera la clave académica ni el puntaje.
+- El workflow de Android exige pruebas automáticas de estas invariantes antes de compilar.
+
 ## Fuentes actuales usadas como anclas de segundo nivel
 - American Academy of Pediatric Dentistry. **Management of the Developing Dentition and Occlusion in Pediatric Dentistry**, revisión 2024, Reference Manual 2026-2027.
 - American Academy of Pediatric Dentistry. **Behavior Guidance for the Pediatric Dental Patient**, revisión 2024.
