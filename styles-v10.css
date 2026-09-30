@@ -1228,3 +1228,34 @@ html,body,.app-shell,.screen,.game-grid,.board-card,.side-stack{
     pointer-events:auto!important;
   }
 }
+
+/* v84 — Native-feel scroll container for Android WebView. */
+@media (max-width:900px){
+  html,body{touch-action:auto!important}
+  body:not(.game-playing){position:fixed!important;inset:0!important;height:100dvh!important;min-height:0!important;overflow:hidden!important}
+  body:not(.game-playing) .app-shell{
+    height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+    display:grid!important;grid-template-rows:auto minmax(0,1fr)!important;overflow:hidden!important;
+  }
+  body:not(.game-playing) .screen.active{
+    height:100%!important;min-height:0!important;max-height:100%!important;
+    overflow-y:scroll!important;overflow-x:hidden!important;
+    overscroll-behavior-y:contain!important;touch-action:pan-y!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-gutter:stable;
+    padding-bottom:max(28px,env(safe-area-inset-bottom))!important;
+  }
+  body:not(.game-playing) .setup-card,
+  body:not(.game-playing) .character-shell{min-height:max-content!important;height:auto!important;overflow:visible!important}
+  body:not(.game-playing) .setup-form,
+  body:not(.game-playing) .setup-copy,
+  body:not(.game-playing) .character-grid{touch-action:pan-y!important}
+  body:not(.game-playing) .character-card{touch-action:pan-y!important}
+  body:not(.game-playing) button,
+  body:not(.game-playing) input,
+  body:not(.game-playing) select,
+  body:not(.game-playing) .btn,
+  body:not(.game-playing) .icon-btn,
+  body:not(.game-playing) .tiny-btn{touch-action:manipulation!important}
+  dialog.modal{touch-action:pan-y!important}
+}
