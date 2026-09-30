@@ -82,3 +82,63 @@
 .game-playing .cell.current-cell .cell-icon,
 .game-playing .cell.landed .cell-icon{opacity:1!important}
 .game-playing .cell:not(.current-cell):not(.landed):not(.occupied){box-shadow:0 1px 3px rgba(44,67,88,.14)!important}
+
+/* v91: rectangular 10x10 snake board + conservative Android cutout/system safe zone. */
+.game-playing{
+  --edge-safe-left:max(env(safe-area-inset-left,0px),24px);
+  --edge-safe-right:max(env(safe-area-inset-right,0px),24px);
+  --edge-safe-top:max(env(safe-area-inset-top,0px),10px);
+  --edge-safe-bottom:max(env(safe-area-inset-bottom,0px),18px);
+}
+.game-playing .app-shell{
+  padding:var(--edge-safe-top) var(--edge-safe-right) var(--edge-safe-bottom) var(--edge-safe-left)!important;
+  width:100%!important;
+  height:100dvh!important;
+}
+.game-playing .game-screen.active{height:calc(100dvh - 46px - var(--edge-safe-top) - var(--edge-safe-bottom))!important;max-height:calc(100dvh - 46px - var(--edge-safe-top) - var(--edge-safe-bottom))!important}
+.game-playing .game-grid{grid-template-columns:minmax(0,1fr) clamp(245px,20vw,300px)!important;gap:8px!important}
+.game-playing .board-card{padding:6px!important}
+.game-playing .spiral-board.zigzag-board{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  border-radius:18px!important;
+  border:4px solid #fff!important;
+  overflow:hidden!important;
+  background:linear-gradient(145deg,#f8fcff,#f8fff8)!important;
+  box-shadow:inset 0 0 0 2px #d8e9ef,0 6px 16px rgba(47,78,102,.12)!important;
+}
+.game-playing .spiral-board.zigzag-board:before,
+.game-playing .spiral-board.zigzag-board:after{display:none!important}
+.game-playing .zigzag-board .cell{
+  left:calc((var(--col) + .5) * 10%)!important;
+  top:calc((var(--row) + .5) * 10%)!important;
+  width:calc(10% - 6px)!important;
+  height:calc(10% - 5px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  transform:translate(-50%,-50%)!important;
+  border-radius:clamp(5px,1vh,10px)!important;
+  border:1.5px solid rgba(255,255,255,.96)!important;
+}
+.game-playing .zigzag-board .cell.finish{opacity:1!important}
+.game-playing .zigzag-board .cell-number{font-size:clamp(9px,1.7vh,13px)!important}
+.game-playing .zigzag-board .cell-icon{font-size:clamp(6px,1.25vh,9px)!important}
+.game-playing .zigzag-board .start-marker{
+  left:1.2%!important;bottom:1.2%!important;top:auto!important;transform:none!important;
+  padding:3px 7px!important;font-size:8px!important;border-radius:7px!important;z-index:150!important
+}
+.game-playing .zigzag-board .goal{display:none!important}
+.game-playing .zigzag-board .board-decoration{display:none!important}
+.game-playing .zigzag-board .board-token{width:clamp(18px,3.5vh,26px)!important;height:clamp(18px,3.5vh,26px)!important}
+@media (orientation:landscape) and (max-height:600px){
+  .game-playing{--edge-safe-left:max(env(safe-area-inset-left,0px),30px);--edge-safe-right:max(env(safe-area-inset-right,0px),30px);--edge-safe-top:max(env(safe-area-inset-top,0px),8px);--edge-safe-bottom:max(env(safe-area-inset-bottom,0px),16px)}
+  .game-playing .topbar{height:38px!important;min-height:38px!important}
+  .game-playing .game-screen.active{height:calc(100dvh - 42px - var(--edge-safe-top) - var(--edge-safe-bottom))!important;max-height:calc(100dvh - 42px - var(--edge-safe-top) - var(--edge-safe-bottom))!important}
+  .game-playing .game-grid{grid-template-columns:minmax(0,1fr) clamp(225px,19vw,270px)!important}
+  .game-playing .zigzag-board .cell{width:calc(10% - 4px)!important;height:calc(10% - 3px)!important}
+}
