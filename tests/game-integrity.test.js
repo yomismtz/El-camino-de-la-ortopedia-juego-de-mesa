@@ -152,6 +152,8 @@ assert(androidTouch.includes('body.game-playing{position:fixed!important'),'Solo
 assert(!css.includes('v3.4 — bloquear desplazamiento horizontal'),'No deben sobrevivir overrides legacy de viewport/touch');
 assert(!css.includes('v3.5 — interfaz completa sin desplazamiento'),'No debe sobrevivir el bloqueo global sin desplazamiento');
 assert(androidTouch.includes('@media (orientation:landscape) and (max-height:900px)'),'La política touch debe cubrir landscape Android');
+assert(androidTouch.includes('@media (orientation:landscape) and (max-height:600px)'),'Debe existir perfil ligero para landscape de poca altura');
+assert(androidTouch.includes('backdrop-filter:none!important'),'El perfil ligero debe desactivar blur costoso');
 
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
