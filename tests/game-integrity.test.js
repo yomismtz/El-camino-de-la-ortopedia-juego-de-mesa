@@ -112,6 +112,14 @@ assert.strictEqual(ppCaseIds.length,25,'Deben conservarse exactamente 25 casos h
 assert.strictEqual(new Set(ppCaseIds).size,25,'Los 25 casos históricos deben tener IDs únicos');
 assert(app.includes("...(window.PRIMER_PARCIAL_CASES||[])"),'Los 25 casos históricos deben estar integrados al banco clínico general');
 
+
+// Auditoría estructural de bancos académicos y seguridad del barajado.
+assert(app.includes("out.correct=order.indexOf(item.correct)"),'Al barajar preguntas debe recalcularse el índice correcto');
+assert(app.includes("out.grades=order.map(i=>item.grades?.[i]||'incorrect')"),'Al barajar casos deben mantenerse opción y grado sincronizados');
+assert(app.includes("out.feedback=order.map(i=>item.feedback?.[i]||'Revisa el razonamiento clínico.')"),'Al barajar casos deben mantenerse opción y feedback sincronizados');
+assert(app.includes("state.questionQueue=freshQuestionQueue"),'Las preguntas deben usar cola aleatoria');
+assert(app.includes("state.caseQueue=shuffledIndices"),'Los casos deben usar cola aleatoria');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
@@ -123,4 +131,5 @@ console.log('✓ Android: pausa segura de narración y cronómetro');
 console.log('✓ UI/documentación: reglamento y textos actuales');
 console.log('✓ QA flujo: eventos, cárcel, cronómetro, IA y recursos cargados');
 console.log('✓ Casos clínicos: 25 casos históricos integrados al banco general');
+console.log('✓ Aleatorización: respuesta, grado y feedback permanecen sincronizados');
 console.log('Paso 13: QA automatizado de versión candidata superado.');
