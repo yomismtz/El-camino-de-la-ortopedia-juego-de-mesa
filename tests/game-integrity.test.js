@@ -104,6 +104,14 @@ assert(app.includes("questionAccuracy:1")&&app.includes("excellent:1"),'IA súpe
 assert(app.includes("if(questionDialog?.open&&pendingQuestion)"),'Reanudación debe reconocer preguntas pendientes');
 assert(app.includes("if(eventDialog?.open)"),'Automatización IA debe poder reanudar eventos pendientes');
 
+const primerPartialSource=fs.readFileSync('primer-parcial-questions.js','utf8');
+const ppCasesBlock=primerPartialSource.match(/const CASES=\\[([\\s\\S]*?)\\];\\s*window\\.PRIMER_PARCIAL_QUESTIONS/);
+assert(ppCasesBlock,'No se localizaron los casos históricos del Primer Parcial');
+const ppCaseIds=[...ppCasesBlock[1].matchAll(/"id"\\s*:\\s*"([^"]+)"/g)].map(x=>x[1]);
+assert.strictEqual(ppCaseIds.length,25,'Deben conservarse exactamente 25 casos históricos');
+assert.strictEqual(new Set(ppCaseIds).size,25,'Los 25 casos históricos deben tener IDs únicos');
+assert(app.includes("...(window.PRIMER_PARCIAL_CASES||[])"),'Los 25 casos históricos deben estar integrados al banco clínico general');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
@@ -114,4 +122,5 @@ console.log('✓ Persistencia: guardado, recuperación y resolución pendiente p
 console.log('✓ Android: pausa segura de narración y cronómetro');
 console.log('✓ UI/documentación: reglamento y textos actuales');
 console.log('✓ QA flujo: eventos, cárcel, cronómetro, IA y recursos cargados');
+console.log('✓ Casos clínicos: 25 casos históricos integrados al banco general');
 console.log('Paso 13: QA automatizado de versión candidata superado.');
