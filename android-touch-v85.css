@@ -1,16 +1,21 @@
-/* Android touch baseline v85 — intentionally simple and loaded last. */
-@media (max-width:900px){
-html,body{margin:0!important;width:100%!important;max-width:100%!important;touch-action:auto!important}
-html{height:auto!important;min-height:100%!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:auto!important}
-body:not(.game-playing){position:static!important;inset:auto!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;overscroll-behavior:auto!important}
-body:not(.game-playing) .app-shell{display:block!important;position:static!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;padding:6px!important}
-body:not(.game-playing) .screen{position:static!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
-body:not(.game-playing) .screen.active{display:block!important;height:auto!important;min-height:calc(100dvh - 56px)!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
-body:not(.game-playing) .setup-card,body:not(.game-playing) .setup-copy,body:not(.game-playing) .setup-form,body:not(.game-playing) .character-shell,body:not(.game-playing) .character-grid{position:relative!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
-body:not(.game-playing) .glass-card{max-height:none!important}
-body:not(.game-playing) .character-card{touch-action:auto!important}
-body:not(.game-playing) button,body:not(.game-playing) input,body:not(.game-playing) select,body:not(.game-playing) .btn,body:not(.game-playing) .icon-btn,body:not(.game-playing) .tiny-btn{touch-action:manipulation!important}
-body.game-playing{position:fixed!important;inset:0!important;height:100dvh!important;overflow:hidden!important}
-dialog.modal[open]{max-height:94dvh!important;overflow-y:auto!important;touch-action:auto!important;-webkit-overflow-scrolling:touch!important}
-dialog.modal[open] .modal-card{height:auto!important;max-height:none!important;overflow:visible!important;touch-action:auto!important}
+/* Android touch baseline v86 — single authority for mobile scrolling. */
+@media (max-width:1200px), (max-height:900px){
+  html{margin:0!important;width:100%!important;height:auto!important;min-height:100%!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+  body:not(.game-playing){margin:0!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+  body:not(.game-playing) .app-shell{display:block!important;position:static!important;width:100%!important;height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important;padding:6px!important}
+  body:not(.game-playing) .screen{position:static!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important}
+  body:not(.game-playing) .screen.active{display:block!important;width:100%!important;height:auto!important;min-height:calc(100dvh - 56px)!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important;padding-bottom:max(28px,env(safe-area-inset-bottom))!important}
+  body:not(.game-playing) .setup-card,body:not(.game-playing) .setup-copy,body:not(.game-playing) .setup-form,body:not(.game-playing) .character-shell,body:not(.game-playing) .character-grid{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important}
+  body:not(.game-playing) .setup-card{display:grid!important}
+  body:not(.game-playing) .character-shell{display:block!important}
+  body:not(.game-playing) .character-grid{display:grid!important;margin:14px 0!important}
+  body:not(.game-playing) .character-card{height:auto!important;min-height:220px!important;overflow:hidden!important;touch-action:pan-y!important}
+  body:not(.game-playing) button,body:not(.game-playing) input,body:not(.game-playing) select,body:not(.game-playing) .btn,body:not(.game-playing) .icon-btn,body:not(.game-playing) .tiny-btn{touch-action:manipulation!important}
+  body.game-playing{position:fixed!important;inset:0!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;touch-action:manipulation!important}
+  dialog.modal[open]{max-height:94dvh!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+  dialog.modal[open] .modal-card{height:auto!important;max-height:none!important;overflow:visible!important;touch-action:pan-y!important}
+}
+@media (orientation:landscape) and (max-height:900px){
+  body:not(.game-playing) .setup-card{grid-template-columns:minmax(0,1fr) minmax(300px,.85fr)!important;gap:14px!important;align-items:start!important}
+  body:not(.game-playing) .character-grid{grid-template-columns:repeat(4,minmax(150px,1fr))!important;grid-template-rows:none!important}
 }
