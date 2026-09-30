@@ -1136,3 +1136,18 @@ html,body,.app-shell,.screen,.game-grid,.board-card,.side-stack{
   overscroll-behavior-x:none!important;
   touch-action:pan-y!important;
 }
+
+/* Mobile scroll fix v82: setup/characters may exceed the viewport. Keep the live board locked only while playing. */
+@media (max-width:760px){
+  html{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+  body:not(.game-playing){height:auto!important;min-height:100dvh!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+  body:not(.game-playing) .app-shell{height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important}
+  body:not(.game-playing) .screen.active{height:auto!important;min-height:calc(100dvh - 51px)!important;max-height:none!important;overflow:visible!important}
+  body:not(.game-playing) .setup-card{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+  body:not(.game-playing) .setup-form{height:auto!important;max-height:none!important;overflow:visible!important}
+  body:not(.game-playing) .character-shell{height:auto!important;min-height:calc(100dvh - 60px)!important;max-height:none!important;overflow:visible!important;display:block!important}
+  body:not(.game-playing) .character-grid{height:auto!important;max-height:none!important;overflow:visible!important;grid-template-rows:none!important}
+  body.game-playing{touch-action:manipulation}
+  .modal{max-height:94dvh!important;overflow-y:auto!important;overscroll-behavior:contain;touch-action:pan-y}
+  .modal-card{max-height:none!important}
+}
