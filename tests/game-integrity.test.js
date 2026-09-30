@@ -120,6 +120,19 @@ assert(app.includes("out.feedback=order.map(i=>item.feedback?.[i]||'Revisa el ra
 assert(app.includes("state.questionQueue=freshQuestionQueue"),'Las preguntas deben usar cola aleatoria');
 assert(app.includes("state.caseQueue=shuffledIndices"),'Los casos deben usar cola aleatoria');
 
+
+const expansionQuestions=fs.readFileSync('expansion-questions-2026.js','utf8');
+const expansionCases=fs.readFileSync('expansion-cases-2026.js','utf8');
+const expQIds=[...expansionQuestions.matchAll(/"id":"(EXP-Q-\\d{3})"/g)].map(x=>x[1]);
+const expCIds=[...expansionCases.matchAll(/"id":"(EXP-C-\\d{3})"/g)].map(x=>x[1]);
+assert.strictEqual(expQIds.length,200,'La expansión debe aportar exactamente 200 preguntas');
+assert.strictEqual(new Set(expQIds).size,200,'Las 200 preguntas nuevas deben tener IDs únicos');
+assert.strictEqual(expCIds.length,145,'La expansión debe aportar exactamente 145 casos');
+assert.strictEqual(new Set(expCIds).size,145,'Los 145 casos nuevos deben tener IDs únicos');
+assert(html.includes('src="expansion-questions-2026.js"'),'play.html debe cargar las 200 preguntas nuevas');
+assert(html.includes('src="expansion-cases-2026.js"'),'play.html debe cargar los 145 casos nuevos');
+assert(html.includes('1000 preguntas')&&html.includes('500 casos clínicos'),'La interfaz debe mostrar los nuevos totales');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
@@ -132,4 +145,5 @@ console.log('✓ UI/documentación: reglamento y textos actuales');
 console.log('✓ QA flujo: eventos, cárcel, cronómetro, IA y recursos cargados');
 console.log('✓ Casos clínicos: 25 casos históricos integrados al banco general');
 console.log('✓ Aleatorización: respuesta, grado y feedback permanecen sincronizados');
+console.log('✓ Expansión: +200 preguntas y +145 casos con IDs únicos y carga activa');
 console.log('Paso 13: QA automatizado de versión candidata superado.');
