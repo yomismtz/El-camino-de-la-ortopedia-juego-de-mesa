@@ -1,0 +1,112 @@
+/* El Camino Dental — tablero premium v93
+   Capa visual no destructiva: mejora jerarquía, tablero, fichas, dados y feedback. */
+:root{
+  --board-ink:#153b59;
+  --board-cream:#fffdf4;
+  --board-gold:#e8b84b;
+  --board-mint:#dff5ee;
+  --board-sky:#e5f5ff;
+  --board-rose:#ffe8ee;
+}
+.game-screen{
+  background:
+    radial-gradient(circle at 8% 18%,rgba(42,178,160,.11),transparent 25%),
+    radial-gradient(circle at 92% 10%,rgba(232,184,75,.13),transparent 26%),
+    linear-gradient(145deg,#eefaff 0%,#f8fcff 48%,#fffaf0 100%);
+}
+.board-card{position:relative;overflow:hidden}
+.board-card:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.42;
+  background-image:radial-gradient(rgba(21,59,89,.08) .65px,transparent .65px);
+  background-size:12px 12px;
+}
+.board-header,.spiral-board,.legend-panel{position:relative;z-index:1}
+.spiral-board{
+  padding:10px!important;
+  border:5px solid #fff!important;
+  border-radius:24px!important;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,250,232,.70)),
+    repeating-linear-gradient(45deg,rgba(25,130,180,.025) 0 8px,transparent 8px 16px)!important;
+  box-shadow:
+    0 0 0 1px rgba(25,104,142,.12),
+    0 16px 38px rgba(22,72,102,.13),
+    inset 0 0 32px rgba(255,255,255,.9)!important;
+}
+.cell{
+  border:1px solid rgba(39,104,137,.16)!important;
+  border-radius:10px!important;
+  background:linear-gradient(145deg,#fff,#f7fbfd)!important;
+  color:var(--board-ink)!important;
+  font-weight:900!important;
+  box-shadow:0 3px 7px rgba(30,76,103,.11),inset 0 1px 0 #fff!important;
+}
+.cell:nth-child(4n+1){background:linear-gradient(145deg,#fff,var(--board-sky))!important}
+.cell:nth-child(4n+2){background:linear-gradient(145deg,#fff,var(--board-mint))!important}
+.cell:nth-child(4n+3){background:linear-gradient(145deg,#fff,#fff6d9)!important}
+.cell:nth-child(4n){background:linear-gradient(145deg,#fff,var(--board-rose))!important}
+.cell.question{background:linear-gradient(145deg,#edf8ff,#cfeeff)!important;border-color:#8bcce9!important}
+.cell.case{background:linear-gradient(145deg,#f0f8ff,#dce8ff)!important;border-color:#a8bde9!important}
+.cell.advance1,.cell.advance2{background:linear-gradient(145deg,#effcf5,#ccefdc)!important;border-color:#86cfaa!important}
+.cell.back1,.cell.back2,.cell.back3{background:linear-gradient(145deg,#fff5f5,#ffdfe4)!important;border-color:#eab0ba!important}
+.cell.vacation,.cell.tax,.cell.lawsuit,.cell.jail,.cell.equipment{
+  background:linear-gradient(145deg,#fff9eb,#f8e5b3)!important;border-color:#ddbd6b!important
+}
+.cell.current-cell{
+  transform:scale(1.08);
+  animation:boardFocus 1.65s ease-in-out infinite;
+}
+@keyframes boardFocus{
+  0%,100%{filter:brightness(1);box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(24,151,188,.22),0 8px 18px rgba(23,52,92,.18)!important}
+  50%{filter:brightness(1.045);box-shadow:0 0 0 3px #fff,0 0 0 8px rgba(24,151,188,.12),0 10px 24px rgba(23,52,92,.22)!important}
+}
+.goal{
+  border:3px solid #fff!important;
+  background:radial-gradient(circle at 40% 28%,#fff8c9,#f0c45b 62%,#d99c2d)!important;
+  color:#563d08!important;
+  animation:goalGlow 2.4s ease-in-out infinite;
+}
+@keyframes goalGlow{50%{filter:brightness(1.06);transform:scale(1.025)}}
+.board-decoration{filter:drop-shadow(0 5px 7px rgba(31,78,88,.13));opacity:.85}
+.dice-panel{background:linear-gradient(180deg,#fff 0%,#f8fdff 100%)!important}
+.dice-row{perspective:600px}
+.die{
+  background:linear-gradient(145deg,#fff,#eef8fc)!important;
+  border:2px solid #d7e9f1!important;
+  color:#173c58!important;
+  text-shadow:0 2px 0 #fff;
+}
+.die.rolling{animation:premiumDice .16s linear infinite!important}
+@keyframes premiumDice{25%{transform:rotate(8deg) scale(1.04)}50%{transform:rotate(-7deg) translateY(-3px)}75%{transform:rotate(5deg) scale(.98)}}
+.roll-btn{
+  background:linear-gradient(135deg,#ef527c,#d83e69)!important;
+  border:0!important;color:#fff!important;
+  box-shadow:0 10px 24px rgba(216,62,105,.24)!important;
+}
+.turn-callout{
+  background:linear-gradient(110deg,#fff,#f0faff)!important;
+  border:1px solid #d8eaf2!important;
+}
+.player-row.current{background:linear-gradient(90deg,#f1fbff,#fff)!important}
+.question-card{
+  background:
+    radial-gradient(circle at 100% 0,rgba(41,177,158,.08),transparent 28%),
+    linear-gradient(180deg,#fff,#fbfeff)!important;
+}
+.option{background:linear-gradient(180deg,#fff,#f8fbfd)!important}
+.option:hover:not(:disabled){transform:translateY(-1px);border-color:#8fcbd9!important}
+.feedback{border-left:5px solid #28a995!important}
+#soundBtn.music-on{position:relative;background:#eefbf8!important}
+#soundBtn.music-on:after{
+  content:"";position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;
+  background:#20b58d;box-shadow:0 0 0 3px rgba(32,181,141,.12);
+}
+.status:before{content:"🦷 ";opacity:.7}
+@media(max-height:620px) and (orientation:landscape){
+  .spiral-board{padding:5px!important;border-radius:17px!important;border-width:3px!important}
+  .cell{border-radius:7px!important}
+  .goal{border-width:2px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .cell.current-cell,.goal,.die.rolling{animation:none!important}
+}
