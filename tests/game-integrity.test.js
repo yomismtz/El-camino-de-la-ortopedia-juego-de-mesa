@@ -142,6 +142,11 @@ assert(!home.includes('800 preguntas')&&!home.includes('355 casos clínicos'),'L
 assert(examHtml.includes('src="expansion-questions-2026.js"'),'Modo Examen debe cargar las 200 preguntas nuevas');
 assert(classifier.includes("id:'anestesia'")&&classifier.includes("id:'implantologia'"),'El selector personalizado debe incluir Anestesia e Implantología');
 
+const css=fs.readFileSync('styles-v10.css','utf8');
+assert(css.includes('Android touch/scroll hard fix'),'Debe existir la corrección fuerte de touch/scroll Android');
+assert(css.includes('body:not(.game-playing){')&&css.includes('position:static!important'),'Pantallas fuera de partida deben liberar position:fixed');
+assert(css.includes('body.game-playing{position:fixed!important'),'Solo la partida debe conservar viewport fijo');
+
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
