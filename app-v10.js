@@ -68,7 +68,7 @@ function loadTeacherQuestions(){try{const q=JSON.parse(localStorage.getItem(TEAC
 function loadTeacherCases(){try{const c=JSON.parse(localStorage.getItem(TEACHER_CASE_KEY)||'[]');return Array.isArray(c)?c.filter(x=>x&&x.text&&Array.isArray(x.options)&&x.options.length>=2):[]}catch{return[]}}
 const questions=[...(window.QUESTIONS||[]),...(window.PRIMER_PARCIAL_QUESTIONS||[]),...loadTeacherQuestions()];
 const fundamentalsQuestions=[...(window.FUNDAMENTOS_OCLUSION||[])];
-const clinicalCases=[...(window.CLINICAL_CASES||[]),...loadTeacherCases()];
+const clinicalCases=[...(window.CLINICAL_CASES||[]),...(window.PRIMER_PARCIAL_CASES||[]),...loadTeacherCases()];
 const fundamentalsCases=[...(window.FUNDAMENTOS_CASES||[])];
 const steinerQuestions=[...(window.STEINER_QUESTIONS||[])];
 const steinerCases=[...(window.STEINER_CASES||[])];
