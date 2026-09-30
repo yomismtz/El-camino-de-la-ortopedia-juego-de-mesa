@@ -169,3 +169,8 @@ console.log('✓ Casos clínicos: 25 casos históricos integrados al banco gener
 console.log('✓ Aleatorización: respuesta, grado y feedback permanecen sincronizados');
 console.log('✓ Expansión: +200 preguntas y +145 casos con IDs únicos y carga activa');
 console.log('Paso 13: QA automatizado de versión candidata superado.');
+
+assert(androidTouch.includes('edge-safe compact landscape setup'),'Debe existir layout landscape compacto y seguro en bordes');
+assert(androidTouch.includes('grid-template-columns:repeat(6,minmax(110px,1fr))'),'Personajes deben compactarse en landscape');
+assert(androidTouch.includes('.setup-form .actions{position:sticky!important;bottom:0!important'),'Acción principal del setup debe permanecer accesible');
+assert(androidTouch.includes('overscroll-behavior:none!important'),'La pantalla landscape no debe propagar overscroll a bordes del sistema');
