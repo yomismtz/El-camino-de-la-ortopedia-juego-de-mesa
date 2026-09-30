@@ -142,3 +142,16 @@
   .game-playing .game-grid{grid-template-columns:minmax(0,1fr) clamp(225px,19vw,270px)!important}
   .game-playing .zigzag-board .cell{width:calc(10% - 4px)!important;height:calc(10% - 3px)!important}
 }
+
+/* v92: accessible low-resolution dialogs; landscape remains mandatory. */
+@media (orientation:landscape) and (max-height:700px){
+  dialog.modal[open]{inset:0!important;margin:auto!important;width:min(94vw,960px)!important;max-width:94vw!important;max-height:calc(100dvh - 24px)!important;padding:0!important;overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important}
+  dialog.modal[open] .modal-card{padding:clamp(10px,2vh,18px)!important;border-radius:18px!important}
+  dialog.modal[open] .question-card h2{font-size:clamp(17px,3.7vh,25px)!important;margin:5px 0!important}
+  dialog.modal[open] .options{gap:6px!important}
+  dialog.modal[open] .option{min-height:42px!important;padding:7px 9px!important;border-radius:12px!important;grid-template-columns:32px 1fr!important;font-size:clamp(10px,2.2vh,14px)!important}
+  dialog.modal[open] .option span:first-child{width:29px!important;height:29px!important}
+  dialog.modal[open] .feedback{padding:8px!important;margin-top:6px!important;font-size:clamp(9px,2vh,13px)!important}
+  dialog.modal[open] .modal-actions{position:sticky!important;bottom:0!important;background:#fff!important;padding:6px 0 max(6px,env(safe-area-inset-bottom))!important;margin-top:5px!important;z-index:5!important}
+  dialog.modal[open] .modal-actions .btn{min-height:40px!important}
+}
