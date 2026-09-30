@@ -32,3 +32,41 @@
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+
+/* v89: edge-safe compact landscape setup. Avoid Android system-edge gesture conflicts. */
+@media (orientation:landscape) and (max-height:700px){
+  html,body:not(.game-playing){height:100dvh!important;min-height:100dvh!important;overflow:hidden!important;overscroll-behavior:none!important}
+  body:not(.game-playing){padding:0 env(safe-area-inset-right) 0 env(safe-area-inset-left)!important}
+  body:not(.game-playing) .app-shell{height:100dvh!important;min-height:0!important;overflow:hidden!important;padding:4px max(10px,env(safe-area-inset-right)) 4px max(10px,env(safe-area-inset-left))!important}
+  body:not(.game-playing) .topbar{height:42px!important;min-height:42px!important;padding:2px 6px!important}
+  body:not(.game-playing) .brand-logo{width:128px!important;max-height:36px!important}
+  body:not(.game-playing) .icon-btn{width:36px!important;height:36px!important;min-width:36px!important}
+  body:not(.game-playing) .screen.active{height:calc(100dvh - 46px)!important;min-height:0!important;max-height:calc(100dvh - 46px)!important;overflow:hidden!important;padding:0!important}
+  body:not(.game-playing) .setup-card{height:100%!important;min-height:0!important;grid-template-columns:minmax(0,.82fr) minmax(360px,1.18fr)!important;gap:10px!important;padding:10px 12px!important;align-items:stretch!important;overflow:hidden!important}
+  body:not(.game-playing) .setup-copy{align-self:center!important;min-height:0!important}
+  body:not(.game-playing) .setup-copy h1{font-size:clamp(28px,6.5vh,42px)!important;margin:5px 0!important;line-height:.96!important}
+  body:not(.game-playing) .setup-copy p{font-size:12px!important;line-height:1.25!important;margin:5px 0!important}
+  body:not(.game-playing) .setup-copy .feature-row{display:none!important}
+  body:not(.game-playing) .setup-form{height:100%!important;min-height:0!important;padding:9px 11px!important;overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:thin!important;touch-action:pan-y!important;scroll-padding-block:12px!important}
+  body:not(.game-playing) .setup-form>label{gap:3px!important;margin-bottom:5px!important;font-size:11px!important}
+  body:not(.game-playing) .setup-form select,body:not(.game-playing) .name-row input{min-height:34px!important;padding:5px 8px!important;font-size:12px!important}
+  body:not(.game-playing) .player-names{gap:4px!important;margin:5px 0!important}
+  body:not(.game-playing) .name-row{grid-template-columns:28px 1fr!important;gap:5px!important}
+  body:not(.game-playing) .player-number{width:27px!important;height:27px!important;font-size:11px!important}
+  body:not(.game-playing) .setup-form .actions{position:sticky!important;bottom:0!important;z-index:8!important;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 24%)!important;padding:12px 2px 2px!important;margin-top:2px!important}
+  body:not(.game-playing) .setup-form .btn{min-height:38px!important;padding:7px 11px!important;font-size:12px!important}
+  body:not(.game-playing) .character-shell{height:100%!important;min-height:0!important;padding:8px 10px!important;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;overflow:hidden!important}
+  body:not(.game-playing) .section-title h1{font-size:clamp(22px,5vh,32px)!important;margin:1px 0!important}
+  body:not(.game-playing) .section-title p{font-size:10px!important;margin:2px 0 4px!important}
+  body:not(.game-playing) .character-grid{min-height:0!important;height:100%!important;margin:3px 0!important;padding:4px!important;grid-template-columns:repeat(6,minmax(110px,1fr))!important;gap:6px!important;overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important;align-content:start!important}
+  body:not(.game-playing) .character-card{min-height:154px!important;padding:6px!important;border-radius:14px!important}
+  body:not(.game-playing) .character-art{height:74px!important}
+  body:not(.game-playing) .character-card h3{font-size:13px!important;margin:4px 0 1px!important}
+  body:not(.game-playing) .character-card>b{font-size:9px!important}
+  body:not(.game-playing) .character-card p{display:none!important}
+  body:not(.game-playing) .select-label{margin-top:4px!important;padding:5px!important;font-size:10px!important}
+  body:not(.game-playing) .picked-summary{margin:3px 0!important;gap:3px!important;max-height:24px!important;overflow:hidden!important}
+  body:not(.game-playing) .picked-summary span{padding:3px 6px!important;font-size:9px!important}
+  body:not(.game-playing) .character-shell>.actions{position:sticky!important;bottom:0!important;z-index:9!important;background:#fff!important;padding:5px 0 max(5px,env(safe-area-inset-bottom))!important;margin:0!important}
+  body:not(.game-playing) .character-shell>.actions .btn{min-height:38px!important;padding:7px 12px!important;font-size:12px!important}
+}
