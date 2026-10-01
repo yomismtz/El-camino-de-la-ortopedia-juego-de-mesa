@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('fs');
 const assert=require('assert');
+const vm=require('vm');
 
 const read=p=>fs.readFileSync(p,'utf8');
 const app=read('app-v10.js');
@@ -121,6 +122,16 @@ assert(app.includes("state.questionQueue=freshQuestionQueue"),'Las preguntas deb
 assert(app.includes("state.caseQueue=shuffledIndices"),'Los casos deben usar cola aleatoria');
 
 
+const nomenclatureSource=fs.readFileSync('nomenclatura-etimologia-questions.js','utf8');
+const nomenclatureContext={window:{}};
+vm.runInNewContext(nomenclatureSource,nomenclatureContext);
+const nomenclatureBank=nomenclatureContext.window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS;
+assert(Array.isArray(nomenclatureBank),'El banco de nomenclatura debe exportarse como arreglo');
+assert.strictEqual(nomenclatureBank.length,100,'Nomenclatura debe contener exactamente 100 preguntas');
+assert.strictEqual(new Set(nomenclatureBank.map(q=>q.id)).size,100,'Las 100 preguntas de nomenclatura deben tener IDs únicos');
+assert(nomenclatureBank.every(q=>q.module==='nomenclatura_etimologia'&&q.text&&Array.isArray(q.options)&&q.options.length>=4&&Number.isInteger(q.correct)),'Todas las preguntas de nomenclatura deben tener estructura válida');
+assert(app.includes("if(module==='nomenclatura_etimologia')return nomenclatureEtymologyQuestions"),'El juego debe enrutar el módulo de nomenclatura a su banco dedicado');
+assert(html.includes('src="nomenclatura-etimologia-questions.js"'),'play.html debe cargar el banco de nomenclatura');
 const expansionQuestions=fs.readFileSync('expansion-questions-2026.js','utf8');
 const expansionCases=fs.readFileSync('expansion-cases-2026.js','utf8');
 const expQIds=[...expansionQuestions.matchAll(/"id":"(EXP-Q-\d{3})"/g)].map(x=>x[1]);
@@ -155,7 +166,7 @@ assert(androidTouch.includes('@media (orientation:landscape) and (max-height:900
 assert(androidTouch.includes('@media (orientation:landscape) and (max-height:600px)'),'Debe existir perfil ligero para landscape de poca altura');
 assert(androidTouch.includes('backdrop-filter:none!important'),'El perfil ligero debe desactivar blur costoso');
 
-const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
+const requiredScripts=['area-classifier.js','primer-parcial-questions.js','nomenclatura-etimologia-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
 console.log('✓ Tablero: 80 casillas, tipos sin colisiones y 3 cárceles');
