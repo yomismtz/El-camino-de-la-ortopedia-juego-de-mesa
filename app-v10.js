@@ -54,7 +54,7 @@ const CELL_TYPES={
   // Las posiciones se mantienen estables para que una partida guardada conserve
   // exactamente el mismo tablero al recargar.
   question:new Set([2,7,12,14,15,16,18,22,23,27,41,47,49,51,68,85,86,87,89,99]),
-  case:new Set([3,4,10,24,37,38,40,44,53,55,56,58,66,67,71,75,77,90,91,94]),
+  case:new Set([3,4,10,24,37,38,40,43,53,55,56,58,66,67,71,75,77,90,91,94]),
   // Los 20 eventos se mezclan entre avance, regreso y situaciones profesionales.
   advance1:new Set([13,70]),
   advance2:new Set([8,20]),
