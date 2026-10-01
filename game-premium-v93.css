@@ -1110,3 +1110,53 @@ body.game-playing{
   width:clamp(27px,4.8vh,40px)!important;
   height:clamp(27px,4.8vh,40px)!important;
 }
+
+
+/* v100 — corrección definitiva: la barra de acciones no puede tapar la explicación */
+#questionDialog .question-card .modal-actions{
+  position:relative!important;
+  inset:auto!important;
+  z-index:2!important;
+  display:flex!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  opacity:1!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  margin-top:12px!important;
+  padding:8px 0 0!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+
+#questionDialog .question-card .modal-actions::before,
+#questionDialog .question-card .modal-actions::after{
+  content:none!important;
+  display:none!important;
+  background:transparent!important;
+}
+
+#questionDialog .question-card .feedback{
+  position:relative!important;
+  z-index:5!important;
+  isolation:isolate!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+#questionDialog .question-card .feedback *{
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+@media (orientation:landscape){
+  #questionDialog .question-card .modal-actions{
+    position:relative!important;
+    bottom:auto!important;
+    top:auto!important;
+  }
+}
