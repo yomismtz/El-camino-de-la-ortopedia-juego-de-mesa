@@ -1012,6 +1012,9 @@ body.game-playing{
 .game-playing .zigzag-board > .start-marker b{
   display:none!important;
 }
+.game-playing .zigzag-board > .start-marker:before{
+  display:none!important;
+}
 .game-playing .zigzag-board > .start-marker .start-tokens{
   display:flex!important;
   align-items:center!important;
