@@ -960,3 +960,73 @@ body.game-playing{
   .game-playing .zigzag-board .goal,
   .game-playing .board-token.active{animation:none!important}
 }
+
+
+/* =========================================================
+   v98 — TABLERO CANVAS
+   El canvas dibuja la composición exacta; el DOM conserva
+   casillas/actores como anclas de lógica y accesibilidad.
+   ========================================================= */
+.game-playing .spiral-board.zigzag-board{
+  isolation:isolate!important;
+}
+.game-playing .dental-board-canvas{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:block!important;
+  z-index:4!important;
+  pointer-events:none!important;
+}
+.game-playing .zigzag-board > .cell{
+  z-index:30!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:transparent!important;
+  text-shadow:none!important;
+}
+.game-playing .zigzag-board > .cell:after,
+.game-playing .zigzag-board > .cell .cell-number,
+.game-playing .zigzag-board > .cell .cell-icon{
+  display:none!important;
+}
+.game-playing .zigzag-board > .cell .tokens{
+  position:absolute!important;
+  inset:0!important;
+  z-index:50!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  pointer-events:none!important;
+}
+.game-playing .zigzag-board > .start-marker{
+  z-index:50!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:transparent!important;
+  pointer-events:none!important;
+}
+.game-playing .zigzag-board > .start-marker b{
+  display:none!important;
+}
+.game-playing .zigzag-board > .start-marker .start-tokens{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.game-playing .zigzag-board > .board-decoration,
+.game-playing .zigzag-board > .goal{
+  display:none!important;
+}
+.game-playing .zigzag-board > .cell.current-cell{
+  filter:none!important;
+}
+.game-playing .zigzag-board > .cell.landed{
+  filter:none!important;
+}
+@media (prefers-reduced-motion:reduce){
+  .game-playing .dental-board-canvas{transition:none!important}
+}
