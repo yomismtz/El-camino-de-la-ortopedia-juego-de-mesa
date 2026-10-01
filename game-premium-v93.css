@@ -1033,3 +1033,80 @@ body.game-playing{
 @media (prefers-reduced-motion:reduce){
   .game-playing .dental-board-canvas{transition:none!important}
 }
+
+
+/* =========================================================
+   v99 — tablero con casillas tipo tarjeta + explicación limpia
+   ========================================================= */
+@media (orientation:landscape){
+  body.game-playing .spiral-board.zigzag-board{
+    height:clamp(285px,54vh,410px)!important;
+    min-height:285px!important;
+  }
+}
+
+/* El canvas ya controla las casillas: estas reglas evitan cualquier
+   herencia visual que las vuelva a convertir en "pastillas". */
+.game-playing .dental-board-canvas{
+  border-radius:16px!important;
+}
+
+@media (orientation:landscape) and (max-height:700px){
+  body.game-playing .spiral-board.zigzag-board{
+    height:clamp(275px,53vh,390px)!important;
+  }
+}
+
+/* La explicación no debe quedar debajo de una franja blanca.
+   Los botones siguen al contenido y el usuario puede leer todo. */
+#questionDialog .question-card{
+  padding-bottom:22px!important;
+}
+
+#questionDialog .modal-actions{
+  position:static!important;
+  z-index:auto!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  padding:12px 0 0!important;
+  margin-top:10px!important;
+}
+
+#questionDialog .feedback{
+  position:relative!important;
+  z-index:1!important;
+  margin-bottom:0!important;
+  overflow:visible!important;
+}
+
+#questionDialog .feedback p,
+#questionDialog .feedback div,
+#questionDialog .feedback span{
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+@media (orientation:landscape) and (max-height:620px){
+  #questionDialog .question-card{
+    padding:12px 16px 18px!important;
+  }
+  #questionDialog .modal-actions{
+    position:static!important;
+    padding:8px 0 0!important;
+    margin-top:8px!important;
+  }
+}
+
+/* Las fichas quedan centradas dentro de cada tarjeta y no tapan
+   números ni iconos. */
+.game-playing .zigzag-board > .cell .tokens{
+  z-index:60!important;
+  padding:2px!important;
+}
+
+.game-playing .zigzag-board .board-token{
+  width:clamp(27px,4.8vh,40px)!important;
+  height:clamp(27px,4.8vh,40px)!important;
+}
