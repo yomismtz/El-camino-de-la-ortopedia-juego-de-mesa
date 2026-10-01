@@ -42,7 +42,7 @@ assert.strictEqual(extractSet('case').length,20,'Deben existir 20 casillas de ca
 assert.strictEqual(bounce(77,3),80,'77 + 3 debe ganar exactamente');
 assert.strictEqual(bounce(77,8),75,'77 + 8 debe rebotar a 75');
 assert.strictEqual(bounce(79,2),79,'79 + 2 debe rebotar a 79');
-assert.strictEqual(bounce(78,12),68,'78 + 12 debe rebotar a 68');
+assert.strictEqual(bounce(78,12),70,'78 + 12 debe rebotar a 70');
 for(let start=0;start<80;start++)for(let roll=2;roll<=12;roll++){
   const end=bounce(start,roll);
   assert(end>=0&&end<=80,'Rebote fuera del tablero');
