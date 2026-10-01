@@ -34,9 +34,9 @@ for(const type of types){
     occupied.set(cell,type);
   }
 }
-assert.deepStrictEqual(extractSet('jail'),[44],'La cárcel debe permanecer en la casilla 44');
+assert.deepStrictEqual(extractSet('jail'),[44,79,95],'Deben existir 3 cárceles distribuidas en el tablero');
 assert.strictEqual(extractSet('question').length,20,'Deben existir 20 casillas de pregunta');
-assert.strictEqual(extractSet('case').length,19,'Deben existir 19 casillas de caso');
+assert.strictEqual(extractSet('case').length,20,'Deben existir 20 casillas de caso');
 
 assert.strictEqual(bounce(97,3),100,'97 + 3 debe ganar exactamente');
 assert.strictEqual(bounce(97,8),95,'97 + 8 debe rebotar a 95');
@@ -158,7 +158,7 @@ assert(androidTouch.includes('backdrop-filter:none!important'),'El perfil ligero
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
-console.log('✓ Tablero: 100 casillas, tipos sin colisiones y cárcel 44');
+console.log('✓ Tablero: 100 casillas, tipos sin colisiones y 3 cárceles');
 console.log('✓ Meta: victoria exacta y rebote validados para todas las posiciones/tiradas 2–12');
 console.log('✓ Configuración: 2–5 jugadores, computadora y 4 niveles IA');
 console.log('✓ Persistencia: guardado, recuperación y resolución pendiente presentes');
