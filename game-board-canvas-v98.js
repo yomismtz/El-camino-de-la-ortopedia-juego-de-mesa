@@ -65,7 +65,7 @@
       const col=row%2===0?step:9-step;
       return {
         x:w*(0.055+col*0.0989),
-        y:h*(0.055+(9-row)*0.099)
+        y:h*(0.055+(7-row)*0.125)
       };
     }
 
@@ -100,7 +100,7 @@
       ctx.fillStyle=bg;
       ctx.fillRect(0,0,w,h);
 
-      // Fondo ilustrado, pero con espacio visual suficiente para las 100 casillas.
+      // Fondo ilustrado, con espacio visual para las 80 casillas.
       const blobs=[
         [0.06,0.18,0.05,'#82d0bd'],[0.94,0.72,0.045,'#9ed9bd'],
         [0.10,0.88,0.055,'#b5d97b'],[0.91,0.12,0.05,'#b7df83'],
@@ -111,7 +111,7 @@
         ctx.fillStyle=color;ctx.globalAlpha=.35;ctx.fill();ctx.globalAlpha=1;
       });
 
-      const centers=Array.from({length:100},(_,i)=>centerFor(i+1,w,h));
+      const centers=Array.from({length:80},(_,i)=>centerFor(i+1,w,h));
 
       // Camino muy discreto: las casillas deben ser las protagonistas.
       ctx.save();
@@ -129,8 +129,8 @@
 
       cells.forEach((cell,index)=>{
         const n=index+1,p=centers[index],type=typeOf(cell);
-        const ww=n===100?tileW*1.03:tileW;
-        const hh=n===100?tileH*1.03:tileH;
+        const ww=n===80?tileW*1.03:tileW;
+        const hh=n===80?tileH*1.03:tileH;
         const colors=COLORS[type]||COLORS.neutral;
         const g=ctx.createLinearGradient(p.x-ww/2,p.y-hh/2,p.x+ww/2,p.y+hh/2);
         g.addColorStop(0,colors[0]);g.addColorStop(1,colors[1]);
@@ -202,7 +202,7 @@
       ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('INICIO',s.x,Math.min(h-28,s.y+hhSafe(h)*.48)+11.5);
       ctx.restore();
 
-      // La META es la casilla 100: no colocamos un panel encima de otras casillas.
+      // La META es la casilla 80: no colocamos un panel encima de otras casillas.
       const f=centers[99];
       ctx.save();
       roundRect(ctx,f.x-wwSafe(w)/2,f.y-hhSafe(h)/2,wwSafe(w),hhSafe(h),9);
