@@ -1035,3 +1035,19 @@ html,body{overscroll-behavior:none}
   .game-playing .dice-eyebrow{display:none}
   .game-playing .turn-copy small{display:none}
 }
+
+
+/* v3.7.9 — tablero horizontal más compacto y eliminación del objetivo superpuesto */
+@media (orientation: landscape){
+  .game-screen .spiral-board{
+    width:80%!important;
+    max-width:none!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  /* El canvas v98 ya dibuja la meta/casilla 100; este elemento HTML antiguo
+     quedaba como una placa blanca superpuesta en el centro del tablero. */
+  .game-screen .spiral-board > .goal{
+    display:none!important;
+  }
+}
