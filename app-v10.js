@@ -47,24 +47,26 @@ const RULE_META={
   neutral:{icon:'🦷',title:'Descanso',message:'No ocurre nada.'},
   finish:{icon:'🏆',title:'Meta'}
 };
-const JAIL_CELL=44;
+const JAIL_CELL=79;
 const CELL_TYPES={
-  // Distribución didáctica: 20 preguntas + 20 casos clínicos + 20 eventos/reglas + 3 cárceles.
-  question:new Set([3,8,13,18,23,28,33,38,43,48,53,58,63,68,73,78,83,88,93,97]),
-  case:new Set([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99]),
-  // Los 20 eventos combinan avance/regreso con situaciones del juego:
-  // vacaciones, impuestos, equipo, demanda, paciente que cancela, expediente perdido, etc.
-  advance1:new Set([2,52]),
-  advance2:new Set([6,56]),
-  back1:new Set([11,61]),
-  back2:new Set([16,66]),
-  back3:new Set([21,71]),
-  vacation:new Set([26,76,96]),
-  tax:new Set([31,81]),
-  equipment:new Set([36,86]),
-  lawsuit:new Set([41,46,91]),
-  // Tres cárceles independientes; la demanda también puede enviar a una de ellas.
-  jail:new Set([22,62,92])
+  // Distribución aleatoria equilibrada del tablero: 20 preguntas + 20 casos +
+  // 20 eventos/reglas + 3 cárceles. La casilla 100 permanece como META.
+  // Las posiciones se mantienen estables para que una partida guardada conserve
+  // exactamente el mismo tablero al recargar.
+  question:new Set([2,7,12,14,15,16,18,22,23,27,41,47,49,51,68,85,86,87,89,99]),
+  case:new Set([3,4,10,24,37,38,40,44,53,55,56,58,66,67,71,75,77,90,91,94]),
+  // Los 20 eventos se mezclan entre avance, regreso y situaciones profesionales.
+  advance1:new Set([13,70]),
+  advance2:new Set([8,20]),
+  back1:new Set([96,98]),
+  back2:new Set([30,64]),
+  back3:new Set([39,54]),
+  vacation:new Set([65,80,81]),
+  tax:new Set([57,62]),
+  equipment:new Set([9,73]),
+  lawsuit:new Set([60,72,83]),
+  // Tres cárceles distribuidas por el recorrido. La demanda envía a la 79.
+  jail:new Set([46,79,95])
 };
 const TEACHER_ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
 const TEACHER_CASE_KEY='ortopediaActiveTeacherCasesV1';
