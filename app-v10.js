@@ -49,18 +49,22 @@ const RULE_META={
 };
 const JAIL_CELL=44;
 const CELL_TYPES={
+  // Distribución didáctica del tablero: 20 preguntas + 20 casos clínicos.
   question:new Set([3,8,13,18,23,28,33,38,43,48,53,58,63,68,73,78,83,88,93,97]),
-  case:new Set([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]),
-  advance1:new Set([2,21,41,52,61,72,98]),
-  advance2:new Set([6,26,46,66,86,99]),
-  back1:new Set([11,31,51,71,91]),
-  back2:new Set([16,36,56,76,96]),
-  back3:new Set([17,37,57,77,92]),
+  case:new Set([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99]),
+  // 20 casillas de movimiento: 10 para avanzar y 10 para regresar.
+  advance1:new Set([2,21,41,61,81]),
+  advance2:new Set([6,26,46,66,86]),
+  back1:new Set([11,31,51]),
+  back2:new Set([16,36,56]),
+  back3:new Set([17,37,57,77]),
+  // Eventos existentes, conservados como variedad del recorrido.
   vacation:new Set([12,32,62,82]),
   tax:new Set([14,34,64,84]),
   lawsuit:new Set([27,67,87]),
-  jail:new Set([44]),
-  equipment:new Set([4,24,54,74,94])
+  equipment:new Set([4,24,54,74,94]),
+  // Tres cárceles independientes; la demanda también puede enviar a una de ellas.
+  jail:new Set([22,42,72])
 };
 const TEACHER_ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
 const TEACHER_CASE_KEY='ortopediaActiveTeacherCasesV1';
