@@ -61,7 +61,7 @@ const CELL_TYPES={
   back1:new Set([28,29]),
   back2:new Set([30,64]),
   back3:new Set([39,54]),
-  vacation:new Set([31,65,80]),
+  vacation:new Set([31,65,74]),
   tax:new Set([57,62]),
   equipment:new Set([9,73]),
   lawsuit:new Set([32,60,72]),
