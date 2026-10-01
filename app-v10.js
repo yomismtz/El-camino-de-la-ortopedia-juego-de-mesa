@@ -66,7 +66,7 @@ const CELL_TYPES={
   equipment:new Set([9,73]),
   lawsuit:new Set([60,72,83]),
   // Tres cárceles distribuidas por el recorrido. La demanda envía a la 79.
-  jail:new Set([46,79,95])
+  jail:new Set([44,79,95])
 };
 const TEACHER_ACTIVE_KEY='ortopediaActiveTeacherQuestionsV1';
 const TEACHER_CASE_KEY='ortopediaActiveTeacherCasesV1';
