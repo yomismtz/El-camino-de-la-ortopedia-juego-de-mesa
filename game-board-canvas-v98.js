@@ -203,7 +203,7 @@
       ctx.restore();
 
       // La META es la casilla 80: no colocamos un panel encima de otras casillas.
-      const f=centers[99];
+      const f=centers[79];
       ctx.save();
       roundRect(ctx,f.x-wwSafe(w)/2,f.y-hhSafe(h)/2,wwSafe(w),hhSafe(h),9);
       ctx.lineWidth=4;ctx.strokeStyle='#f0b92f';ctx.stroke();
