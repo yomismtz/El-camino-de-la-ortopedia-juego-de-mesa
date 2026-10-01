@@ -188,7 +188,7 @@
           ctx.font='800 '+clamp(w*.0075,8,11)+'px system-ui,sans-serif';
           ctx.textAlign='center';
           ctx.textBaseline='bottom';
-          ctx.fillText(type==='question'?'PREG':type==='case'?'CASO':type.includes('advance')?'AVANZA':type.includes('back')?'REGRESA':type==='jail'?'CÁRCEL':'EVENTO',p.x,p.y+hh/2-3);
+          ctx.fillText(type==='question'?'PREG':type==='case'?'CASO':type==='jail'?'CÁRCEL':'EVENTO',p.x,p.y+hh/2-3);
         }
       });
 
