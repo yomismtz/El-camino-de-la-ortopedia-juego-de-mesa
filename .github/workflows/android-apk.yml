@@ -27,6 +27,7 @@ on:
       - 'learning-tools.js'
       - 'area-classifier.js'
       - 'primer-parcial-questions.js'
+      - 'nomenclatura-etimologia-questions.js'
       - 'accessibility.js'
       - 'sw.js'
       - 'manifest.webmanifest'
