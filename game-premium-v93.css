@@ -1189,3 +1189,154 @@ body.game-playing{
   font-size:clamp(8px,1.2vh,11px)!important;
   line-height:1!important;
 }
+
+
+/* v101 — auditoría visual integral del tablero
+   Una sola capa de renderizado: HTML/CSS. Se elimina ruido visual,
+   se igualan proporciones y se deja aire uniforme entre las 80 posiciones. */
+.game-playing .spiral-board.zigzag-board{
+  background:
+    radial-gradient(circle at 14% 18%,rgba(255,255,255,.42),transparent 22%),
+    radial-gradient(circle at 86% 80%,rgba(255,255,255,.30),transparent 24%),
+    linear-gradient(180deg,#ccefc5 0%,#c3e9c9 52%,#d8efbf 100%)!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(43,112,91,.13),
+    inset 0 0 35px rgba(255,255,255,.45),
+    0 10px 24px rgba(28,70,88,.13)!important;
+}
+
+/* Las franjas decorativas anteriores competían con las casillas. */
+.game-playing .spiral-board.zigzag-board:before,
+.game-playing .spiral-board.zigzag-board:after{
+  display:none!important;
+}
+
+/* Cuadrícula 10 × 8 con márgenes simétricos y separación constante. */
+.game-playing .zigzag-board .cell{
+  left:calc(5% + var(--col) * 10%)!important;
+  top:calc(6.5% + var(--row) * 12.43%)!important;
+  width:8.4%!important;
+  height:8.6%!important;
+  transform:translate(-50%,-50%)!important;
+  border:3px solid rgba(255,255,255,.96)!important;
+  border-radius:14px!important;
+  box-shadow:
+    0 4px 0 rgba(75,111,105,.12),
+    0 7px 12px rgba(38,75,94,.10),
+    inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+
+/* Elimina la variación geométrica excesiva: la diferenciación queda en el color. */
+.game-playing .zigzag-board .cell:nth-child(n){
+  transform:translate(-50%,-50%)!important;
+  border-radius:14px!important;
+}
+
+/* Paleta semántica estable y armónica. */
+.game-playing .zigzag-board .cell.neutral{
+  background:linear-gradient(145deg,#ffffff,#edf7f2)!important;
+  color:#31566a!important;
+}
+.game-playing .zigzag-board .cell.question{
+  background:linear-gradient(145deg,#42aceb,#197dcc)!important;
+  color:#fff!important;
+}
+.game-playing .zigzag-board .cell.case{
+  background:linear-gradient(145deg,#9a7be1,#704fc2)!important;
+  color:#fff!important;
+}
+.game-playing .zigzag-board .cell.advance1,
+.game-playing .zigzag-board .cell.advance2{
+  background:linear-gradient(145deg,#63d294,#2eae74)!important;
+  color:#fff!important;
+}
+.game-playing .zigzag-board .cell.back1,
+.game-playing .zigzag-board .cell.back2,
+.game-playing .zigzag-board .cell.back3{
+  background:linear-gradient(145deg,#f58a9b,#e45d76)!important;
+  color:#fff!important;
+}
+.game-playing .zigzag-board .cell.vacation,
+.game-playing .zigzag-board .cell.tax,
+.game-playing .zigzag-board .cell.equipment,
+.game-playing .zigzag-board .cell.lawsuit{
+  background:linear-gradient(145deg,#f8d477,#e8b447)!important;
+  color:#5a4211!important;
+}
+.game-playing .zigzag-board .cell.jail{
+  background:linear-gradient(145deg,#aeb8c3,#758291)!important;
+  color:#fff!important;
+}
+
+/* Tipografía: número arriba, icono al centro, sin competir entre sí. */
+.game-playing .zigzag-board .cell-number{
+  left:7px!important;
+  top:5px!important;
+  font-size:clamp(10px,1.7vh,16px)!important;
+  line-height:1!important;
+}
+.game-playing .zigzag-board .cell-icon{
+  right:50%!important;
+  bottom:5px!important;
+  transform:translateX(50%)!important;
+  font-size:clamp(13px,2.4vh,21px)!important;
+  line-height:1!important;
+}
+
+/* Decoración ambiental muy discreta. */
+.game-playing .zigzag-board .board-decoration{
+  opacity:.38!important;
+  filter:drop-shadow(0 3px 4px rgba(31,78,88,.10))!important;
+  z-index:8!important;
+}
+
+/* La ficha siempre queda contenida dentro de su casilla. */
+.game-playing .zigzag-board .tokens{
+  z-index:60!important;
+  padding:4px!important;
+}
+.game-playing .zigzag-board .board-token{
+  width:clamp(25px,4vh,36px)!important;
+  height:clamp(25px,4vh,36px)!important;
+  border-width:2px!important;
+}
+
+/* META central: ocupa solamente el espacio libre entre las filas. */
+.game-playing .zigzag-board .goal{
+  width:clamp(78px,8vw,120px)!important;
+  height:clamp(44px,7.5vh,64px)!important;
+  border:3px solid #fff!important;
+  border-radius:18px!important;
+  background:linear-gradient(180deg,#ffffff,#eaf8ff)!important;
+  box-shadow:
+    0 7px 0 rgba(64,109,124,.12),
+    0 12px 20px rgba(38,77,96,.14),
+    inset 0 0 0 2px #bce7f7!important;
+  z-index:70!important;
+}
+.game-playing .zigzag-board .goal:before{
+  font-size:clamp(18px,3vh,27px)!important;
+}
+.game-playing .zigzag-board .goal strong{
+  font-size:clamp(10px,1.6vh,14px)!important;
+}
+.game-playing .zigzag-board .goal b{
+  font-size:clamp(8px,1.1vh,10px)!important;
+}
+
+/* El 80 es la meta lógica y no debe aparecer como una casilla adicional. */
+.game-playing .zigzag-board .cell.finish{
+  left:50%!important;
+  top:50%!important;
+  width:1px!important;
+  height:1px!important;
+  opacity:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+.game-playing .zigzag-board .cell.finish .tokens{
+  position:absolute!important;
+  inset:-20px!important;
+}
