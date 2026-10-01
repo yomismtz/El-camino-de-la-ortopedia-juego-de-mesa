@@ -66,6 +66,7 @@ jobs:
         shell: bash
         run: |
           node --check app-v10.js
+          node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
           node --check exam.js
@@ -168,4 +169,3 @@ jobs:
           name: ElCaminoDental-v3.7
           path: ElCaminoDental-v3.7.apk
           if-no-files-found: error
-
