@@ -15,12 +15,12 @@ function extractSet(name){
 }
 function bounce(start,roll){
   const raw=start+roll;
-  return raw>100?100-(raw-100):raw;
+  return raw>80?80-(raw-80):raw;
 }
 
-assert(app.includes('const BOARD_END=100;'),'BOARD_END debe ser 100');
-assert(html.includes('100 casillas'),'La interfaz debe declarar 100 casillas');
-assert(html.includes('<b>100</b>'),'La meta visible debe ser 100');
+assert(app.includes('const BOARD_END=80;'),'BOARD_END debe ser 80');
+assert(html.includes('80 casillas'),'La interfaz debe declarar 80 casillas');
+assert(html.includes('<b>80</b>'),'La meta visible debe ser 80');
 
 const types=['question','case','advance1','advance2','back1','back2','back3','vacation','tax','lawsuit','jail','equipment'];
 const occupied=new Map();
@@ -29,22 +29,22 @@ for(const type of types){
   assert(cells.length>0,type+' no puede quedar vacío');
   assert.strictEqual(new Set(cells).size,cells.length,type+' contiene casillas duplicadas');
   for(const cell of cells){
-    assert(Number.isInteger(cell)&&cell>=1&&cell<100,type+' contiene casilla inválida '+cell);
+    assert(Number.isInteger(cell)&&cell>=1&&cell<80,type+' contiene casilla inválida '+cell);
     assert(!occupied.has(cell),'La casilla '+cell+' aparece en '+occupied.get(cell)+' y '+type);
     occupied.set(cell,type);
   }
 }
-assert.deepStrictEqual(extractSet('jail'),[44,79,95],'Deben existir 3 cárceles distribuidas en el tablero');
+assert.deepStrictEqual(extractSet('jail'),[33,44,79],'Deben existir 3 cárceles distribuidas en el tablero');
 assert.strictEqual(extractSet('question').length,20,'Deben existir 20 casillas de pregunta');
 assert.strictEqual(extractSet('case').length,20,'Deben existir 20 casillas de caso');
 
-assert.strictEqual(bounce(97,3),100,'97 + 3 debe ganar exactamente');
-assert.strictEqual(bounce(97,8),95,'97 + 8 debe rebotar a 95');
-assert.strictEqual(bounce(99,2),99,'99 + 2 debe rebotar a 99');
-assert.strictEqual(bounce(98,12),90,'98 + 12 debe rebotar a 90');
-for(let start=0;start<100;start++)for(let roll=2;roll<=12;roll++){
+assert.strictEqual(bounce(77,3),80,'77 + 3 debe ganar exactamente');
+assert.strictEqual(bounce(77,8),75,'77 + 8 debe rebotar a 75');
+assert.strictEqual(bounce(79,2),79,'79 + 2 debe rebotar a 79');
+assert.strictEqual(bounce(78,12),68,'78 + 12 debe rebotar a 68');
+for(let start=0;start<80;start++)for(let roll=2;roll<=12;roll++){
   const end=bounce(start,roll);
-  assert(end>=0&&end<=100,'Rebote fuera del tablero');
+  assert(end>=0&&end<=80,'Rebote fuera del tablero');
 }
 assert(app.includes('async function moveWithFinishBounce'),'Falta función de rebote');
 assert(app.includes('position===BOARD_END'),'La victoria por dados debe exigir meta exacta');
@@ -158,7 +158,7 @@ assert(androidTouch.includes('backdrop-filter:none!important'),'El perfil ligero
 const requiredScripts=['area-classifier.js','primer-parcial-questions.js','questions.js','app-v10.js','android-navigation.js'];
 for(const script of requiredScripts)assert(html.includes('src="'+script+'"'),'Falta script crítico '+script);
 
-console.log('✓ Tablero: 100 casillas, tipos sin colisiones y 3 cárceles');
+console.log('✓ Tablero: 80 casillas, tipos sin colisiones y 3 cárceles');
 console.log('✓ Meta: victoria exacta y rebote validados para todas las posiciones/tiradas 2–12');
 console.log('✓ Configuración: 2–5 jugadores, computadora y 4 niveles IA');
 console.log('✓ Persistencia: guardado, recuperación y resolución pendiente presentes');
