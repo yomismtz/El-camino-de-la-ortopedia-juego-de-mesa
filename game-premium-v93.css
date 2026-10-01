@@ -1160,3 +1160,32 @@ body.game-playing{
     top:auto!important;
   }
 }
+
+
+/* v99 — corrección de superposición del tablero
+   El tablero HTML ya dibuja las 80 casillas. El canvas v98 era una segunda capa
+   de casillas con coordenadas distintas y producía duplicados/ghosting en Android.
+   Se conserva el canvas en el proyecto para compatibilidad, pero no se pinta sobre
+   la cuadrícula real. La META central se reduce para ocupar el hueco entre casillas. */
+.game-playing .dental-board-canvas{
+  display:none!important;
+  pointer-events:none!important;
+}
+.game-playing .zigzag-board .goal{
+  width:clamp(72px,6.5vw,108px)!important;
+  height:clamp(40px,7vh,58px)!important;
+  border-width:3px!important;
+  border-radius:18px!important;
+  gap:0!important;
+}
+.game-playing .zigzag-board .goal:before{
+  font-size:clamp(18px,3.2vh,28px)!important;
+}
+.game-playing .zigzag-board .goal strong{
+  font-size:clamp(10px,1.7vh,15px)!important;
+  line-height:1!important;
+}
+.game-playing .zigzag-board .goal b{
+  font-size:clamp(8px,1.2vh,11px)!important;
+  line-height:1!important;
+}
