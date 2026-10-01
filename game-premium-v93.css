@@ -489,7 +489,7 @@ body.game-playing{
 .game-playing .zigzag-board .cell{
   z-index:20!important;
   left:calc(5% + var(--col) * 9.48%)!important;
-  top:calc(7% + var(--row) * 9.55%)!important;
+  top:calc(7% + var(--row) * 12.285%)!important;
   width:8.25%!important;
   height:7.25%!important;
   min-width:0!important;
