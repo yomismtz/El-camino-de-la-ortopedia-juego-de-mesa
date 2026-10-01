@@ -47,7 +47,7 @@ const RULE_META={
   neutral:{icon:'🦷',title:'Descanso',message:'No ocurre nada.'},
   finish:{icon:'🏆',title:'Meta'}
 };
-const JAIL_CELL=79;
+const JAIL_CELL=44;
 const CELL_TYPES={
   // Distribución aleatoria equilibrada del tablero: 20 preguntas + 20 casos +
   // 20 eventos/reglas + 3 cárceles. La casilla 100 permanece como META.
