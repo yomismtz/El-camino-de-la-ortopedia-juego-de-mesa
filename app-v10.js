@@ -86,6 +86,8 @@ const habitsParafunctionsQuestions=[...(window.HABITOS_PARAFUNCIONES_QUESTIONS||
 const habitsParafunctionsCases=[...(window.HABITOS_PARAFUNCIONES_CASES||[])];
 const firstPartialQuestions=[...(window.PRIMER_PARCIAL_QUESTIONS||[])];
 const nomenclatureEtymologyQuestions=[...(window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[])];
+const anatomyQuestions=[...(window.ANATOMIA_QUESTIONS||[])];
+const dentalAnesthesiaQuestions=[...(window.ANESTESIA_DENTAL_QUESTIONS||[])];
 const firstPartialCases=[...(window.PRIMER_PARCIAL_CASES||[])];
 function moduleQuestionBank(module){
   if(module==='fundamentos_oclusion')return fundamentalsQuestions;
@@ -94,6 +96,8 @@ function moduleQuestionBank(module){
   if(module==='habitos_parafunciones')return habitsParafunctionsQuestions;
   if(module==='nomenclatura_etimologia')return nomenclatureEtymologyQuestions;
   if(module==='steiner')return steinerQuestions;
+  if(module==='anatomia_general')return anatomyQuestions;
+  if(module==='anestesia_general')return dentalAnesthesiaQuestions;
   return questions
 }
 function moduleCaseBank(module){
@@ -108,7 +112,8 @@ const MASTER_QUESTION_SOURCES=[
   ['ortopedia_general',questions],['fundamentos_oclusion',fundamentalsQuestions],['steiner',steinerQuestions],
   ['fisiologia_funcion',physiologyFunctionQuestions],['crecimiento_desarrollo',growthDevelopmentQuestions],
   ['habitos_parafunciones',habitsParafunctionsQuestions],
-  ['nomenclatura_etimologia',nomenclatureEtymologyQuestions]
+  ['nomenclatura_etimologia',nomenclatureEtymologyQuestions],
+  ['anatomia_general',anatomyQuestions],['anestesia_general',dentalAnesthesiaQuestions]
 ];
 const MASTER_CASE_SOURCES=[
   ['ortopedia_general',clinicalCases],['fundamentos_oclusion',fundamentalsCases],['steiner',steinerCases],
