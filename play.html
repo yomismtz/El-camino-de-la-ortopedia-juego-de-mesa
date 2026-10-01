@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#278BFF">
   <meta name="color-scheme" content="light">
   <title>Jugar | El Camino Dental</title>
-  <meta name="description" content="El Camino Dental: juego educativo con tablero ilustrado de 100 casillas, preguntas, casos clínicos y Modo Docente.">
+  <meta name="description" content="El Camino Dental: juego educativo con tablero ilustrado de 80 casillas, preguntas, casos clínicos y Modo Docente.">
   <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles-v10.css">
     <link rel="stylesheet" href="ui-polish.css">
@@ -37,11 +37,11 @@
   <section id="setup" class="screen active">
     <div class="setup-card glass-card">
       <div class="setup-copy">
-        <span class="pill">🎲🎲 2 dados · 100 casillas · Meta al centro</span>
+        <span class="pill">🎲🎲 2 dados · 80 casillas · Meta al centro</span>
         <h1>Aprender ortopedia dental jugando.</h1>
-        <p>Forma de 2 a 5 jugadores o equipos. Cada participante elige un personaje distinto y recorre un tablero circular de 100 casillas hasta llegar a la meta.</p>
+        <p>Forma de 2 a 5 jugadores o equipos. Cada participante elige un personaje distinto y recorre un tablero circular de 80 casillas hasta llegar a la meta.</p>
         <div class="feature-row">
-          <span>🧠 1000 preguntas</span><span>📋 500 casos clínicos</span><span>🤖 Vs computadora</span><span>🎵 Música + efectos</span><span>👥 2–5 jugadores</span><span>🏆 Meta 100</span>
+          <span>🧠 1000 preguntas</span><span>📋 500 casos clínicos</span><span>🤖 Vs computadora</span><span>🎵 Música + efectos</span><span>👥 2–5 jugadores</span><span>🏆 Meta 80</span>
         </div>
       </div>
       <div class="setup-form">
@@ -127,7 +127,7 @@
   </section>
 
   <section id="loadingScreen" class="screen loading-screen">
-    <div class="loading-card glass-card"><img class="loader-logo" src="brand/icon-el-camino-dental.svg" alt=""><h2>Preparando El Camino Dental…</h2><p>100 casillas · dos dados · 12 personajes</p></div>
+    <div class="loading-card glass-card"><img class="loader-logo" src="brand/icon-el-camino-dental.svg" alt=""><h2>Preparando El Camino Dental…</h2><p>80 casillas · dos dados · 12 personajes</p></div>
   </section>
 
   <section id="game" class="screen game-screen">
@@ -137,7 +137,7 @@
           <div><span class="eyebrow">TABLERO PRINCIPAL</span><h2>Camino a la meta</h2></div>
           <div class="turn-chip"><span>Turno</span><strong id="turnLabel">Jugador</strong></div>
         </div>
-        <div id="board" class="spiral-board" aria-label="Tablero rectangular en zigzag de 100 casillas">
+        <div id="board" class="spiral-board" aria-label="Tablero rectangular en zigzag de 80 casillas">
           <div class="board-decoration deco-a">🌿</div><div class="board-decoration deco-b">🌸</div><div class="board-decoration deco-c">🪴</div>
           <div class="goal"><span>🦷</span><strong>META</strong><b>100</b></div>
         </div>
@@ -231,7 +231,7 @@
       <a href="#rule-objective">🎯 Objetivo</a><a href="#rule-turn">🎲 Turnos</a><a href="#rule-academic">🧠 Preguntas y casos</a><a href="#rule-cells">🗺️ Casillas</a><a href="#rule-goal">🏆 Meta</a><a href="#rule-save">💾 Partida</a>
     </nav>
     <div class="rules-sections">
-      <section id="rule-objective"><h3>🎯 Objetivo y jugadores</h3><p>Participan de 2 a 5 jugadores locales o un jugador contra la computadora. Cada participante elige un personaje y recorre el tablero. El objetivo es ser el primero en terminar exactamente en la casilla 100.</p></section>
+      <section id="rule-objective"><h3>🎯 Objetivo y jugadores</h3><p>Participan de 2 a 5 jugadores locales o un jugador contra la computadora. Cada participante elige un personaje y recorre el tablero. El objetivo es ser el primero en terminar exactamente en la casilla 80.</p></section>
       <section id="rule-turn"><h3>🎲 Turnos y movimiento</h3><p>En cada turno se lanzan dos dados y se avanza la suma de ambos. Al terminar el movimiento se resuelve la casilla de llegada. Los movimientos provocados por preguntas, casos o eventos también obligan a resolver la nueva casilla.</p></section>
       <section><h3>📚 Área y dificultad</h3><p>Antes de jugar puedes elegir un módulo o seleccionar hasta 5 áreas en el juego personalizado. La dificultad puede configurarse como Básico, Intermedio, Clínico o Todas.</p></section>
       <section id="rule-academic"><h3>❓ Preguntas</h3><p>La pregunta se narra antes de iniciar el tiempo. Después de la narración dispones de 30 segundos para responder. Los últimos 10 segundos incluyen una señal de urgencia. Una respuesta incorrecta o el tiempo agotado hacen retroceder 1 casilla; la nueva casilla se resuelve normalmente.</p></section>
@@ -252,7 +252,7 @@
           <div>🦷 <b>Descanso</b><span>No ocurre ningún efecto y continúa el siguiente turno.</span></div>
         </div>
       </section>
-      <section id="rule-goal" class="rule-goal-highlight"><h3>🏆 Victoria exacta y rebote en la META</h3><p>Solo ganas si tu movimiento termina exactamente en la casilla 100. Si la tirada supera la meta, avanzas hasta 100 y retrocedes las casillas sobrantes. La casilla donde termines el rebote se resuelve normalmente.</p><p><b>Ejemplo:</b> estás en 97 y sacas 8 → avanzas 3 hasta 100 → sobran 5 → regresas 5 → terminas en 95. En cambio, desde 97 con una tirada de 3 llegas exactamente a 100 y ganas.</p></section>
+      <section id="rule-goal" class="rule-goal-highlight"><h3>🏆 Victoria exacta y rebote en la META</h3><p>Solo ganas si tu movimiento termina exactamente en la casilla 80. Si la tirada supera la meta, avanzas hasta 80 y retrocedes las casillas sobrantes. La casilla donde termines el rebote se resuelve normalmente.</p><p><b>Ejemplo:</b> estás en 77 y sacas 8 → avanzas 3 hasta 80 → sobran 5 → regresas 5 → terminas en 75. En cambio, desde 77 con una tirada de 3 llegas exactamente a 80 y ganas.</p></section>
       <section><h3>🤖 Contra la computadora</h3><p>La computadora realiza automáticamente sus turnos y respuestas según el nivel seleccionado: Bajo, Medio, Alto o Súper inteligente. Está sujeta a las mismas reglas de movimiento, casillas, cárcel y rebote en la meta.</p></section>
       <section id="rule-save"><h3>💾 Guardado y reanudación</h3><p>La partida se guarda automáticamente. Si sales o Android suspende la aplicación, el progreso se conserva. Al regresar puedes continuar la partida guardada; cerrar la aplicación no permite evitar una resolución pendiente.</p></section>
       <section><h3>📊 Final de la partida</h3><p>Al ganar se muestra un resumen académico con reactivos contestados, respuestas correctas e incorrectas y desempeño por tema.</p></section>
