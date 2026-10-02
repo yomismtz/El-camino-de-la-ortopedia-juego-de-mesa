@@ -29,7 +29,12 @@ const CHARACTERS=[
   {name:'El Niño',role:'Paciente infantil',spriteX:'0%',spriteY:'100%',emoji:'👦🏻',pawnEmoji:'👦🏻',color:'#3988da',anim:'jump',reaction:'¡Listo para el reto!',desc:'Simpático, curioso y con mucha energía.'},
   {name:'Bracki',role:'Maestro de los brackets',spriteX:'33.333%',spriteY:'100%',emoji:'😁',pawnEmoji:'😁',color:'#8a52e8',anim:'wiggle',reaction:'¡Brackets listos!',desc:'Divertido, ingenioso y orgulloso de su sonrisa con brackets.'},
   {name:'Súper Diente',role:'Héroe de la sonrisa',spriteX:'66.667%',spriteY:'100%',emoji:'🦷',pawnEmoji:'🦷',color:'#f34d72',anim:'hero',reaction:'¡Al rescate de las sonrisas!',desc:'Valiente, energético y defensor de la salud dental.'},
-  {name:'La Asistente Dental',role:'Asistencia clínica',spriteX:'100%',spriteY:'100%',emoji:'🧑🏼‍⚕️',pawnEmoji:'🧑🏼‍⚕️',color:'#16a6a0',anim:'pulse',reaction:'¡Todo listo para comenzar!',desc:'Organizada, ágil y preparada para apoyar al equipo.'}
+  {name:'La Asistente Dental',role:'Asistencia clínica',spriteX:'100%',spriteY:'100%',emoji:'🧑🏼‍⚕️',pawnEmoji:'🧑🏼‍⚕️',color:'#16a6a0',anim:'pulse',reaction:'¡Todo listo para comenzar!',desc:'Organizada, ágil y preparada para apoyar al equipo.'},
+  {name:'La Muela del Juicio',role:'Personaje desbloqueable',spriteX:'0%',spriteY:'0%',emoji:'🦷',pawnEmoji:'🦷',color:'#9b6b42',anim:'hero',reaction:'¡Llegó la hora de demostrar lo que sé!',desc:'Personaje especial que se desbloquea al acumular partidas.',unlockId:'wisdom',unlockLabel:'10 partidas'},
+  {name:'Ratón de los Dientes',role:'Personaje legendario',spriteX:'0%',spriteY:'0%',emoji:'🐭',pawnEmoji:'🐭',color:'#e8a5c5',anim:'jump',reaction:'¡La recompensa está en tus manos!',desc:'Personaje legendario de la colección.',unlockId:'toothMouse',unlockLabel:'30 partidas'},
+  {name:'Santa Apolonia',role:'Personaje legendario',spriteX:'0%',spriteY:'0%',emoji:'👑🦷',pawnEmoji:'🦷',color:'#d8a83e',anim:'hero',reaction:'¡Que la sabiduría dental te acompañe!',desc:'Se obtiene con victorias en dificultad extrema.',unlockId:'apollonia',unlockLabel:'10 victorias en extremo'},
+  {name:'Hada de los Dientes',role:'Personaje legendario',spriteX:'0%',spriteY:'0%',emoji:'🧚🦷',pawnEmoji:'🦷',color:'#b879d6',anim:'wink',reaction:'¡Una sonrisa más para la colección!',desc:'Personaje legendario de alto dominio.',unlockId:'toothFairy',unlockLabel:'25 victorias en extremo'},
+  {name:'Dios de los Dientes',role:'Personaje mítico',spriteX:'0%',spriteY:'0%',emoji:'⚡🦷',pawnEmoji:'🦷',color:'#c58b24',anim:'hero',reaction:'¡Has llegado al nivel mítico!',desc:'El personaje máximo de la colección.',unlockId:'toothGod',unlockLabel:'50 victorias en extremo'}
 ]
 const RULE_META={
   question:{icon:'❓',title:'Pregunta',message:'Si contestas mal, retrocedes 1 casilla.'},
@@ -281,14 +286,17 @@ function renderPicker(){
   $('pickerTitle').textContent=`${draft.names[i]}, elige tu personaje`;
   $('pickerHint').textContent=draft.mode==='computer'
     ?'Tú eliges primero. La computadora recibirá un personaje distinto.'
-    :`Jugador ${i+1} de ${draft.pickerCount}. Cada personaje solo puede elegirse una vez.`;
+    :`Jugador ${i+1} de ${draft.pickerCount}. Cada personaje solo puede elegirse una vez. 🔒 Los especiales se desbloquean con progresión.`;
   const grid=$('characterGrid');grid.innerHTML='';
   CHARACTERS.forEach((ch,idx)=>{
-    const b=document.createElement('button');b.type='button';b.disabled=taken.has(idx);
-    b.className=`character-card${draft.characters[i]===idx?' selected':''}${taken.has(idx)?' taken':''}`;
+    const takenByOther=taken.has(idx),lockedByProgress=!!window.step9CharacterLocked?.(idx),disabled=takenByOther||lockedByProgress;
+    const b=document.createElement('button');b.type='button';b.disabled=disabled;
+    b.className=`character-card${draft.characters[i]===idx?' selected':''}${takenByOther?' taken':''}${lockedByProgress?' locked':''}`;
     b.dataset.char=idx;b.style.setProperty('--accent',ch.color);
-    b.innerHTML=`<div class="character-art">${characterSprite(ch,'pick-character')}</div><span class="character-bubble" hidden>${ch.reaction}</span><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p><span class="select-label">${taken.has(idx)?'En uso':draft.characters[i]===idx?'Seleccionado':'Seleccionar'}</span>`;
+    const label=lockedByProgress?(`🔒 ${ch.unlockLabel||'Desbloquea con progresión'}`):(takenByOther?'En uso':draft.characters[i]===idx?'Seleccionado':'Seleccionar');
+    b.innerHTML=`<div class="character-art">${characterSprite(ch,'pick-character')}</div><span class="character-bubble" hidden>${ch.reaction}</span><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p><span class="select-label">${label}</span>`;
     b.onclick=()=>{
+      if(window.step9CharacterLocked?.(idx)){window.step9ShowLocked?.(idx);return}
       draft.characters[i]=idx;
       if(i===0)localStorage.setItem(FAVORITE_CHARACTER_KEY,String(idx));
       tone('select');characterTone(idx,'select');renderPicker();requestAnimationFrame(()=>reactCharacter(idx))
@@ -1255,4 +1263,4 @@ window.step6GetRuleForCell=function(n){return ruleForCell(n)};
 /* Paso 7 · puente seguro para IA y controles de interacción */
 window.step7GetState=function(){return state};
 window.step7GetAiLevel=function(){const p=state?.players?.[state?.current];return p?.isComputer?(AI_LEVELS[p.aiLevel||'medium']?.label||'Medio'):''};
-
+window.step9GetCharacters=function(){return CHARACTERS};
