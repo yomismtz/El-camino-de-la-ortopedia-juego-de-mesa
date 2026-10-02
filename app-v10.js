@@ -672,7 +672,7 @@ function confirmAnswer(){
     opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
     if(grade==='excellent'){delta=2;heading=tr('Excelente · avanzas 2 casillas','Excellent · move forward 2 spaces');snd='excellent';outcome='excellent'}
     else if(grade==='good'){delta=1;heading=tr('Buena · avanzas 1 casilla','Good · move forward 1 space');snd='correct';outcome='good'}
-    else{delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space');outcome='wrong'}
+    else{delta=-1;state.roundErrors=(state.roundErrors||0)+1;state.roundBank=(state.roundBank||0)+1;heading=state.roundErrors>=3?tr('Tercer error · ¡ROBO!','Third error · STEAL!'):tr(`Incorrecta · retrocedes 1 casilla · Error ${state.roundErrors}/3`,`Incorrect · move back 1 space · Error ${state.roundErrors}/3`);outcome='wrong';if(state.roundErrors>=3)pendingQuestion.robberyReady=true}
   }
   recordMatchAnswer(outcome,pendingQuestion);
   haptic(outcome==='wrong'?'error':'correct');renderQuestionCharacter(outcome==='wrong'?'error':'success');
@@ -690,6 +690,13 @@ async function continueAfterQuestion(){
   const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;
   if(state?.robbery?.active)return finishRobberyRound();
   if(q?.robberyReady){return startRobbery()}
+  if(d<0&&state?.roundErrors>0&&state.roundErrors<3){
+    await move(d);
+    q.resultDelta=0;
+    selectedAnswer=null;
+    showQuestion();
+    return
+  }
   pendingQuestion=null;
   if(state)state.pendingResolution=null;
   questionDialog.close();
