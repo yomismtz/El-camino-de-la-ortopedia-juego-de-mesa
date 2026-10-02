@@ -20,6 +20,7 @@ const TARGET=[
 const BANKS=[
  ['general',()=>window.QUESTIONS||[],'Banco general'],['primer_parcial',()=>window.PRIMER_PARCIAL_QUESTIONS||[],'Primer parcial'],
  ['nomenclatura_etimologia',()=>window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[],'Nomenclatura y etimología'],
+ ['endodoncia',()=>window.ENDODONCIA_QUESTIONS||[],'Endodoncia'],
  ['anatomia',()=>window.ANATOMIA_QUESTIONS||[],'Anatomía'],['anestesia_dental',()=>window.ANESTESIA_DENTAL_QUESTIONS||[],'Anestesia dental'],
  ['steiner',()=>window.STEINER_QUESTIONS||[],'Cefalometría de Steiner'],['fisiologia_funcion',()=>window.FISIOLOGIA_FUNCION_QUESTIONS||[],'Fisiología y función'],
  ['crecimiento_desarrollo',()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[],'Crecimiento y desarrollo'],
