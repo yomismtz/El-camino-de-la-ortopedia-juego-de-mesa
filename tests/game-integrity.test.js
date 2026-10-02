@@ -196,3 +196,11 @@ assert(app.includes('points+=r.bank'),'El robo fallido debe conservar el banco p
 assert(app.includes('state.roundErrors=0'),'El contador de errores debe reiniciarse al cerrar la ronda');
 assert(app.includes("if(d<0&&state?.roundErrors>0&&state.roundErrors<3)"),'Los errores 1 y 2 deben conservar la ronda para acumular tres errores');
 assert(app.includes("state.roundErrors=(state.roundErrors||0)+1"),'Preguntas y casos incorrectos deben incrementar errores');
+
+assert(app.includes('round:1'),'La partida debe iniciar en ronda 1');
+assert(app.includes('roundNo>=8'),'Debe existir cierre automático después de 8 rondas');
+assert(app.includes('function finishRound('),'Debe existir cierre automático de ronda');
+assert(app.includes('gana la ronda'),'Debe anunciarse al ganador de la ronda');
+assert(app.includes('round-award'),'Debe existir animación visual de puntos');
+assert(app.includes('roundWinnerPoints'),'El ganador debe recibir puntos automáticamente');
+assert(app.includes('function showMatchWinner()'),'La ronda 8 debe pasar al resultado final');
