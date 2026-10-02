@@ -1086,3 +1086,11 @@ html,body{overscroll-behavior:none}
   .character-collection{margin-bottom:6px}
   .character-collection span{padding:4px 8px;font-size:10px}
 }
+
+/* Paso 10 · perfil */
+.profile-card{width:min(720px,94vw);max-height:90vh;overflow:auto}
+.profile-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}.profile-head h2{margin:0}.profile-head p{margin:3px 0;color:#60758a;font-weight:800}.profile-medal{font-size:42px}
+.profile-xp{height:12px;border-radius:999px;background:#e7eef4;overflow:hidden;margin:8px 0}.profile-xp span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#278bff,#d8a83e)}
+.profile-progress small{color:#64778a;font-weight:800}.profile-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}.profile-stats div{padding:10px;border:1px solid #dce8ef;border-radius:12px;text-align:center;background:#f8fbfd}.profile-stats b,.profile-stats span{display:block}.profile-stats b{font-size:20px}.profile-stats span{font-size:10px;color:#65798a;font-weight:900}
+.profile-achievements,.profile-characters{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 14px}.profile-achievements span,.profile-characters span{padding:7px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid #dce8ef}.profile-achievements .earned,.profile-characters .unlocked{background:#fff8df}.profile-achievements .locked,.profile-characters .locked{opacity:.55;background:#f2f5f7}
+@media(max-width:600px){.profile-stats{grid-template-columns:repeat(3,1fr)}}
