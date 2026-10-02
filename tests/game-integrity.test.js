@@ -185,3 +185,12 @@ assert(androidTouch.includes('edge-safe compact landscape setup'),'Debe existir 
 assert(androidTouch.includes('grid-template-columns:repeat(6,minmax(110px,1fr))'),'Personajes deben compactarse en landscape');
 assert(androidTouch.includes('.setup-form .actions{position:sticky!important;bottom:0!important'),'Acción principal del setup debe permanecer accesible');
 assert(androidTouch.includes('overscroll-behavior:none!important'),'La pantalla landscape no debe propagar overscroll a bordes del sistema');
+assert(app.includes('roundErrors'),'Debe existir contador de errores por ronda');
+assert(app.includes('roundErrors>=3'),'Tres errores deben activar el robo');
+assert(app.includes('function startRobbery()'),'Debe existir modo robo');
+assert(app.includes('function confirmRobberyAnswer()'),'El robo debe tener resolución independiente');
+assert(app.includes('¡ROBO!'),'Debe anunciarse el robo al llegar a tres errores');
+assert(app.includes('has one chance'),'El rival debe tener un único intento en robo');
+assert(app.includes('points+=r.bank'),'El robo exitoso debe transferir el banco al rival');
+assert(app.includes('points+=r.bank'),'El robo fallido debe conservar el banco para el equipo original');
+assert(app.includes('state.roundErrors=0'),'El contador de errores debe reiniciarse al cerrar la ronda');
