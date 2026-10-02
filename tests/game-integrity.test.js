@@ -259,3 +259,15 @@ assert(html.includes('src="step8-progress-runtime.js"'),'play.html debe cargar l
 assert(css.includes('step8-progression'),'Debe existir el panel visual de progresion');
 assert(app.includes('ensurePlayerStats'),'La partida debe conservar estadisticas del jugador');
 console.log('✓ Paso 8: progresion XP, logros persistentes y resumen final');
+
+// Paso 9: colección de personajes y desbloqueos.
+assert(html.includes('id="characterCollection"'),'Debe existir el resumen de colección de personajes');
+assert(html.includes('src="step9-characters-runtime.js"'),'play.html debe cargar el runtime del Paso 9');
+assert(app.includes('window.step9GetCharacters=function(){return CHARACTERS}'),'Debe existir puente seguro a la colección de personajes');
+assert(app.includes("unlockId:'wisdom'")&&app.includes("unlockId:'toothMouse'"),'Deben existir personajes especiales con desbloqueo');
+assert(app.includes('window.step9CharacterLocked?.(idx)'),'La selección debe respetar el bloqueo por progresión');
+assert(css.includes('.character-card.locked'),'Debe existir estado visual para personajes bloqueados');
+const step9=fs.readFileSync('step9-characters-runtime.js','utf8');
+assert(step9.includes('elCaminoDentalCharacterProgressV1'),'El progreso de personajes debe persistir');
+assert(step9.includes('extremeWins'),'Debe contabilizar victorias en dificultad extrema');
+console.log('✓ Paso 9: colección persistente, personajes especiales y desbloqueos por progresión');
