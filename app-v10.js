@@ -491,9 +491,9 @@ function randomizePresentedItem(item,kind){
   }
   return out
 }
-async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:14,mode:draft.mode||'local',module:draft.module||'personalizado',selectedAreas:[...(draft.selectedAreas||[])],difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null,quizStats:{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}}}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false,boardEnd:BOARD_END};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn();setTimeout(()=>showTutorial(false),500)}
+async function startWithLoading(){showScreen($('loadingScreen'));tone('start');await delay(700);state={version:15,mode:draft.mode||'local',module:draft.module||'personalizado',selectedAreas:[...(draft.selectedAreas||[])],difficulty:draft.difficulty||'all',players:Array.from({length:draft.count},(_,i)=>{const cpu=draft.mode==='computer'&&i===draft.count-1;return{name:draft.names[i],position:0,skipTurns:0,skipReason:'',jailVisits:0,character:draft.characters[i],color:CHARACTERS[draft.characters[i]].color,isComputer:cpu,aiLevel:cpu?(draft.aiLevel||'medium'):null,quizStats:{attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{},points:0,steals:0}}}),current:0,usedQuestionIds:[],usedCaseIds:[],questionQueue:[],caseQueue:[],questionQueueSize:0,caseQueueSize:0,lastQuestionIndex:null,lastCaseIndex:null,turn:1,locked:false,boardEnd:BOARD_END,roundErrors:0,roundBank:0,robbery:null};ensureRandomQueues(true);saveGame();showScreen($('game'));buildBoard();render();startBackgroundMusic();statusText.textContent=`${state.players[0].name}, tira los dos dados.`;if(isComputerTurn())scheduleComputerTurn();setTimeout(()=>showTutorial(false),500)}
 function buildBoard(){board.querySelectorAll('.cell,.start-marker').forEach(n=>n.remove());board.classList.add('zigzag-board');const cols=10,rows=8;for(let n=1;n<=BOARD_END;n++){const i=n-1,row=Math.floor(i/cols),step=i%cols,col=row%2===0?step:cols-1-step,r=ruleForCell(n),m=RULE_META[r.type]||RULE_META.neutral,c=document.createElement('div');c.className=`cell ${r.type}${n===BOARD_END?' finish':''}${n%10===0&&n<BOARD_END?' milestone':''}`;c.dataset.cell=n;c.style.setProperty('--col',col);c.style.setProperty('--row',rows-1-row);c.style.zIndex=10+n;c.innerHTML=`<span class="cell-number">${n}</span>${r.type!=='neutral'&&r.type!=='finish'?`<span class="cell-icon">${m.icon}</span>`:''}<span class="tokens"></span>`;board.appendChild(c)}const start=document.createElement('div');start.className='start-marker';start.innerHTML='<b>INICIO</b><div class="start-tokens"></div>';board.appendChild(start)}
-function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,BOARD_END));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${characterFace(CHARACTERS[p.character]||CHARACTERS[0])}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=BOARD_END?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,(p.position/BOARD_END)*100)}%"></i></div></div><strong>${Math.min(p.position,BOARD_END)}/${BOARD_END}</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';const turnAction=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');const turnDetail=`${currentCh.name} · ${current?.position===0?'Inicio':current?.position>=BOARD_END?'Meta':`Casilla ${current?.position}`} · ${turnAction}`;if($('turnPrompt'))$('turnPrompt').textContent=turnDetail;if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='personalizado'?`🎯 ${selectedAreaLabelList(state.selectedAreas).join(' + ')}`:state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='nomenclatura_etimologia'?'🔤 Nomenclatura y etimología':state.module==='anatomia_general'?'🫀 Anatomía dental y cabeza/cuello':state.module==='anestesia_general'?'💉 Anestesia dental':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
+function render(){if(!state)return;document.querySelectorAll('.tokens,.start-tokens').forEach(x=>x.innerHTML='');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('occupied','current-cell'));const grouped=new Map();state.players.forEach((p,i)=>{const pos=Math.max(0,Math.min(p.position,BOARD_END));if(!grouped.has(pos))grouped.set(pos,[]);grouped.get(pos).push({p,i})});for(const [pos,list] of grouped.entries()){const host=pos===0?document.querySelector('.start-tokens'):document.querySelector(`[data-cell="${pos}"] .tokens`),cell=pos===0?document.querySelector('.start-marker'):document.querySelector(`[data-cell="${pos}"]`);if(host){list.forEach(({p,i},idx)=>{const tok=document.createElement('span');tok.className='board-token'+(i===state.current?' active':'');tok.style.setProperty('--token',p.color);const sh=tokenShift(idx,list.length);tok.style.setProperty('--sx',sh.x+'px');tok.style.setProperty('--sy',sh.y+'px');tok.innerHTML=`<span class="token-face">${characterFace(CHARACTERS[p.character]||CHARACTERS[0])}</span>`;tok.title=p.name;host.appendChild(tok)});cell?.classList.add('occupied');if(list.some(x=>x.i===state.current))cell?.classList.add('current-cell')}}$('scoreList').innerHTML=state.players.map((p,i)=>{const ch=CHARACTERS[p.character]||CHARACTERS[0];ensurePlayerStats(p);return `<div class="player-row ${i===state.current?'current':''}${p.isComputer?' computer-player':''}" style="--player:${p.color}"><div class="avatar character-avatar">${characterSprite(ch,"mini-character")}</div><div><b>${p.isComputer?'🤖 ':''}${esc(p.name)}</b><small>${ch.name}${p.isComputer?` · CPU ${AI_LEVELS[p.aiLevel]?.label||'Medio'}`:''} · ${p.position===0?'Inicio':p.position>=BOARD_END?'Meta':`Casilla ${p.position}`}${p.skipTurns?` · pierde ${p.skipTurns} ${p.skipTurns===1?'turno':'turnos'}${p.skipReason?` · ${p.skipReason}`:''}`:''}</small><div class="progress"><i style="width:${Math.min(100,(p.position/BOARD_END)*100)}%"></i></div></div><strong>${Math.min(p.position,BOARD_END)}/${BOARD_END}</strong></div>`}).join('');const current=state.players[state.current]||state.players[0],currentCh=current?CHARACTERS[current.character]||CHARACTERS[0]:CHARACTERS[0];document.documentElement.style.setProperty('--turn-accent',current?.color||'#168fd7');$('turnLabel').textContent=current?.name||'Jugador';if($('turnAvatar'))$('turnAvatar').innerHTML=characterSprite(currentCh,'turn-character');if($('turnPlayerName'))$('turnPlayerName').textContent=current?.name||'Jugador';const turnAction=current?.isComputer?(state.locked?'Jugando…':'Pensando…'):(state.locked?'Moviendo ficha…':'Tira los dados');const turnDetail=`${currentCh.name} · ${current?.position===0?'Inicio':current?.position>=BOARD_END?'Meta':`Casilla ${current?.position}`} · ${turnAction}`;if($('turnPrompt'))$('turnPrompt').textContent=turnDetail;if($('moduleBadge'))$('moduleBadge').textContent=(state.module==='personalizado'?`🎯 ${selectedAreaLabelList(state.selectedAreas).join(' + ')}`:state.module==='fundamentos_oclusion'?'📘 Fundamentos de la oclusión':state.module==='fisiologia_funcion'?'🫁 Fisiología + función':state.module==='crecimiento_desarrollo'?'🦴 Crecimiento y desarrollo':state.module==='habitos_parafunciones'?'🧠 Hábitos y parafunciones':state.module==='nomenclatura_etimologia'?'🔤 Nomenclatura y etimología':state.module==='anatomia_general'?'🫀 Anatomía dental y cabeza/cuello':state.module==='anestesia_general'?'💉 Anestesia dental':state.module==='steiner'?'📐 Cefalometría de Steiner':'🦷 Ortopedia / banco general')+(state.difficulty&&state.difficulty!=='all'?` · ${state.difficulty}`:'');rollBtn.textContent=current?.isComputer?`🤖 ${current.name}: juega automáticamente`:(state.locked?'Moviendo ficha…':`🎲 ${current?.name||'Jugador'}: tirar dados`);rollBtn.disabled=state.locked||!!current?.isComputer;saveGame()}
 async function rollDice(auto=false){haptic('dice');
   if(!state||state.locked)return;
   const p=currentPlayer();
@@ -546,7 +546,9 @@ function renderQuestionCharacter(mode='neutral'){
 }
 function ensurePlayerStats(p){
   if(!p)return null;
-  if(!p.quizStats||typeof p.quizStats!=='object')p.quizStats={attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{}};
+  if(!p.quizStats||typeof p.quizStats!=='object')p.quizStats={attempts:0,correct:0,excellent:0,good:0,wrong:0,topics:{},points:0,steals:0};
+  p.quizStats.points=Number(p.quizStats.points)||0;
+  p.quizStats.steals=Number(p.quizStats.steals)||0;
   if(!p.quizStats.topics||typeof p.quizStats.topics!=='object')p.quizStats.topics={};
   return p.quizStats
 }
@@ -572,7 +574,7 @@ function renderWinnerLearningReport(summary){
   if(!summary.topics.length){host.innerHTML='<p class="winner-report-empty">'+esc(tr('No hubo suficientes reactivos para generar un desglose por tema.','There were not enough items to generate a topic breakdown.'))+'</p>';return}
   host.innerHTML=summary.topics.map(t=>'<div class="winner-topic-row"><div class="winner-topic-name"><b>'+esc(t.name)+'</b><span>'+t.correct+'/'+t.attempts+' '+esc(tr('correctas','correct'))+'</span></div><div class="winner-topic-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+t.rate+'"><i style="width:'+t.rate+'%"></i></div><strong>'+t.rate+'%</strong></div>').join('')
 }
-function showQuestion(){haptic('question');stopTimer();stopQuestionNarration();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.kind==='case'?q.id:`Pregunta ${q.id}`;$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());renderQuestionCharacter('neutral');const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion();else setTimeout(narrateCurrentQuestion,180)}
+function showQuestion(){haptic('question');stopTimer();stopQuestionNarration();const q=pendingQuestion;questionDialog.classList.toggle('case-mode',q.kind==='case');questionDialog.classList.toggle('question-mode',q.kind!=='case');questionDialog.classList.toggle('robbery-mode',!!q.robbery);$('questionCategory').textContent=q.kind==='case'?(q.module==='fundamentos_oclusion'?`📋 Caso clínico · ${q.topic||'Fundamentos'}`:q.module==='fisiologia_funcion'?`🫁 Caso funcional · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Caso de crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Caso de hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Caso Steiner · ${q.topic||'Cefalometría'}`:`📋 Caso clínico · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`):q.module==='fundamentos_oclusion'?`📘 Fundamentos · ${q.topic||'Oclusión'}`:q.module==='fisiologia_funcion'?`🫁 Fisiología + función · ${q.topic||'Fisiología'}`:q.module==='crecimiento_desarrollo'?`🦴 Crecimiento · ${q.topic||'Crecimiento'}`:q.module==='habitos_parafunciones'?`🧠 Hábitos · ${q.topic||'Hábitos'}`:q.module==='steiner'?`📐 Steiner · ${q.topic||'Cefalometría'}`:`❓ Pregunta · Sobre ${q.deck}${q.origin==='teacher'?' · Docente':''}`;if(q.difficulty)$('questionCategory').textContent+=` · ${q.difficulty}`;$('questionNumber').textContent=q.robbery?`🚨 ROBO · ${q.id}`:(q.kind==='case'?q.id:`Pregunta ${q.id}`);$('questionText').textContent=q.text;$('feedback').hidden=true;$('confirmAnswerBtn').hidden=false;$('confirmAnswerBtn').disabled=true;$('continueBtn').hidden=true;$('continueBtn').disabled=false;$('continueBtn').textContent='Continuar';$('timerDisplay').textContent='30';$('timerDisplay').closest('.timer-wrap')?.classList.remove('timer-low','timer-expired');$('timerBtn').disabled=false;$('timerBtn').textContent='Iniciar 30 s';questionDialog.classList.toggle('computer-turn',isComputerTurn());renderQuestionCharacter('neutral');const media=$('questionMedia');media.hidden=true;media.innerHTML='';if(q.mediaPending){media.hidden=false;media.innerHTML='<p>🎵🎬 Esta pregunta utiliza contenido multimedia en la versión original. La mecánica de respuesta permanece disponible.</p>'}const host=$('questionOptions');host.innerHTML='';q.options.forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='option';b.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${esc(opt)}</b>`;b.onclick=()=>{selectedAnswer=i;tone('answer');document.querySelectorAll('.option').forEach((e,j)=>e.classList.toggle('selected',i===j));$('confirmAnswerBtn').disabled=false};host.appendChild(b)});questionDialog.showModal();if(isComputerTurn())runComputerQuestion();else setTimeout(narrateCurrentQuestion,180)}
 function runComputerQuestion(){
   const q=pendingQuestion,p=currentPlayer();
   if(!q||!p?.isComputer)return;
@@ -654,6 +656,8 @@ function educationalFeedbackHtml(heading,q,selected,kind,timedOut=false){
 function confirmAnswer(){
   if(selectedAnswer===null||!pendingQuestion)return;
   stopTimer();
+  const robberyMode=!!state?.robbery?.active||!!pendingQuestion?.robbery;
+  if(robberyMode)return confirmRobberyAnswer();
   const opts=[...document.querySelectorAll('.option')];
   opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
   let delta=0,heading='',snd='error',outcome='wrong';
@@ -662,7 +666,7 @@ function confirmAnswer(){
     opts[pendingQuestion.correct]?.classList.add('correct');
     window.LearningTools?.record?.(state?.module,pendingQuestion,ok);
     if(ok){heading=tr('Correcta · permaneces en tu casilla','Correct · stay on your space');snd='correct';outcome='correct'}
-    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;heading=tr('Incorrecta · retrocedes 1 casilla','Incorrect · move back 1 space');outcome='wrong'}
+    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;state.roundErrors=(state.roundErrors||0)+1;state.roundBank=(state.roundBank||0)+1;heading=state.roundErrors>=3?tr('Tercer error · ¡ROBO!','Third error · STEAL!'):tr(`Incorrecta · retrocedes 1 casilla · Error ${state.roundErrors}/3`,`Incorrect · move back 1 space · Error ${state.roundErrors}/3`);outcome='wrong';if(state.roundErrors>=3)pendingQuestion.robberyReady=true}
   }else{
     const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';
     opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
@@ -678,9 +682,77 @@ function confirmAnswer(){
   $('feedback').hidden=false;
   $('feedback').innerHTML=educationalFeedbackHtml(heading,pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
   $('confirmAnswerBtn').hidden=true;
-  $('continueBtn').hidden=false
+  $('continueBtn').hidden=false;
+  if(state.roundErrors>=3&&!pendingQuestion.robbery&&pendingQuestion.kind!=='case')$('continueBtn').textContent=tr('Ir al robo →','Go to steal →')
 }
-async function continueAfterQuestion(){stopQuestionNarration();stopTimer();const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;pendingQuestion=null;if(state)state.pendingResolution=null;questionDialog.close();if(!d)return endTurn();await move(d);return resolveLanding(depth+1)}
+async function continueAfterQuestion(){
+  stopQuestionNarration();stopTimer();
+  const q=pendingQuestion,d=q?.resultDelta||0,depth=q?.chainDepth||0;
+  if(state?.robbery?.active)return finishRobberyRound();
+  if(q?.robberyReady){return startRobbery()}
+  pendingQuestion=null;
+  if(state)state.pendingResolution=null;
+  questionDialog.close();
+  if(!d)return endTurn();
+  await move(d);
+  return resolveLanding(depth+1)
+}
+function nextRivalIndex(source){
+  if(!state?.players?.length)return source;
+  return (source+1)%state.players.length
+}
+function startRobbery(){
+  if(!state||!pendingQuestion)return endTurn();
+  const source=state.current,target=nextRivalIndex(source),bank=Math.max(1,state.roundBank||3);
+  state.robbery={active:true,sourcePlayer:source,targetPlayer:target,bank};
+  pendingQuestion.robbery=true;
+  pendingQuestion.robberyReady=false;
+  pendingQuestion.resultDelta=0;
+  state.current=target;
+  state.locked=true;
+  questionDialog.close();
+  statusText.textContent=tr(`🚨 ¡ROBO! ${state.players[target].name} tiene una sola oportunidad por ${bank} puntos.`,`🚨 STEAL! ${state.players[target].name} has one chance for ${bank} points.`);
+  render();
+  setTimeout(()=>{if(state?.robbery?.active&&pendingQuestion){showQuestion()}},220)
+}
+function confirmRobberyAnswer(){
+  if(selectedAnswer===null||!pendingQuestion||!state?.robbery?.active)return;
+  stopTimer();stopQuestionNarration();
+  const r=state.robbery,source=state.players[r.sourcePlayer],rival=state.players[r.targetPlayer];
+  const opts=[...document.querySelectorAll('.option')];
+  opts.forEach(o=>{o.disabled=true;o.classList.remove('selected')});
+  const ok=pendingQuestion.kind==='case'
+    ? pendingQuestion.grades?.[selectedAnswer]!=='incorrect'
+    : selectedAnswer===pendingQuestion.correct;
+  if(ok){
+    opts[selectedAnswer]?.classList.add('correct');
+    ensurePlayerStats(rival).steals++;
+    ensurePlayerStats(rival).points+=r.bank;
+    $('feedback').hidden=false;
+    $('feedback').innerHTML=educationalFeedbackHtml(tr(`🎯 ¡ROBO EXITOSO! ${rival.name} gana ${r.bank} puntos.`,`🎯 SUCCESSFUL STEAL! ${rival.name} wins ${r.bank} points.`),pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
+    characterTone(rival.character,'win');tone('win');haptic('win');
+  }else{
+    opts[selectedAnswer]?.classList.add('wrong');
+    ensurePlayerStats(source).points+=r.bank;
+    $('feedback').hidden=false;
+    $('feedback').innerHTML=educationalFeedbackHtml(tr(`❌ Robo fallido. Los ${r.bank} puntos permanecen con ${source.name}.`,`❌ Failed steal. The ${r.bank} points stay with ${source.name}.`),pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
+    characterTone(rival.character,'error');tone('error');haptic('error');
+  }
+  selectedAnswer=null;
+  $('confirmAnswerBtn').hidden=true;
+  $('continueBtn').hidden=false;
+  $('continueBtn').disabled=false;
+  $('continueBtn').textContent=tr('Continuar · siguiente turno','Continue · next turn');
+  renderQuestionCharacter(ok?'success':'error');
+  render();
+}
+function finishRobberyRound(){
+  stopQuestionNarration();stopTimer();
+  pendingQuestion=null;
+  if(state){state.pendingResolution=null;state.robbery=null;state.roundErrors=0;state.roundBank=0}
+  if(questionDialog?.open)questionDialog.close();
+  return endTurn()
+}
 function expireQuestionTimer(){
   if(!pendingQuestion||!questionDialog?.open)return;
   stopQuestionNarration();stopTimer();tone('alarm');timerLeft=0;
@@ -694,7 +766,7 @@ function expireQuestionTimer(){
     opts[pendingQuestion.correct]?.classList.add('correct');
     window.LearningTools?.record?.(state?.module,pendingQuestion,false);
   }
-  pendingQuestion.resultDelta=-1;selectedAnswer=null;
+  pendingQuestion.resultDelta=-1;selectedAnswer=null;state.roundErrors=(state.roundErrors||0)+1;state.roundBank=(state.roundBank||0)+1;if(state.roundErrors>=3)pendingQuestion.robberyReady=true;
   recordMatchAnswer('wrong',pendingQuestion);renderQuestionCharacter('error');characterTone(currentPlayer()?.character,'error');
   const heading=tr('⏱ Tiempo terminado · respuesta incorrecta · retrocedes 1 casilla','⏱ Time is up · incorrect answer · move back 1 space');
   $('feedback').hidden=false;
@@ -743,14 +815,14 @@ function nextTutorial(){
 }
 function showEvent(title,text,icon,cb){haptic('event');$('eventIcon').textContent=icon;$('eventTitle').textContent=title;$('eventText').textContent=text;pendingAfterDialog=cb;const btn=$('eventContinueBtn'),cpu=isComputerTurn();btn.disabled=cpu;btn.textContent=cpu?'La computadora continúa…':'Continuar';eventDialog.showModal();if(cpu)queueComputerAction(()=>{if(eventDialog.open)closeEvent()},720)}
 function closeEvent(){eventDialog.close();const cb=pendingAfterDialog;pendingAfterDialog=null;cb?.()}
-function endTurn(){invalidateTurnAction();clearComputerTimer();if(state)state.pendingResolution=null;state.current=(state.current+1)%state.players.length;state.turn++;let guard=0;const skipped=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*8){const p=state.players[state.current],reason=p.skipReason||'penalización';p.skipTurns--;skipped.push(`${p.name} pierde este turno por ${reason}.`);if(p.skipTurns<=0)p.skipReason='';state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;saveGame();render();tone('turn');const prefix=skipped.length?skipped.join(' ')+' ':'';if(isComputerTurn()){statusText.textContent=prefix+`🤖 ${currentPlayer().name} está pensando…`;scheduleComputerTurn()}else statusText.textContent=prefix+`${currentPlayer().name}, tira los dos dados.`}
+function endTurn(){invalidateTurnAction();clearComputerTimer();if(state){state.pendingResolution=null;state.roundErrors=0;state.roundBank=0;state.robbery=null}state.current=(state.current+1)%state.players.length;state.turn++;let guard=0;const skipped=[];while(state.players[state.current].skipTurns>0&&guard<state.players.length*8){const p=state.players[state.current],reason=p.skipReason||'penalización';p.skipTurns--;skipped.push(`${p.name} pierde este turno por ${reason}.`);if(p.skipTurns<=0)p.skipReason='';state.current=(state.current+1)%state.players.length;state.turn++;guard++}state.locked=false;saveGame();render();tone('turn');const prefix=skipped.length?skipped.join(' ')+' ':'';if(isComputerTurn()){statusText.textContent=prefix+`🤖 ${currentPlayer().name} está pensando…`;scheduleComputerTurn()}else statusText.textContent=prefix+`${currentPlayer().name}, tira los dos dados.`}
 function showWinner(p){
   clearComputerTimer();state.locked=true;p.position=BOARD_END;render();stopBackgroundMusic(true);
   const ch=CHARACTERS[p.character]||CHARACTERS[0],summary=winnerLearningSummary(p),persona=personaFor(p.character);
   $('winnerTitle').textContent=p.isComputer?'🤖 La computadora ganó':'¡Llegaste a la META!';
   $('winnerText').textContent=p.isComputer?`${p.name} llegó primero a la meta con razonamiento ${AI_LEVELS[p.aiLevel]?.label||'Medio'}.`:`${p.name} completó las ${BOARD_END} casillas. ${persona.win}`;
   if($('winnerCharacter')){$('winnerCharacter').style.setProperty('--accent',ch.color);$('winnerCharacter').innerHTML=characterSprite(ch,'winner-character-sprite')}
-  if($('winnerStats'))$('winnerStats').innerHTML=`<div><b>${summary.accuracy}%</b><span>Aciertos</span></div><div><b>${summary.correct}</b><span>Correctas</span></div><div><b>${summary.wrong}</b><span>Incorrectas</span></div><div><b>${summary.excellent}</b><span>Excelentes</span></div><div><b>${summary.attempts}</b><span>Reactivos</span></div>`;
+  if($('winnerStats'))$('winnerStats').innerHTML=`<div><b>${summary.accuracy}%</b><span>Aciertos</span></div><div><b>${summary.correct}</b><span>Correctas</span></div><div><b>${summary.wrong}</b><span>Incorrectas</span></div><div><b>${summary.excellent}</b><span>Excelentes</span></div><div><b>${summary.attempts}</b><span>Reactivos</span></div><div><b>${ensurePlayerStats(p).points||0}</b><span>Puntos de robo</span></div>`;
   renderWinnerLearningReport(summary);
   if($('winnerConfetti'))$('winnerConfetti').innerHTML=Array.from({length:28},(_,i)=>`<i style="--i:${i}"></i>`).join('');
   $('winnerDialog').showModal();haptic('win');tone('win');characterTone(p.character,'win')
