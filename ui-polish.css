@@ -1051,3 +1051,8 @@ html,body{overscroll-behavior:none}
     display:none!important;
   }
 }
+
+
+/* Paso 4 · premio automático de ronda */
+.player-row.round-award{animation:roundAward .85s cubic-bezier(.2,.8,.2,1)}
+@keyframes roundAward{0%{transform:translateX(0) scale(1);box-shadow:none}25%{transform:translateX(5px) scale(1.035);box-shadow:0 0 0 4px rgba(19,185,173,.16),0 10px 26px rgba(23,52,92,.13)}60%{transform:translateX(-2px) scale(1.015);box-shadow:0 0 0 6px rgba(19,185,173,.08),0 10px 26px rgba(23,52,92,.10)}100%{transform:translateX(0) scale(1);box-shadow:none}}
