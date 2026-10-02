@@ -1251,3 +1251,8 @@ setTimeout(step5PatchRuntime,0);
 /* Paso 6 · puente seguro para la capa visual */
 window.step6GetState=function(){return state};
 window.step6GetRuleForCell=function(n){return ruleForCell(n)};
+
+/* Paso 7 · puente seguro para IA y controles de interacción */
+window.step7GetState=function(){return state};
+window.step7GetAiLevel=function(){const p=state?.players?.[state?.current];return p?.isComputer?(AI_LEVELS[p.aiLevel||'medium']?.label||'Medio'):''};
+
