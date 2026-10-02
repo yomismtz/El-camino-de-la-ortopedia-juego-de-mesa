@@ -271,3 +271,14 @@ const step9=fs.readFileSync('step9-characters-runtime.js','utf8');
 assert(step9.includes('elCaminoDentalCharacterProgressV1'),'El progreso de personajes debe persistir');
 assert(step9.includes('extremeWins'),'Debe contabilizar victorias en dificultad extrema');
 console.log('✓ Paso 9: colección persistente, personajes especiales y desbloqueos por progresión');
+
+
+// Paso 10: perfil de progreso.
+assert(html.includes('id="profileBtn"'),'Debe existir acceso al perfil de progreso');
+assert(html.includes('id="profileDialog"'),'Debe existir el diálogo de perfil');
+assert(html.includes('src="step10-profile-runtime.js"'),'play.html debe cargar el runtime del Paso 10');
+assert(css.includes('.profile-stats')&&css.includes('.profile-achievements'),'Debe existir estilo para estadísticas y logros');
+const step10=fs.readFileSync('step10-profile-runtime.js','utf8');
+assert(step10.includes('elCaminoDentalProgressV1')&&step10.includes('elCaminoDentalCharacterProgressV1'),'El perfil debe leer el progreso persistente');
+assert(step10.includes('step9GetCharacters'),'El perfil debe integrar la colección del Paso 9');
+console.log('✓ Paso 10: perfil, estadísticas, logros y colección integrados');
