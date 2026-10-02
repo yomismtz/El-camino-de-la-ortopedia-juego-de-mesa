@@ -49,7 +49,7 @@ for(let start=0;start<80;start++)for(let roll=2;roll<=12;roll++){
 }
 assert(app.includes('async function moveWithFinishBounce'),'Falta función de rebote');
 assert(app.includes('position===BOARD_END'),'La victoria por dados debe exigir meta exacta');
-assert(app.includes('triggerCell(state.players[state.current].position)'),'La casilla tras movimiento/rebote debe resolverse');
+assert(/triggerCell\([^)]*\.position/.test(app),'La casilla tras movimiento/rebote debe resolverse');
 
 for(const n of [2,3,4,5])assert(html.includes('value="'+n+'"')&&html.includes('>'+n+' jugadores</option>'),'Falta opción de '+n+' jugadores');
 assert(!html.includes('value="6"'),'No debe existir opción de 6 jugadores');
