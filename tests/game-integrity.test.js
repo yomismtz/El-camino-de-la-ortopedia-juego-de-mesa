@@ -238,3 +238,19 @@ assert(app.includes("saveGame();render();tone('turn')"),'El cambio de turno debe
 assert(app.includes('scheduleComputerTurn'),'Los turnos contra computadora deben usar el mismo flujo central');
 assert(app.includes('visibilitychange'),'Debe conservarse recuperación al suspender WebView');
 console.log('✓ Paso 6: tablero compacto, foco de posición/destino, indicador de turno y continuidad visual');
+
+
+// Paso 7: IA, protección de turno y carga explícita del runtime.
+assert(html.includes('src="step7-ai-runtime.js"'),'play.html debe cargar el runtime del Paso 7');
+assert(app.includes('window.step7GetState=function(){return state}'),'Debe existir puente seguro al estado para la capa Paso 7');
+assert(app.includes('window.step7GetAiLevel=function()'),'Debe existir puente seguro al nivel de IA');
+assert(app.includes('const AI_LEVELS='),'Deben existir niveles de IA');
+assert(app.includes('function scheduleComputerTurn('),'La IA debe programar su turno automáticamente');
+assert(app.includes('function resumeComputerAutomation('),'La IA debe poder reanudar después de suspensión');
+assert(app.includes('function rollDice(auto=false)'),'La tirada debe distinguir acciones automáticas de la IA');
+assert(app.includes('if(p?.isComputer&&!auto)return'),'Un jugador humano no debe controlar la tirada de la IA');
+assert(app.includes('function confirmRobberyAnswer()'),'La IA/robo debe mantener resolución independiente');
+assert(css.includes('step7-ai-status'),'Debe existir indicador visual del turno de IA');
+assert(css.includes('step7-disabled'),'Debe existir estado visual de control bloqueado');
+assert(css.includes('@media(max-height:600px) and (orientation:landscape)'),'Paso 7 debe conservar adaptación landscape compacta');
+console.log('✓ Paso 7: IA visible, turno protegido, reanudación automática y adaptación compacta');
