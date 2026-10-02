@@ -147,7 +147,7 @@ function activeCaseBank(){
   if(state?.module==='personalizado')return filterByAreas(allStudyCases,state.selectedAreas);
   return moduleCaseBank(state?.module)
 }
-let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,turnActionToken=0,transitionTimer=null,soundEnabled=localStorage.getItem('elCaminoDentalSound')!=='off',hapticsEnabled=localStorage.getItem('elCaminoDentalHaptics')!=='off',timer=null,timerLeft=30,computerTimer=null,narrationToken=0,narrationActive=false;
+let state=null,draft=null,pendingQuestion=null,selectedAnswer=null,pendingAfterDialog=null,turnActionToken=0,transitionTimer=null,soundEnabled=localStorage.getItem('elCaminoDentalSound')!=='off',hapticsEnabled=localStorage.getItem('elCaminoDentalHaptics')!=='off',timer=null,timerLeft=30,computerTimer=null,narrationToken=0,narrationActive=false,timerPaused=false,timerPausedLeft=30;
 const $=id=>document.getElementById(id);
 const screens=['setup','characters','loadingScreen','game'].map($);
 const board=$('board'),playerCount=$('playerCount'),playerNames=$('playerNames'),gameModule=$('gameModule'),gameDifficulty=$('gameDifficulty'),gameMode=$('gameMode'),aiLevel=$('aiLevel'),playerCountLabel=$('playerCountLabel'),aiLevelLabel=$('aiLevelLabel'),resumeBtn=$('resumeBtn'),rollBtn=$('rollBtn'),statusText=$('statusText'),areaPickerPanel=$('areaPickerPanel'),areaPickerGroups=$('areaPickerGroups'),areaSelectionCount=$('areaSelectionCount'),areaPoolSummary=$('areaPoolSummary');
@@ -702,8 +702,8 @@ function expireQuestionTimer(){
   $('confirmAnswerBtn').hidden=true;$('confirmAnswerBtn').disabled=true;
   $('continueBtn').hidden=false;$('continueBtn').disabled=false;$('continueBtn').textContent=tr('Continuar','Continue')
 }
-function startTimer(){if(timer||!pendingQuestion||narrationActive)return;timerLeft=30;$('timerDisplay').textContent='30';$('timerBtn').disabled=true;timer=setInterval(()=>{timerLeft--;$('timerDisplay').textContent=Math.max(0,timerLeft);const tw=$('timerDisplay').closest('.timer-wrap');if(timerLeft>0&&timerLeft<=10){tw?.classList.add('timer-low');tone('tick')}else tw?.classList.remove('timer-low');if(timerLeft<=0)expireQuestionTimer()},1000)}
-function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+function startTimer(reset=true){if(timer||!pendingQuestion||narrationActive)return;if(reset||timerPausedLeft<=0){timerLeft=30}else{timerLeft=Math.max(1,timerPausedLeft)}timerPaused=false;timerPausedLeft=timerLeft;$('timerDisplay').textContent=String(timerLeft);$('timerBtn').disabled=true;$('timerBtn').textContent=tr('30 s en curso','30 s running');timer=setInterval(()=>{timerLeft--;timerPausedLeft=timerLeft;$('timerDisplay').textContent=Math.max(0,timerLeft);const tw=$('timerDisplay').closest('.timer-wrap');if(timerLeft>0&&timerLeft<=10){tw?.classList.add('timer-low');tone('tickUrgent')}else tw?.classList.remove('timer-low');if(timerLeft<=0)expireQuestionTimer()},1000)}
+function stopTimer(pause=false){if(timer){clearInterval(timer);timer=null}if(pause&&pendingQuestion&&timerLeft>0){timerPaused=true;timerPausedLeft=timerLeft}}
 function movement(type,delta,depth=0,token=turnActionToken){const m=RULE_META[type];tone(type);showEvent(m.title,m.message,m.icon,async()=>{if(token!==turnActionToken)return;await move(delta);return resolveLanding(depth+1,token)})}
 function addSkipTurns(turns,reason){const p=state.players[state.current];p.skipTurns=(p.skipTurns||0)+turns;p.skipReason=reason||p.skipReason||'Evento';render()}
 function loseTurnEvent(type,reason,turns=1){const m=RULE_META[type];tone(type);addSkipTurns(turns,reason);showEvent(m.title,m.message,m.icon,endTurn)}
@@ -881,6 +881,8 @@ function tone(kind='neutral'){
         beep(ctx,690,t,.045,.017,'sine',760);break;
       case 'tick':
         beep(ctx,880,t,.035,.014,'sine');break;
+      case 'tickUrgent':
+        beep(ctx,980,t,.07,.036,'square');beep(ctx,1180,t+.075,.09,.032,'square');break;
       case 'select':
         beep(ctx,520,t,.07,.025,'sine',660);beep(ctx,760,t+.07,.08,.022,'sine');break;
       case 'start':
@@ -1021,7 +1023,7 @@ $('characterBookDialog')?.addEventListener('cancel',e=>{e.preventDefault();$('ch
 window.addEventListener('elcamino:native-pause',()=>{
   clearComputerTimer();
   stopQuestionNarration();
-  stopTimer();
+  stopTimer(true);
   if(state)saveGame();
   if(musicActive)stopBackgroundMusic(false);
 });
@@ -1030,8 +1032,9 @@ window.addEventListener('elcamino:native-resume',()=>{
   render();
   if(questionDialog?.open&&pendingQuestion){
     $('timerBtn').disabled=false;
-    $('timerBtn').textContent=tr('Reanudar 30 s','Resume 30 s');
-    statusText.textContent=tr('Partida reanudada. Reinicia el tiempo cuando estés listo.','Game resumed. Restart the timer when ready.');
+    $('timerBtn').textContent=timerPaused?tr(`Reanudar ${timerPausedLeft} s`,`Resume ${timerPausedLeft} s`):tr('Iniciar 30 s','Start 30 s');
+    statusText.textContent=timerPaused?tr(`Partida reanudada. Quedan ${timerPausedLeft} segundos.` ,`Game resumed. ${timerPausedLeft} seconds remain.`):tr('Partida reanudada.','Game resumed.');
+    if(timerPaused)startTimer(false);
   }else if(isComputerTurn()&&!state.locked){
     scheduleComputerTurn(650);
   }
