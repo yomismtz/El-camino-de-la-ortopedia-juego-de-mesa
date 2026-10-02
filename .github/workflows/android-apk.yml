@@ -24,6 +24,7 @@ on:
       - 'step12-question-audit.js'
       - 'step13-question-catalog.js'
       - 'endodoncia-questions-2026.js'
+      - 'ortodoncia-questions-2026.js'
       - 'endodoncia-audit-2026-10-02.md'
       - 'question-catalog-2026-10-02.md'
       - 'question-audit-2026-10-02.md'
@@ -86,6 +87,7 @@ jobs:
           node --check step12-question-audit.js
           node --check step13-question-catalog.js
           node --check endodoncia-questions-2026.js
+          node --check ortodoncia-questions-2026.js
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
@@ -138,6 +140,7 @@ jobs:
           cp step12-question-audit.js question-audit-2026-10-02.md www/
           cp step13-question-catalog.js question-catalog-2026-10-02.md www/
           cp endodoncia-questions-2026.js endodoncia-audit-2026-10-02.md www/
+          cp ortodoncia-questions-2026.js www/
           cp questions*.js cases*.js expansion-questions-2026.js expansion-cases-2026.js nomenclatura-etimologia-questions.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
           cp -r brand www/
 
