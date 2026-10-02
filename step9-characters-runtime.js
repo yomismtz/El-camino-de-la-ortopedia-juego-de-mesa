@@ -31,7 +31,8 @@
     const state=window.step7GetState?.(),dlg=document.getElementById('winnerDialog');
     if(!state||!dlg?.open||state.__step9ExtremeRecorded)return;
     state.__step9ExtremeRecorded=true;
-    if(state.difficulty==='extreme'){
+    const winner=[...state.players].sort((a,b)=>(b.stats?.points||b.quizStats?.points||0)-(a.stats?.points||a.quizStats?.points||0))[0];
+    if(state.difficulty==='extreme'&&winner&&!winner.isComputer){
       const x=readExtra();x.extremeWins=(Number(x.extremeWins)||0)+1;saveExtra(x);
       const p=readProfile();p.extremeWins=x.extremeWins;try{localStorage.setItem(KEY,JSON.stringify(p))}catch{}
     }
