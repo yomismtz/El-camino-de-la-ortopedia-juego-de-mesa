@@ -194,3 +194,5 @@ assert(app.includes('has one chance'),'El rival debe tener un único intento en 
 assert(app.includes('points+=r.bank'),'El robo exitoso debe transferir el banco al rival');
 assert(app.includes('points+=r.bank'),'El robo fallido debe conservar el banco para el equipo original');
 assert(app.includes('state.roundErrors=0'),'El contador de errores debe reiniciarse al cerrar la ronda');
+assert(app.includes("if(d<0&&state?.roundErrors>0&&state.roundErrors<3)"),'Los errores 1 y 2 deben conservar la ronda para acumular tres errores');
+assert(app.includes("state.roundErrors=(state.roundErrors||0)+1"),'Preguntas y casos incorrectos deben incrementar errores');
