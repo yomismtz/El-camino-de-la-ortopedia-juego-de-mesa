@@ -2,9 +2,9 @@
 (function(){
 'use strict';
 function el(id){return document.getElementById(id)}
-function player(){try{return window.state&&window.state.players?window.state.players[window.state.current]:null}catch{return null}}
+function player(){try{return window.step6GetState?window.step6GetState().players[window.step6GetState().current]:null}catch{return null}}
 function cellInfo(pos){
-  const r=typeof window.ruleForCell==='function'?window.ruleForCell(pos):{type:'neutral'};
+  const r=typeof window.step6GetRuleForCell==='function'?window.step6GetRuleForCell(pos):{type:'neutral'};
   const labels={question:'Pregunta',case:'Caso clínico',advance1:'Avanza +1',advance2:'Tratamiento +2',back1:'Retrocede −1',back2:'Retrocede −2',back3:'Retrocede −3',vacation:'Vacaciones',tax:'Impuestos',equipment:'Equipo',lawsuit:'Demanda → cárcel',jail:'Cárcel',finish:'META',neutral:'Descanso',start:'Salida'};
   return labels[r.type]||'Casilla';
 }
@@ -49,7 +49,7 @@ function install(){
   setInterval(function(){
     if(!el('game')||!el('game').classList.contains('active'))return;
     updateFocus();
-    const p=player(),pos=p?p.position:-1,idx=window.state?window.state.current:-1;
+    const p=player(),pos=p?p.position:-1,idx=window.step6GetState?window.step6GetState().current:-1;
     if(pos!==lastPosition||idx!==lastPlayer){lastPosition=pos;lastPlayer=idx;pulseTurn()}
   },350);
   window.addEventListener('pagehide',function(){try{if(window.state&&typeof window.saveGame==='function')window.saveGame()}catch{}},{passive:true});
