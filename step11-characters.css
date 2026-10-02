@@ -1,0 +1,6 @@
+/* Paso 11 · colección completa */
+.character-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;max-height:none;overflow:visible}
+.character-grid .character-card{min-height:120px}
+@media (max-width:900px){.character-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}}
+@media (max-width:680px){.character-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}}
+@media (max-width:480px){.character-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}}
