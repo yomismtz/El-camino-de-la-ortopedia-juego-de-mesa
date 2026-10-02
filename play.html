@@ -27,6 +27,7 @@
       <button id="exitGameBtn" class="icon-btn exit-game-btn" aria-label="Salir del juego" title="Guardar y salir" hidden>🚪</button>
       <button id="soundBtn" class="icon-btn" aria-label="Apagar sonidos y música" title="Sonido y música activados">🔊</button>
       <button id="characterBookBtn" class="icon-btn" aria-label="Conoce a los personajes" title="Conoce a los personajes">🎭</button>
+      <button id="profileBtn" class="icon-btn" aria-label="Mi progreso" title="Mi progreso">🏆</button>
       <button id="tutorialBtn" class="icon-btn" aria-label="Tutorial" title="Tutorial">💡</button>
       <button id="rulesBtn" class="icon-btn" aria-label="Reglas">📖</button>
       <a class="icon-btn link-btn" href="exam.html" aria-label="Modo Examen">📝</a>
@@ -264,6 +265,17 @@
   </div>
 </dialog>
 
+
+<dialog id="profileDialog" class="modal">
+  <div class="modal-card profile-card">
+    <div class="profile-head"><div class="profile-medal">🏆</div><div><h2>Mi progreso</h2><p id="profileLevelLine">Nivel 1</p></div></div>
+    <div id="profileProgress" class="profile-progress"></div>
+    <div id="profileStats" class="profile-stats"></div>
+    <section><h3>🎖️ Logros</h3><div id="profileAchievements" class="profile-achievements"></div></section>
+    <section><h3>🎭 Colección</h3><div id="profileCharacters" class="profile-characters"></div></section>
+    <button id="closeProfileBtn" class="btn primary">Cerrar</button>
+  </div>
+</dialog>
 <dialog id="winnerDialog" class="modal">
   <div class="modal-card winner-card">
     <div id="winnerConfetti" class="winner-confetti" aria-hidden="true"></div>
@@ -305,7 +317,7 @@
 <script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
 <script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
 <script src="legacy-case-grading-audit.js"></script>
-<script src="app-v10.js"></script><script src="step9-characters-runtime.js"></script>
+<script src="app-v10.js"></script><script src="step9-characters-runtime.js"></script><script src="step10-profile-runtime.js"></script>
 <script src="step6-board-runtime.js"></script><script src="step7-ai-runtime.js"></script><script src="step8-progress-runtime.js"></script>
 <script src="android-navigation.js"></script></body>
 </html>
