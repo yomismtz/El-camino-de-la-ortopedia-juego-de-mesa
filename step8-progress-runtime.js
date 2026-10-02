@@ -3,7 +3,7 @@
 'use strict';
 const KEY='elCaminoDentalProgressV1';
 const getState=()=>{try{return window.step7GetState?window.step7GetState():null}catch{return null}};
-function read(){try{return Object.assign({xp:0,level:1,matches:0,wins:0,robberies:0,correct:0,excellent:0,achievements:[]},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return{xP:0}}}
+function read(){try{return Object.assign({xp:0,level:1,matches:0,wins:0,robberies:0,correct:0,excellent:0,achievements:[]},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return{xp:0,level:1,matches:0,wins:0,robberies:0,correct:0,excellent:0,achievements:[]}}}
 function save(p){try{localStorage.setItem(KEY,JSON.stringify(p))}catch{}}
 function level(xp){return Math.max(1,Math.floor(Math.sqrt(Math.max(0,xp)/100))+1)}
 function award(){
