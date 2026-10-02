@@ -100,6 +100,7 @@ function moduleQuestionBank(module){
   if(module==='crecimiento_desarrollo')return growthDevelopmentQuestions;
   if(module==='habitos_parafunciones')return habitsParafunctionsQuestions;
   if(module==='nomenclatura_etimologia')return nomenclatureEtymologyQuestions;
+  if(module==='ortodoncia')return [...(window.ORTODONCIA_QUESTIONS||[])];
   if(module==='steiner')return steinerQuestions;
   if(module==='anatomia_general')return anatomyQuestions;
   if(module==='anestesia_general')return dentalAnesthesiaQuestions;
