@@ -21,6 +21,8 @@ on:
       - 'step10-profile-runtime.js'
       - 'step11-characters-runtime.js'
       - 'step11-characters.css'
+      - 'step12-question-audit.js'
+      - 'question-audit-2026-10-02.md'
       - 'android-navigation.js'
       - 'site.css'
       - 'styles-v10.css'
@@ -77,6 +79,7 @@ jobs:
           node --check step9-characters-runtime.js
           node --check step10-profile-runtime.js
           node --check step11-characters-runtime.js
+          node --check step12-question-audit.js
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
@@ -126,6 +129,7 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js nomenclatura-etimologia-questions.js primer-parcial-questions.js styles-v10.css ui-polish.css game-premium-v93.css game-board-canvas-v98.js character-art.css android-touch-v85.css i18n.js learning-tools.js area-classifier.js accessibility.js app-v10.js step7-ai-runtime.js step8-progress-runtime.js step9-characters-runtime.js step10-profile-runtime.js step11-characters-runtime.js android-navigation.js www/
           cp step11-characters.css www/
+          cp step12-question-audit.js question-audit-2026-10-02.md www/
           cp questions*.js cases*.js expansion-questions-2026.js expansion-cases-2026.js nomenclatura-etimologia-questions.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
           cp -r brand www/
 
