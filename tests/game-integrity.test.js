@@ -204,7 +204,8 @@ assert(app.includes('gana la ronda'),'Debe anunciarse al ganador de la ronda');
 assert(app.includes('round-award'),'Debe existir animación visual de puntos');
 assert(app.includes('roundWinnerPoints'),'El ganador debe recibir puntos automáticamente');
 assert(app.includes('function showMatchWinner()'),'La ronda 8 debe pasar al resultado final');
-\n// Paso 5: rendimiento y continuidad
+
+// Paso 5: rendimiento y continuidad
 assert(app.includes('Paso 5 · rendimiento'),'Debe existir la capa de rendimiento del Paso 5');
 assert(app.includes('step5NormalizeAnswer'),'Debe normalizar respuestas');
 assert(app.includes("normalize('NFD')"),'Debe tolerar acentos');
