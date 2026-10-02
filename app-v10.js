@@ -739,13 +739,13 @@ function confirmRobberyAnswer(){
   if(ok){
     opts[selectedAnswer]?.classList.add('correct');
     ensurePlayerStats(rival).steals++;
-    ensurePlayerStats(rival).points+=r.bank;state.robbery.won=true;
+    state.robbery.won=true;
     $('feedback').hidden=false;
     $('feedback').innerHTML=educationalFeedbackHtml(tr(`🎯 ¡ROBO EXITOSO! ${rival.name} gana ${r.bank} puntos.`,`🎯 SUCCESSFUL STEAL! ${rival.name} wins ${r.bank} points.`),pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
     characterTone(rival.character,'win');tone('win');haptic('win');
   }else{
     opts[selectedAnswer]?.classList.add('wrong');
-    ensurePlayerStats(source).points+=r.bank;state.robbery.won=false;
+    state.robbery.won=false;
     $('feedback').hidden=false;
     $('feedback').innerHTML=educationalFeedbackHtml(tr(`❌ Robo fallido. Los ${r.bank} puntos permanecen con ${source.name}.`,`❌ Failed steal. The ${r.bank} points stay with ${source.name}.`),pendingQuestion,selectedAnswer,pendingQuestion.kind,false);
     characterTone(rival.character,'error');tone('error');haptic('error');
