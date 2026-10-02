@@ -305,3 +305,15 @@ assert(auditSource.includes('less_than_3_options'),'Debe detectar reactivos con 
 assert(auditSource.includes('missing_difficulty'),'Debe detectar reactivos sin dificultad');
 const nomenclatureStep12=vm.runInNewContext(fs.readFileSync('nomenclatura-etimologia-questions.js','utf8')+';window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS;',{window:{}});
 assert.strictEqual(nomenclatureStep12.length,100,'Nomenclatura debe conservar exactamente 100 reactivos');
+
+// Paso 14: banco de Endodoncia.
+assert(fs.existsSync('endodoncia-questions-2026.js'),'Debe existir el banco de Endodoncia del Paso 14');
+const endoSource=fs.readFileSync('endodoncia-questions-2026.js','utf8');
+assert(endoSource.includes('window.ENDODONCIA_QUESTIONS'),'El banco debe exponer ENDODONCIA_QUESTIONS');
+const endoCtx={window:{QUESTIONS:[]}}; vm.runInNewContext(endoSource,endoCtx);
+assert.strictEqual(endoCtx.window.ENDODONCIA_QUESTIONS.length,100,'Endodoncia debe contener exactamente 100 reactivos');
+assert.strictEqual(new Set(endoCtx.window.ENDODONCIA_QUESTIONS.map(q=>q.id)).size,100,'Los IDs de Endodoncia deben ser únicos');
+const ed=endoCtx.window.ENDODONCIA_QUESTIONS.reduce((m,q)=>(m[q.difficulty]=(m[q.difficulty]||0)+1,m),{});
+assert.deepStrictEqual(ed,{Fácil:30,Medio:20,Difícil:20,Extremo:30},'La distribución de dificultad debe ser 30/20/20/30');
+assert(endoCtx.window.ENDODONCIA_QUESTIONS.every(q=>q.options.length>=3&&q.options.length<=7&&q.correct>=0&&q.correct<q.options.length),'Todos los reactivos deben tener 3-7 opciones válidas');
+assert(endoCtx.window.ENDODONCIA_QUESTIONS.every(q=>q.specialty==='Endodoncia'),'Todos los reactivos deben pertenecer a Endodoncia');
