@@ -55,7 +55,7 @@ const F=[
 ["¿Qué principio debe guiar la indicación de tratamiento ortodóntico?","Diagnóstico individual y objetivos funcionales y dentofaciales","Usar el mismo aparato para todos","Elegir tratamiento solo por estética","Evitar registros diagnósticos"]
 ];
 const Q=[];
-F.forEach((f,i)=>{
+F.slice(0,50).forEach((f,i)=>{
  const d=i<15?"Fácil":i<25?"Medio":i<35?"Difícil":"Extremo";
  const [q,a,b,c,e]=f;
  Q.push({id:`ORTO-${String(i*2+1).padStart(3,'0')}`,deck:15,origin:"audited_public",module:"ortodoncia",specialty:"Ortodoncia",difficulty:d,text:q,options:[a,b,c,e],correct:0,explanation:"Reactivo basado en terminología y conceptos ortodónticos de la AAO.",evidence:E,audit:"Paso 15 · 2026-10-02"});
