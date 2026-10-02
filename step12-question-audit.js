@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const BANKS=[
  ['general',()=>window.QUESTIONS||[]],['primer_parcial',()=>window.PRIMER_PARCIAL_QUESTIONS||[]],
- ['nomenclatura_etimologia',()=>window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[]],['anatomia',()=>window.ANATOMIA_QUESTIONS||[]],
+ ['nomenclatura_etimologia',()=>window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS||[]],['ortodoncia',()=>window.ORTODONCIA_QUESTIONS||[]],['anatomia',()=>window.ANATOMIA_QUESTIONS||[]],
  ['anestesia',()=>window.ANESTESIA_DENTAL_QUESTIONS||[]],['steiner',()=>window.STEINER_QUESTIONS||[]],
  ['fisiologia_funcion',()=>window.FISIOLOGIA_FUNCION_QUESTIONS||[]],['crecimiento_desarrollo',()=>window.CRECIMIENTO_DESARROLLO_QUESTIONS||[]],
  ['habitos_parafunciones',()=>window.HABITOS_PARAFUNCIONES_QUESTIONS||[]]
