@@ -254,3 +254,8 @@ assert(css.includes('step7-ai-status'),'Debe existir indicador visual del turno 
 assert(css.includes('step7-disabled'),'Debe existir estado visual de control bloqueado');
 assert(css.includes('@media(max-height:600px) and (orientation:landscape)'),'Paso 7 debe conservar adaptación landscape compacta');
 console.log('✓ Paso 7: IA visible, turno protegido, reanudación automática y adaptación compacta');
+
+assert(html.includes('src="step8-progress-runtime.js"'),'play.html debe cargar la progresion del Paso 8');
+assert(css.includes('step8-progression'),'Debe existir el panel visual de progresion');
+assert(app.includes('ensurePlayerStats'),'La partida debe conservar estadisticas del jugador');
+console.log('✓ Paso 8: progresion XP, logros persistentes y resumen final');
