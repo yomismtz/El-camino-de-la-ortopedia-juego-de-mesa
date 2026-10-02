@@ -68,6 +68,7 @@ jobs:
         run: |
           node --check app-v10.js
           node --check step7-ai-runtime.js
+          node --check step8-progress-runtime.js
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
