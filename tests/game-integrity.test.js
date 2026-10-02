@@ -317,3 +317,25 @@ const ed=endoCtx.window.ENDODONCIA_QUESTIONS.reduce((m,q)=>(m[q.difficulty]=(m[q
 assert.deepStrictEqual(ed,{Fácil:30,Medio:20,Difícil:20,Extremo:30},'La distribución de dificultad debe ser 30/20/20/30');
 assert(endoCtx.window.ENDODONCIA_QUESTIONS.every(q=>q.options.length>=3&&q.options.length<=7&&q.correct>=0&&q.correct<q.options.length),'Todos los reactivos deben tener 3-7 opciones válidas');
 assert(endoCtx.window.ENDODONCIA_QUESTIONS.every(q=>q.specialty==='Endodoncia'),'Todos los reactivos deben pertenecer a Endodoncia');
+
+
+// Paso 15: banco dedicado de Ortodoncia.
+assert(fs.existsSync('ortodoncia-questions-2026.js'),'Debe existir el banco de Ortodoncia del Paso 15');
+const orthoSource=fs.readFileSync('ortodoncia-questions-2026.js','utf8');
+assert(orthoSource.includes('window.ORTODONCIA_QUESTIONS'),'El banco debe exponer ORTODONCIA_QUESTIONS');
+const orthoCtx={window:{QUESTIONS:[]}};
+vm.runInNewContext(orthoSource,orthoCtx);
+const orthoBank=orthoCtx.window.ORTODONCIA_QUESTIONS;
+assert.strictEqual(orthoBank.length,100,'Ortodoncia debe contener exactamente 100 reactivos');
+assert.strictEqual(new Set(orthoBank.map(q=>q.id)).size,100,'Los IDs de Ortodoncia deben ser únicos');
+const od=orthoBank.reduce((m,q)=>(m[q.difficulty]=(m[q.difficulty]||0)+1,m),{});
+assert.deepStrictEqual(od,{Fácil:30,Medio:20,Difícil:20,Extremo:30},'Ortodoncia debe distribuirse 30/20/20/30');
+assert(orthoBank.every(q=>q.options.length>=3&&q.options.length<=7&&Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.options.length),'Todos los reactivos de Ortodoncia deben tener 3-7 opciones válidas');
+assert(orthoBank.every(q=>q.specialty==='Ortodoncia'&&q.module==='ortodoncia'),'Todos los reactivos deben pertenecer a Ortodoncia');
+assert(orthoBank.every(q=>q.text&&q.explanation&&q.evidence&&q.audit),'Todos los reactivos deben conservar trazabilidad de auditoría');
+assert(html.includes('src="ortodoncia-questions-2026.js"'),'play.html debe cargar Ortodoncia');
+assert(html.includes('value="ortodoncia"'),'El selector debe ofrecer Ortodoncia como módulo');
+assert(app.includes("if(module==='ortodoncia')return [...(window.ORTODONCIA_QUESTIONS||[])]"),'El motor debe enrutar el módulo de Ortodoncia a su banco dedicado');
+assert(fs.readFileSync('step12-question-audit.js','utf8').includes("['ortodoncia',()=>window.ORTODONCIA_QUESTIONS||[]]"),'La auditoría debe incluir Ortodoncia');
+assert(fs.readFileSync('step13-question-catalog.js','utf8').includes("['ortodoncia',()=>window.ORTODONCIA_QUESTIONS||[],'Ortodoncia']"),'El catálogo debe incluir Ortodoncia');
+console.log('✓ Paso 15: 100 reactivos de Ortodoncia, IDs únicos, distribución 30/20/20/30 y trazabilidad');
