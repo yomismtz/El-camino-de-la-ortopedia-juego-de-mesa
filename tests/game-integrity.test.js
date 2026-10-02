@@ -224,3 +224,17 @@ assert(html.includes('id="musicVolume"')&&html.includes('id="effectsVolume"')&&h
 assert(html.includes('id="performanceMode"'),'Debe existir control de rendimiento');
 assert(css.includes('performance-mode'),'El CSS debe reducir efectos en modo rendimiento');
 console.log('✓ Paso 5: fases, transiciones, precarga, respuestas tolerantes, recuperación, audio y rendimiento');
+
+
+// Paso 6: tablero, foco de turno y continuidad visual.
+assert(html.includes('id="board"'),'Debe existir el tablero principal');
+assert(html.includes('id="turnPlayerName"')&&html.includes('id="turnPrompt"'),'Debe existir un indicador inequívoco del jugador activo');
+assert(html.includes('<details class="legend-panel">'),'La leyenda del tablero debe permanecer colapsable');
+assert(css.includes('step6-focus'),'Debe existir resumen compacto de posición/destino/casilla');
+assert(css.includes('step6-current-cell'),'La casilla actual debe tener resaltado visual');
+assert(css.includes('step6-turn-pulse'),'Debe existir una señal visual de cambio de turno');
+assert(app.includes('function endTurn()'),'El flujo debe centralizar el cambio de turno');
+assert(app.includes("saveGame();render();tone('turn')"),'El cambio de turno debe guardar, renderizar y anunciarse');
+assert(app.includes('scheduleComputerTurn'),'Los turnos contra computadora deben usar el mismo flujo central');
+assert(app.includes('visibilitychange'),'Debe conservarse recuperación al suspender WebView');
+console.log('✓ Paso 6: tablero compacto, foco de posición/destino, indicador de turno y continuidad visual');
