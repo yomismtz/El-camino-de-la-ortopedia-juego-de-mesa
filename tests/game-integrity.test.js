@@ -282,3 +282,12 @@ const step10=fs.readFileSync('step10-profile-runtime.js','utf8');
 assert(step10.includes('elCaminoDentalProgressV1')&&step10.includes('elCaminoDentalCharacterProgressV1'),'El perfil debe leer el progreso persistente');
 assert(step10.includes('step9GetCharacters'),'El perfil debe integrar la colección del Paso 9');
 console.log('✓ Paso 10: perfil, estadísticas, logros y colección integrados');
+
+// Paso 12: auditoría estructural del banco.
+assert(fs.existsSync('step12-question-audit.js'),'Debe existir el auditor estructural del banco');
+const auditSource=fs.readFileSync('step12-question-audit.js','utf8');
+assert(auditSource.includes('window.step12QuestionAudit'),'El auditor debe exponer una API de auditoría');
+assert(auditSource.includes('less_than_3_options'),'Debe detectar reactivos con menos de 3 opciones');
+assert(auditSource.includes('missing_difficulty'),'Debe detectar reactivos sin dificultad');
+const nomenclatureStep12=vm.runInNewContext(fs.readFileSync('nomenclatura-etimologia-questions.js','utf8')+';window.NOMENCLATURA_ETIMOLOGIA_QUESTIONS;',{window:{}});
+assert.strictEqual(nomenclatureStep12.length,100,'Nomenclatura debe conservar exactamente 100 reactivos');
