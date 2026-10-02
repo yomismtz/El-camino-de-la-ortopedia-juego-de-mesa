@@ -153,7 +153,7 @@ assert(!home.includes('800 preguntas')&&!home.includes('355 casos clínicos'),'L
 assert(examHtml.includes('src="expansion-questions-2026.js"'),'Modo Examen debe cargar las 200 preguntas nuevas');
 assert(classifier.includes("id:'anestesia'")&&classifier.includes("id:'implantologia'"),'El selector personalizado debe incluir Anestesia e Implantología');
 
-const css=fs.readFileSync('styles-v10.css','utf8');
+const css=fs.readFileSync('styles-v10.css','utf8')+'\n'+fs.readFileSync('ui-polish.css','utf8');
 const androidTouch=fs.readFileSync('android-touch-v85.css','utf8');
 assert(html.includes('href="android-touch-v85.css"'),'play.html debe cargar el baseline Android al final');
 assert(html.lastIndexOf('android-touch-v85.css')>html.lastIndexOf('character-art.css'),'El baseline Android debe cargarse después de los estilos heredados');
