@@ -283,6 +283,20 @@ assert(step10.includes('elCaminoDentalProgressV1')&&step10.includes('elCaminoDen
 assert(step10.includes('step9GetCharacters'),'El perfil debe integrar la colección del Paso 9');
 console.log('✓ Paso 10: perfil, estadísticas, logros y colección integrados');
 
+// Paso 13: catálogo maestro de cobertura.
+assert(fs.existsSync('step13-question-catalog.js'),'Debe existir el catálogo maestro del Paso 13');
+const catalogSource=fs.readFileSync('step13-question-catalog.js','utf8');
+assert(catalogSource.includes('targetQuestions:4400'),'El catálogo debe fijar la meta en 4,400 preguntas');
+assert(catalogSource.includes('targetCategories:TARGET.length'),'El catálogo debe trabajar con 44 categorías');
+const catalogContext={window:{}};
+vm.runInNewContext(catalogSource,catalogContext);
+assert.strictEqual(typeof catalogContext.window.step13QuestionCatalog,'function','Debe existir la API del catálogo');
+const catalogSummary=catalogContext.window.step13QuestionCatalogSummary();
+assert.strictEqual(catalogSummary.targetCategories,44,'El catálogo debe contener exactamente 44 categorías');
+assert.strictEqual(catalogSummary.targetQuestions,4400,'La meta debe ser 4,400 preguntas');
+assert(Number.isInteger(catalogSummary.duplicateIds)&&catalogSummary.duplicateIds>=0,'El catálogo debe calcular duplicados');
+assert(html.includes('src="step13-question-catalog.js"'),'play.html debe cargar el catálogo del Paso 13');
+
 // Paso 12: auditoría estructural del banco.
 assert(fs.existsSync('step12-question-audit.js'),'Debe existir el auditor estructural del banco');
 const auditSource=fs.readFileSync('step12-question-audit.js','utf8');
