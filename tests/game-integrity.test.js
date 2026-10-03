@@ -458,3 +458,15 @@ assert(examJs.includes('mínimo de aprobación: 70%'),'El resultado debe mostrar
 assert(examHtml.includes('id="examTimer"'),'La interfaz debe mostrar el temporizador');
 assert(examHtml.includes('id="passStatus"'),'La interfaz debe mostrar el estado de aprobación');
 console.log('✓ Mejora 9: modo examen cronometrado, aprobación 70% y cierre automático por tiempo');
+
+// Mejora 10: Modo Casos Clínicos.
+const clinicalRuntime=fs.readFileSync('step20-clinical-cases.js','utf8');
+assert(clinicalRuntime.includes('window.step20ClinicalCases'),'Debe existir API del modo de casos clínicos');
+assert(clinicalRuntime.includes('function start()'),'Debe existir inicio del entrenamiento clínico');
+assert(clinicalRuntime.includes('function answer(i)'),'Debe existir evaluación de casos');
+assert(clinicalRuntime.includes('localStorage.setItem(KEY'),'Debe conservar estadísticas clínicas');
+assert(html.includes('id="clinicalCasesBtn"'),'Debe existir acceso al modo de casos clínicos');
+assert(html.includes('id="clinicalCasesDialog"'),'Debe existir diálogo de casos clínicos');
+assert(html.includes('src="step20-clinical-cases.js"'),'play.html debe cargar la mejora 10');
+assert(css.includes('.clinical-case-option')&&css.includes('.clinical-case-feedback'),'Debe existir estilo para opciones y retroalimentación clínica');
+console.log('✓ Mejora 10: modo de casos clínicos con retroalimentación y estadísticas persistentes');
