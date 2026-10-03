@@ -554,3 +554,16 @@ assert(playWorkflow.includes('com.uam.cientodentistas'),'El AAB debe conservar e
 assert(playWorkflow.includes('versionCode 37')&&playWorkflow.includes('versionName "3.7.0"'),'El AAB debe fijar la versión 3.7.0/37');
 assert(playWorkflow.includes('targetSdkVersion = 36'),'El AAB debe usar target SDK 36');
 console.log('✓ Mejora 16: AAB Play Store con runtime completo y preflight reforzado');
+
+
+// Mejora 17: recuperación y respaldo de partidas.
+const recovery=fs.readFileSync('step23-recovery-runtime.js','utf8');
+const appSource=fs.readFileSync('app-v10.js','utf8');
+const playSource=fs.readFileSync('play.html','utf8');
+assert(recovery.includes("elCaminoDentalSaveBackupV1"),'Debe existir almacenamiento de respaldo');
+assert(recovery.includes('function recover'), 'Debe existir recuperación de partida');
+assert(recovery.includes('Date.now()-Number(x.savedAt||0)>MAX_AGE'), 'El backup debe caducar');
+assert(recovery.includes('players.length>=1&&s.players.length<=5'), 'Debe validar estructura de jugadores');
+assert(appSource.includes('window.step23Recovery?.writeBackup?.(state)'), 'saveGame debe crear backup');
+assert(playSource.includes('step23-recovery-runtime.js'), 'play.html debe cargar recuperación');
+console.log('✓ Mejora 17: save recovery y backup validados');
