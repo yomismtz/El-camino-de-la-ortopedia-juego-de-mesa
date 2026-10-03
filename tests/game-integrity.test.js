@@ -410,3 +410,15 @@ assert(ai10.includes('aiLearningProfile'), 'La IA debe conservar memoria por mó
 assert(ai10.includes('aiAnswerProbability'), 'La IA debe ajustar probabilidad por dificultad');
 assert(ai10.includes('recordAiAnswer'), 'La IA debe registrar sus resultados');
 console.log('✓ Mejora 5: IA adaptativa integrada');
+
+
+// Mejora 7: ronda final.
+assert(app.includes('const FINAL_ROUND_COUNT=10,FINAL_ROUND_TARGET=300;'),'La ronda final debe tener 10 preguntas y meta de 300 puntos');
+assert(app.includes('function startFinalRound()'),'Falta inicio de la ronda final');
+assert(app.includes('function answerFinal(choice)'),'Falta evaluación de respuestas finales');
+assert(app.includes('function finishFinalRound()'),'Falta cierre de ronda final');
+assert(app.includes('if(roundNo>=8){'),'La partida debe enlazar la ronda final tras la ronda 8');
+assert(app.includes('setTimeout(()=>startFinalRound(),700);'),'La ronda final debe iniciar después de la partida principal');
+assert(app.includes('f.score>=FINAL_ROUND_TARGET'),'Debe comprobarse la meta de 300 puntos');
+assert(app.includes('f.index+1>=FINAL_ROUND_COUNT'),'Debe terminar exactamente después de 10 preguntas');
+console.log('✓ Mejora 7: ronda final integrada y validada');
