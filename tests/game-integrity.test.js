@@ -448,7 +448,6 @@ assert(css.includes('.profile-specialties')&&css.includes('.profile-specialty-ba
 console.log('✓ Mejora 8: estadísticas persistentes por especialidad, precisión y perfil');
 
 const examJs=fs.readFileSync('exam.js','utf8');
-const examHtml=fs.readFileSync('exam.html','utf8');
 assert(examJs.includes('EXAM_MINUTES_PER_QUESTION=1'),'El examen debe tener tiempo proporcional a su extensión');
 assert(examJs.includes('function startExamTimer()'),'El modo examen debe iniciar temporizador');
 assert(examJs.includes('function stopExamTimer()'),'El modo examen debe detener temporizador');
