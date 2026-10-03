@@ -388,3 +388,9 @@ assert(app10.includes("type==='shield'"), 'Debe existir habilidad de protección
 assert(app10.includes("type==='bonus'"), 'Debe existir habilidad de punto extra');
 assert(app10.includes("type==='move'"), 'Debe existir habilidad de movimiento');
 console.log('✓ Mejora 4: habilidades de personajes integradas');
+
+const ai10=fs.readFileSync('app-v10.js','utf8');
+assert(ai10.includes('aiLearningProfile'), 'La IA debe conservar memoria por módulo');
+assert(ai10.includes('aiAnswerProbability'), 'La IA debe ajustar probabilidad por dificultad');
+assert(ai10.includes('recordAiAnswer'), 'La IA debe registrar sus resultados');
+console.log('✓ Mejora 5: IA adaptativa integrada');
