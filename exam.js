@@ -13,7 +13,7 @@
   };
   const DIFFICULTIES=['Básico','Intermedio','Clínico'];
 
-  let exam=null;
+  let exam=null;\n  const EXAM_MINUTES_PER_QUESTION=1;\n  let timerId=null;
 
   function esc(v){
     return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
@@ -108,7 +108,7 @@
     $('examForm').querySelector('.primary-btn').disabled=available===0;
   }
 
-  function showScreen(id){
+  function stopExamTimer(){if(timerId){clearInterval(timerId);timerId=null}}\n  function renderTimer(){if(!exam)return;const left=Math.max(0,exam.endsAt-Date.now());const sec=Math.ceil(left/1000);const m=Math.floor(sec/60),s=sec%60;$('examTimer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');$('examTimer').classList.toggle('urgent',sec<=60);if(left<=0){stopExamTimer();exam.timedOut=true;finishExam(true)}}\n  function startExamTimer(){stopExamTimer();renderTimer();timerId=setInterval(renderTimer,1000)}\n  function showScreen(id){
     ['examSetup','examRun','examResults'].forEach(x=>$(x).classList.toggle('active',x===id));
     window.scrollTo(0,0);
   }
@@ -124,7 +124,7 @@
     const adaptive=window.LearningTools?.sample?.(source,count,module);
     const selected=Array.isArray(adaptive)&&adaptive.length===count?adaptive:shuffle(source).slice(0,count);
     const questions=selected.map(randomizeQuestionOptions);
-    exam={module,difficulty,count,questions,answers:Array(count).fill(null),index:0,startedAt:Date.now()};
+    exam={module,difficulty,count,questions,answers:Array(count).fill(null),index:0,startedAt:Date.now(),endsAt:Date.now()+count*EXAM_MINUTES_PER_QUESTION*60000,timedOut:false};
     const mod=MODULES[module];
     $('runModule').textContent=mod.icon+' '+mod.label;
     showScreen('examRun');
@@ -195,7 +195,7 @@
     $('scoreRing').style.setProperty('--score-angle',(percent*3.6)+'deg');
     $('correctCount').textContent=correct;$('wrongCount').textContent=wrong;$('unansweredCount').textContent=unanswered;$('totalCount').textContent=exam.count;
     $('resultTitle').textContent=mod.icon+' '+mod.label;
-    const diff=exam.difficulty==='all'?'todas las dificultades':exam.difficulty;
+    const diff=exam.difficulty==='all'?'todas las dificultades':exam.difficulty;\n    $('passStatus').textContent=percent>=70?'APROBADO':'NO APROBADO';\n    $('resultSummary').textContent=(exam.timedOut?'⏰ Tiempo agotado · ':'')+correct+' de '+exam.count+' correctas · '+diff+' · mínimo de aprobación: 70%.';
     $('resultSummary').textContent=correct+' de '+exam.count+' correctas · '+diff+' · sin retroalimentación durante el examen.';
     const partialFocus=false;
     $('topicSection').classList.toggle('partial-topic-focus',partialFocus);
@@ -232,7 +232,7 @@
   }
 
   function toggleReview(){const host=$('reviewList');host.hidden=!host.hidden;$('toggleReviewBtn').textContent=host.hidden?'Mostrar revisión':'Ocultar revisión';}
-  function resetExam(){exam=null;showScreen('examSetup');updateDifficultyOptions();}
+  function resetExam(){stopExamTimer();exam=null;showScreen('examSetup');updateDifficultyOptions();}
 
   $('examModule').addEventListener('change',updateDifficultyOptions);
   $('examDifficulty').addEventListener('change',updateLengthOptions);
@@ -250,5 +250,5 @@
   if(requestedModule&&MODULES[requestedModule]&&[...$('examModule').options].some(o=>o.value===requestedModule)){
     $('examModule').value=requestedModule;
   }
-  updateDifficultyOptions();
+  window.addEventListener('beforeunload',stopExamTimer);\n  updateDifficultyOptions();
 })();
