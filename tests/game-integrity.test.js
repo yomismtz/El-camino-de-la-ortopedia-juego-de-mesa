@@ -567,3 +567,17 @@ assert(recovery.includes('players.length>=1&&s.players.length<=5'), 'Debe valida
 assert(appSource.includes('window.step23Recovery?.writeBackup?.(state)'), 'saveGame debe crear backup');
 assert(playSource.includes('step23-recovery-runtime.js'), 'play.html debe cargar recuperación');
 console.log('✓ Mejora 17: save recovery y backup validados');
+
+
+// Mejora 18 + reconexión Bluetooth: progreso unificado y sesión persistente.
+const progress18=fs.readFileSync('step18-progress-unified.js','utf8');
+const bt21=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+const playStore18=fs.readFileSync('.github/workflows/playstore-aab.yml','utf8');
+assert(progress18.includes('function merge(incoming)'), 'Progreso debe tener reconciliación');
+assert(progress18.includes('window.step18Reconcile=merge'), 'Debe exponer reconciliación global');
+assert(bt21.includes('elCaminoDentalBluetoothSessionV1'), 'Bluetooth debe persistir la sesión');
+assert(bt21.includes('resume:true'), 'Bluetooth debe solicitar/restaurar la sesión al reconectar');
+assert(bt21.includes('lastSnapshot'), 'Bluetooth debe conservar snapshot de partida');
+assert((bt21.match(/function stop\(/g)||[]).length===1, 'Debe existir un único stop Bluetooth');
+assert(playStore18.includes('step23-recovery-runtime.js'), 'AAB debe incluir recuperación');
+console.log('✓ Mejora 18: progreso unificado + reconexión Bluetooth validados');
