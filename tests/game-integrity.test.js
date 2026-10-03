@@ -378,3 +378,13 @@ assert.strictEqual(p18.window.step18Progress.xpForLevel(3),400,'La fórmula XP/n
 assert.strictEqual(typeof p18.window.step18Progress.awardGame,'function','Debe existir adjudicación unificada de progreso');
 assert(html.includes('src="step18-progress-unified.js"'),'play.html debe cargar la progresión unificada');
 console.log('✓ Mejora 3: XP, niveles, rachas y logros unificados');
+
+const chars11=fs.readFileSync('step11-characters-runtime.js','utf8');
+assert(chars11.includes("ABILITIES"),'Los personajes deben tener habilidades');
+assert(chars11.includes("window.step11GetAbility"),'Debe existir acceso a la habilidad del personaje');
+const app10=fs.readFileSync('app-v10.js','utf8');
+assert(app10.includes('characterAbility(p)'), 'El motor debe resolver la habilidad activa');
+assert(app10.includes("type==='shield'"), 'Debe existir habilidad de protección');
+assert(app10.includes("type==='bonus'"), 'Debe existir habilidad de punto extra');
+assert(app10.includes("type==='move'"), 'Debe existir habilidad de movimiento');
+console.log('✓ Mejora 4: habilidades de personajes integradas');
