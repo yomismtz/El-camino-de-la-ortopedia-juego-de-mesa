@@ -384,7 +384,7 @@ assert(html.includes('src="step17-study-runtime.js"'),'play.html debe cargar el 
 console.log('✓ Mejora 2: Modo Estudio, explicaciones y Mis errores');
 
 const progress18=fs.readFileSync('step18-progress-unified.js','utf8');
-const p18={window:{},document:{addEventListener(){},getElementById(){return null}}};
+const p18={window:{addEventListener(){}},document:{addEventListener(){},getElementById(){return null}}};
 vm.runInNewContext(progress18,p18);
 assert.strictEqual(typeof p18.window.step18Progress.levelForXp,'function','Debe existir cálculo unificado de nivel');
 assert.strictEqual(p18.window.step18Progress.levelForXp(0),1,'0 XP debe ser nivel 1');
