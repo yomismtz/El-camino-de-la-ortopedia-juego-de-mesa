@@ -339,3 +339,20 @@ assert(app.includes("if(module==='ortodoncia')return [...(window.ORTODONCIA_QUES
 assert(fs.readFileSync('step12-question-audit.js','utf8').includes("['ortodoncia',()=>window.ORTODONCIA_QUESTIONS||[]]"),'La auditoría debe incluir Ortodoncia');
 assert(fs.readFileSync('step13-question-catalog.js','utf8').includes("['ortodoncia',()=>window.ORTODONCIA_QUESTIONS||[],'Ortodoncia']"),'El catálogo debe incluir Ortodoncia');
 console.log('✓ Paso 15: 100 reactivos de Ortodoncia, IDs únicos, distribución 30/20/20/30 y trazabilidad');
+
+
+const step16=fs.readFileSync('step16-question-integrity.js','utf8');
+const step16Ctx={window:{}};
+vm.runInNewContext(step16,step16Ctx);
+assert.strictEqual(typeof step16Ctx.window.step16QuestionIntegrity.auditBank,'function','Debe existir el auditor robusto de preguntas');
+assert.strictEqual(typeof step16Ctx.window.step16ValidateQuestion,'function','Debe existir el validador runtime');
+const validQ={id:'T-1',text:'¿Qué tejido recubre la corona?',options:['Esmalte','Dentina','Pulpa'],correct:0,difficulty:'Medio',explanation:'Fundamento'};
+assert.strictEqual(step16Ctx.window.step16ValidateQuestion(validQ),true,'Un reactivo válido debe pasar');
+const invalidQ={id:'T-2',text:'Pregunta',options:['A','A'],correct:0};
+assert.strictEqual(step16Ctx.window.step16ValidateQuestion(invalidQ),false,'Opciones duplicadas deben rechazarse');
+const audit16=step16Ctx.window.step16QuestionIntegrity.auditBank([validQ,invalidQ],'test');
+assert.strictEqual(audit16.valid,false,'El auditor debe detectar errores');
+assert.strictEqual(audit16.errors.some(x=>x.issue==='duplicate_options'),true,'Debe detectar opciones duplicadas');
+assert(app.includes('window.step16ValidateQuestion'),'El motor debe filtrar reactivos inválidos antes de jugar');
+assert(html.includes('src="step16-question-integrity.js"'),'play.html debe cargar el validador antes del motor');
+console.log('✓ Paso 16: validación de estructura, opciones duplicadas y filtrado runtime');
