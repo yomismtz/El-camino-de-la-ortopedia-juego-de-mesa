@@ -912,7 +912,7 @@ function finishRound(winner,points,reason='answer'){
   speakRoundAnnouncement(tr(`Ronda ${roundNo}. ${winner.name} gana ${awarded} puntos.`,`Round ${roundNo}. ${winner.name} wins ${awarded} points.`));
   if(roundNo>=8){
     state.locked=true;
-    setTimeout(()=>showMatchWinner(),700);
+    setTimeout(()=>startFinalRound(),700);
     saveGame();
     return
   }
@@ -935,6 +935,48 @@ function beginRound(){
   state.roundErrors=0;
   state.roundBank=Math.max(1,state.roundBank||1);
   state.robbery=null
+}
+
+// Mejora 7 — Ronda final: 10 preguntas, popularidad y meta de 300 puntos.
+const FINAL_ROUND_COUNT=10,FINAL_ROUND_TARGET=300;
+const FINAL_ROUND_BANK=[
+ {q:'¿Qué hábito ayuda más a prevenir la caries?',a:['Cepillado dental','Comer dulces','No beber agua','Dormir más'],p:[100,0,0,0]},
+ {q:'¿Qué instrumento se usa para explorar caries?',a:['Explorador','Brújula','Estetoscopio','Goniómetro'],p:[100,0,0,0]},
+ {q:'¿Qué tejido cubre la corona dental?',a:['Esmalte','Pulpa','Cemento','Hueso'],p:[100,0,0,0]},
+ {q:'¿Qué vitamina se relaciona con la mineralización ósea?',a:['Vitamina D','Vitamina C','Vitamina B12','Vitamina K'],p:[100,0,0,0]},
+ {q:'¿Qué especialidad trata principalmente las encías?',a:['Periodoncia','Endodoncia','Ortodoncia','Odontopediatría'],p:[100,0,0,0]},
+ {q:'¿Qué estructura contiene los vasos y nervios del diente?',a:['Pulpa','Esmalte','Dentina','Cemento'],p:[100,0,0,0]},
+ {q:'¿Qué material se usa para una obturación estética directa?',a:['Resina','Yeso','Alginato','Cera'],p:[100,0,0,0]},
+ {q:'¿Qué articulación participa directamente en la masticación?',a:['Temporomandibular','Hombro','Cadera','Rodilla'],p:[100,0,0,0]},
+ {q:'¿Qué radiografía muestra ambos maxilares en una sola imagen?',a:['Panorámica','Periapical','Oclusal','Bite-wing'],p:[100,0,0,0]},
+ {q:'¿Qué conducta reduce el riesgo de caries?',a:['Limitar azúcares','Fumar','Dormir sin cepillarse','Aumentar refrescos'],p:[100,0,0,0]}
+];
+function startFinalRound(){
+ if(!state)return; state.locked=true; state.finalRound={active:true,index:0,score:0,answers:[]}; pendingQuestion=null;
+ if(questionDialog?.open)questionDialog.close(); saveGame(); showFinalQuestion();
+}
+function showFinalQuestion(){
+ const f=state.finalRound;if(!f?.active)return;
+ const item=FINAL_ROUND_BANK[f.index];
+ $('winnerTitle').textContent='🏆 RONDA FINAL'; $('winnerText').textContent=`Pregunta ${f.index+1}/${FINAL_ROUND_COUNT} · Meta: ${FINAL_ROUND_TARGET} puntos · Acumulado: ${f.score}`;
+ if($('winnerStats'))$('winnerStats').innerHTML=item.a.map((a,i)=>`<button class="final-answer btn" data-final="${i}"><b>${a}</b><span>0 puntos</span></button>`).join('');
+ if($('winnerTopicResults'))$('winnerTopicResults').innerHTML=`<h3>${item.q}</h3><p>Elige la respuesta que consideres más popular.</p>`;
+ const buttons=$('winnerStats')?.querySelectorAll('[data-final]')||[];buttons.forEach(b=>b.addEventListener('click',()=>answerFinal(Number(b.dataset.final)),{once:true}));
+ $('winnerDialog').showModal(); haptic('select');
+}
+function answerFinal(choice){
+ const f=state.finalRound;if(!f?.active)return;const item=FINAL_ROUND_BANK[f.index],points=Number(item.p[choice]||0);f.score+=points;f.answers.push({index:f.index,choice,points});
+ const box=$('winnerStats');if(box)box.innerHTML=item.a.map((a,i)=>`<div class="final-answer-result"><b>${a}</b><span>${item.p[i]||0}</span></div>`).join('')+`<p><strong>Acumulado: ${f.score}/${FINAL_ROUND_TARGET}</strong></p>`;
+ if(f.index+1>=FINAL_ROUND_COUNT){f.active=false;state.locked=true;saveGame();setTimeout(()=>finishFinalRound(),900);return}
+ f.index++;saveGame();setTimeout(showFinalQuestion,900);
+}
+function finishFinalRound(){
+ const f=state.finalRound||{score:0};const winner=state.players[state.players.findIndex(p=>p===state.players[state.current])]||state.players[0];
+ if(winner){winner.finalRoundScore=f.score;ensurePlayerStats(winner).points=(ensurePlayerStats(winner).points||0)+f.score;}
+ const passed=f.score>=FINAL_ROUND_TARGET; $('winnerTitle').textContent=passed?'🏆 ¡RONDA FINAL SUPERADA!':'🎯 Ronda final terminada';
+ $('winnerText').textContent=`${winner?.name||'Jugador'} obtuvo ${f.score}/${FINAL_ROUND_TARGET} puntos en 10 preguntas. ${passed?'Meta de 300 puntos alcanzada.':'No alcanzó la meta de 300 puntos.'}`;
+ if($('winnerStats'))$('winnerStats').innerHTML=`<div><b>${f.score}</b><span>Puntos finales</span></div><div><b>${FINAL_ROUND_TARGET}</b><span>Meta</span></div><div><b>10</b><span>Preguntas</span></div>`;
+ saveGame();
 }
 function showMatchWinner(){
   if(!state)return;
