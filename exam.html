@@ -62,12 +62,12 @@
 
           <label>Número de preguntas
             <select id="examLength">
-              <option value="20">20 preguntas</option>
-              <option value="40">40 preguntas · simulación de una versión</option>
-              <option value="50">50 preguntas</option>
-              <option value="100">100 preguntas</option>
-              <option value="200">200 preguntas</option>
-              <option value="300">300 preguntas</option>
+              <option value="20">20 preguntas · 20 min</option>
+              <option value="40">40 preguntas · 40 min</option>
+              <option value="50">50 preguntas · 50 min</option>
+              <option value="100">100 preguntas · 100 min</option>
+              <option value="200">200 preguntas · 200 min</option>
+              <option value="300">300 preguntas · 300 min</option>
             </select>
             <small id="lengthHint">Disponibles: 100 preguntas.</small>
           </label>
@@ -85,7 +85,7 @@
             <span id="runModule" class="module-pill"></span>
             <strong id="runCounter">Pregunta 1 de 20</strong>
           </div>
-          <div class="answered-count"><span id="answeredCount">0</span> respondidas</div>
+          <div class="exam-timer" aria-live="polite">⏱️ <span id="examTimer">00:00</span></div><div class="answered-count"><span id="answeredCount">0</span> respondidas</div>
         </div>
         <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
 
@@ -117,7 +117,7 @@
           <div class="score-ring" id="scoreRing"><strong id="scorePercent">0%</strong><span>calificación</span></div>
         </div>
 
-        <div class="result-stats">
+        <div class="result-stats"><div><strong id="passStatus">—</strong><span>Estado</span></div>
           <div><strong id="correctCount">0</strong><span>Correctas</span></div>
           <div><strong id="wrongCount">0</strong><span>Incorrectas</span></div>
           <div><strong id="unansweredCount">0</strong><span>Sin responder</span></div>
