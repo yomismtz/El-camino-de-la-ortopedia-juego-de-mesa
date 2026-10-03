@@ -210,3 +210,5 @@ button:disabled{opacity:.45;cursor:not-allowed}
 html,body{width:100%;max-width:100%;overflow-x:hidden!important;overscroll-behavior-x:none;touch-action:pan-y}
 .exam-app,.exam-topbar,.exam-screen,.panel,.setup-grid,.run-card,.results-card{min-width:0;max-width:100%}
 img,svg,canvas{max-width:100%}
+
+.exam-timer{font-variant-numeric:tabular-nums;font-weight:800;min-width:72px;text-align:center}.exam-timer.urgent{font-weight:900;text-decoration:underline}.result-stats>div:first-child strong{font-size:12px}
