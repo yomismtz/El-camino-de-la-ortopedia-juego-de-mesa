@@ -34,6 +34,8 @@ on:
       - 'step18-progress-unified.js'
       - 'step19-specialty-stats.js'
       - 'step20-clinical-cases.js'
+      - 'step21-bluetooth-runtime.js'
+      - 'native/**'
       - 'endodoncia-audit-2026-10-02.md'
       - 'question-catalog-2026-10-02.md'
       - 'question-audit-2026-10-02.md'
@@ -102,6 +104,8 @@ jobs:
           node --check step18-progress-unified.js
           node --check step19-specialty-stats.js
           node --check step20-clinical-cases.js
+          node --check step21-bluetooth-runtime.js
+          test -f native/DentalBluetoothPlugin.java
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
@@ -153,7 +157,7 @@ jobs:
           cp step11-characters.css www/
           cp anatomia-questions.js anestesia-dental-questions.js step6-board-runtime.js step16-question-integrity.js step17-study-runtime.js step17-study.css step18-progress-unified.js step19-specialty-stats.js www/
           cp step12-question-audit.js question-audit-2026-10-02.md www/
-          cp step20-clinical-cases.js www/
+          cp step20-clinical-cases.js step21-bluetooth-runtime.js www/
           cp step13-question-catalog.js question-catalog-2026-10-02.md www/
           cp endodoncia-questions-2026.js endodoncia-audit-2026-10-02.md www/
           cp ortodoncia-questions-2026.js www/
@@ -165,6 +169,26 @@ jobs:
 
       - name: Sync local web assets
         run: npx cap sync android
+
+      - name: Install native Bluetooth bridge
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/java/com/uam/cientodentistas
+          cp native/DentalBluetoothPlugin.java android/app/src/main/java/com/uam/cientodentistas/DentalBluetoothPlugin.java
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/java/com/uam/cientodentistas/MainActivity.java')
+          s=p.read_text()
+          if 'DentalBluetoothPlugin' not in s:
+              s=s.replace('import com.getcapacitor.BridgeActivity;', 'import com.getcapacitor.BridgeActivity;\\nimport com.uam.cientodentistas.DentalBluetoothPlugin;')
+              s=s.replace('public class MainActivity extends BridgeActivity {', 'public class MainActivity extends BridgeActivity {\\n  @Override public void onCreate(android.os.Bundle savedInstanceState) { super.onCreate(savedInstanceState); registerPlugin(DentalBluetoothPlugin.class); }')
+          p.write_text(s)
+          m=Path('android/app/src/main/AndroidManifest.xml')
+          ms=m.read_text()
+          perms='''<uses-permission android:name="android.permission.BLUETOOTH" />\n          <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />\n          <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />\n          <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />\n          <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />\n          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />'''
+          if 'android.permission.BLUETOOTH_SCAN' not in ms: ms=ms.replace('<manifest ', '<manifest ',1); ms=ms.replace('>', '>\\n          '+perms+'\\n',1)
+          m.write_text(ms)
+          PY
 
       - name: Apply El Camino Dental branding
         shell: bash
