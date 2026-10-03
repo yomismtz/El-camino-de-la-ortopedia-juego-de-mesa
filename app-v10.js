@@ -677,7 +677,7 @@ function confirmAnswer(){
     opts[pendingQuestion.correct]?.classList.add('correct');
     window.LearningTools?.record?.(state?.module,pendingQuestion,ok);
     if(ok){state.roundBank=Math.max(1,state.roundBank||1);if(ability?.type==='bonus'&&!p.abilityUses?.bonus){p.abilityUses={...(p.abilityUses||{}),bonus:true};state.roundBank+=1;heading=tr('Correcta · habilidad activada · +1 punto extra','Correct · ability activated · +1 bonus point')}else heading=tr('Correcta · ganas la ronda','Correct · you win the round');snd='correct';outcome='correct'}
-    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;if(ability?.type==='shield'&&!p.abilityUses?.shield){p.abilityUses={...(p.abilityUses||{}),shield:true};delta=0;heading=tr('Habilidad activada · primer error protegido','Ability activated · first mistake protected');}state.roundErrors=(state.roundErrors||0)+1;state.roundBank=(state.roundBank||0)+1;heading=state.roundErrors>=3?tr('Tercer error · ¡ROBO!','Third error · STEAL!'):tr(`Incorrecta · retrocedes 1 casilla · Error ${state.roundErrors}/3`,`Incorrect · move back 1 space · Error ${state.roundErrors}/3`);outcome='wrong';if(state.roundErrors>=3)pendingQuestion.robberyReady=true}
+    else{opts[selectedAnswer]?.classList.add('wrong');delta=-1;const protectedError=ability?.type==='shield'&&!p.abilityUses?.shield;if(protectedError){p.abilityUses={...(p.abilityUses||{}),shield:true};delta=0;heading=tr('🛡️ Habilidad activada · primer error protegido','🛡️ Ability activated · first mistake protected')}else{state.roundErrors=(state.roundErrors||0)+1;heading=state.roundErrors>=3?tr('Tercer error · ¡ROBO!','Third error · STEAL!'):tr(`Incorrecta · retrocedes 1 casilla · Error ${state.roundErrors}/3`,`Incorrect · move back 1 space · Error ${state.roundErrors}/3`)}state.roundBank=(state.roundBank||0)+1;outcome='wrong';if(state.roundErrors>=3)pendingQuestion.robberyReady=true}
   }else{
     const grade=pendingQuestion.grades?.[selectedAnswer]||'incorrect';
     opts[selectedAnswer]?.classList.add(grade==='incorrect'?'wrong':'correct');
@@ -812,7 +812,7 @@ function lawsuit(depth=0,token=turnActionToken){const m=RULE_META.lawsuit;tone('
 function jail(){const m=RULE_META.jail,p=state.players[state.current];p.jailVisits=(p.jailVisits||0)+1;const turns=p.jailVisits===1?2:3;addSkipTurns(turns,'Cárcel');tone('jail');const text=p.jailVisits===1?'Primera vez en la cárcel: pierdes 2 turnos.':`Visita ${p.jailVisits} a la cárcel: pierdes 3 turnos.`;showEvent(m.title,text,m.icon,endTurn)}
 function renderCharacterBook(){
   const host=$('characterBookGrid');if(!host)return;
-  host.innerHTML=CHARACTERS.map((ch,i)=>`<article class="character-book-item" style="--accent:${ch.color}"><div class="book-art">${characterSprite(ch,'book-character')}</div><div><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p><small>“${personaFor(i).correct}”</small></div></article>`).join('')
+  host.innerHTML=CHARACTERS.map((ch,i)=>`<article class="character-book-item" style="--accent:${ch.color}"><div class="book-art">${characterSprite(ch,'book-character')}</div><div><h3>${ch.name}</h3><b>${ch.role}</b><p>${ch.desc}</p>${ch.ability?`<p><strong>${ch.ability.name}</strong><br><small>${ch.ability.description}</small></p>`:''}<small>“${personaFor(i).correct}”</small></div></article>`).join('')
 }
 const TUTORIAL_STEPS=[
   {title:'1. Elige qué practicar',text:'En Juego personalizado selecciona de 1 a 5 áreas, además de dificultad y jugadores. El sistema mezcla preguntas y casos clínicos de esas áreas y prioriza lo que necesites repasar.'},
