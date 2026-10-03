@@ -1101,3 +1101,7 @@ html,body{overscroll-behavior:none}
 .cell.specialShield{background:linear-gradient(135deg,#4b78c2,#315a9e)}
 .cell.specialBoost{background:linear-gradient(135deg,#e7a62b,#d8791f)}
 .cell.specialBonus{background:linear-gradient(135deg,#6f55c9,#49358e)}
+
+
+/* Mejora 8 · estadísticas por especialidad */
+.profile-specialties{display:grid;gap:8px;margin:8px 0 16px}.profile-specialty-row{display:grid;grid-template-columns:minmax(125px,1.25fr) minmax(90px,2fr) 42px;gap:9px;align-items:center;padding:8px 10px;border:1px solid #dce8ef;border-radius:13px;background:#f8fbfd}.profile-specialty-name{min-width:0}.profile-specialty-name b,.profile-specialty-name small{display:block}.profile-specialty-name b{font-size:11px;color:#294c70;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.profile-specialty-name small{font-size:9px;color:#718397;margin-top:2px}.profile-specialty-bar{height:8px;border-radius:999px;background:#e3edf2;overflow:hidden}.profile-specialty-bar i{display:block;height:100%;border-radius:inherit;background:currentColor;color:#2f8df5}.profile-specialty-row>strong{font-size:11px;color:#17345c;text-align:right}.profile-specialties-empty{margin:0;color:#718397;font-size:11px}@media(max-width:600px){.profile-specialty-row{grid-template-columns:minmax(95px,1.2fr) minmax(70px,1.7fr) 38px;gap:6px;padding:7px}.profile-specialty-name b{font-size:10px}.profile-specialty-name small{font-size:8px}}@media (orientation:landscape) and (max-height:600px){.profile-specialties{gap:5px;margin-bottom:9px}.profile-specialty-row{padding:6px 8px}}
