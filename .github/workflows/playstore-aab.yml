@@ -70,7 +70,7 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js \
              legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js \
-             styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js accessibility.js app-v10.js android-navigation.js step16-question-integrity.js step17-study-runtime.js step18-progress-unified.js step19-specialty-stats.js step20-clinical-cases.js step21-bluetooth-runtime.js www/
+             styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js accessibility.js app-v10.js android-navigation.js step16-question-integrity.js step17-study-runtime.js step18-progress-unified.js step19-specialty-stats.js step20-clinical-cases.js step21-bluetooth-runtime.js step23-recovery-runtime.js www/
           cp questions*.js cases*.js nomenclatura-etimologia-questions.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js \
              fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
              crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
