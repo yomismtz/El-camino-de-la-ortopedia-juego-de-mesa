@@ -39,6 +39,22 @@ assert.deepStrictEqual(extractSet('jail'),[33,44,79],'Deben existir 3 cárceles 
 assert.strictEqual(extractSet('question').length,20,'Deben existir 20 casillas de pregunta');
 assert.strictEqual(extractSet('case').length,20,'Deben existir 20 casillas de caso');
 
+// Mejora 6: casillas especiales con efectos persistentes y no colisionados.
+for(const type of ['specialShield','specialBoost','specialBonus']){
+  const cells=extractSet(type);
+  assert.strictEqual(cells.length,2,'Mejora 6 debe tener 2 casillas de '+type);
+  assert.strictEqual(new Set(cells).size,2,type+' contiene casillas duplicadas');
+  for(const cell of cells){assert(Number.isInteger(cell)&&cell>=1&&cell<80,type+' contiene casilla inválida '+cell);assert(!occupied.has(cell),'La casilla '+cell+' colisiona con '+occupied.get(cell));occupied.set(cell,type)}
+}
+assert(app.includes("function specialCell(type)"),'Falta resolución de casillas especiales');
+assert(app.includes('p.specialShield=true'),'Protección clínica debe persistir en la ficha');
+assert(app.includes('p.specialBoost=2'),'Impulso debe persistir hasta el próximo lanzamiento');
+assert(app.includes('p.specialBonus=1'),'Bono de conocimiento debe persistir hasta la próxima respuesta correcta');
+assert(app.includes('if(p.specialBoost){'),'El impulso debe modificar el próximo lanzamiento');
+assert(app.includes('if(p.specialBonus){'),'El bono debe modificar la próxima respuesta correcta');
+assert(app.includes('const protectedError=p.specialShield||'),'La protección debe evitar el retroceso por error');
+console.log('✓ Mejora 6: 6 casillas especiales, efectos persistentes y QA de colisiones');
+
 assert.strictEqual(bounce(77,3),80,'77 + 3 debe ganar exactamente');
 assert.strictEqual(bounce(77,8),75,'77 + 8 debe rebotar a 75');
 assert.strictEqual(bounce(79,2),79,'79 + 2 debe rebotar a 79');
