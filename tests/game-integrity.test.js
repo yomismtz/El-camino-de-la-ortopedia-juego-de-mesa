@@ -570,7 +570,6 @@ console.log('✓ Mejora 17: save recovery y backup validados');
 
 
 // Mejora 18 + reconexión Bluetooth: progreso unificado y sesión persistente.
-const progress18=fs.readFileSync('step18-progress-unified.js','utf8');
 const bt21=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
 const playStore18=fs.readFileSync('.github/workflows/playstore-aab.yml','utf8');
 assert(progress18.includes('function merge(incoming)'), 'Progreso debe tener reconciliación');
