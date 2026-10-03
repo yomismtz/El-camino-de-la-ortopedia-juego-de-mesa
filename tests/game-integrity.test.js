@@ -470,3 +470,18 @@ assert(html.includes('id="clinicalCasesDialog"'),'Debe existir diálogo de casos
 assert(html.includes('src="step20-clinical-cases.js"'),'play.html debe cargar la mejora 10');
 assert(css.includes('.clinical-case-option')&&css.includes('.clinical-case-feedback'),'Debe existir estilo para opciones y retroalimentación clínica');
 console.log('✓ Mejora 10: modo de casos clínicos con retroalimentación y estadísticas persistentes');
+
+// Mejora 11: Multijugador Bluetooth Android.
+const btRuntime=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+const btNative=fs.readFileSync('native/DentalBluetoothPlugin.java','utf8');
+assert(btRuntime.includes("registerPlugin('DentalBluetooth')"),'El runtime debe registrar el puente Bluetooth nativo');
+assert(btRuntime.includes('startHost')&&btRuntime.includes('scan')&&btRuntime.includes('connect'),'Debe existir anfitrión, búsqueda y conexión Bluetooth');
+assert(btRuntime.includes('send({type:\'hello\''),'Debe existir handshake de sesión');
+assert(btNative.includes('@CapacitorPlugin(name="DentalBluetooth")'),'Debe existir plugin Capacitor nativo');
+assert(btNative.includes('listenUsingRfcommWithServiceRecord'),'El anfitrión debe abrir un canal Bluetooth RFCOMM');
+assert(btNative.includes('createRfcommSocketToServiceRecord'),'El cliente debe poder conectarse por RFCOMM');
+assert(btNative.includes('BLUETOOTH_CONNECT')||btNative.includes('BLUETOOTH_SCAN'),'El puente debe contemplar permisos Bluetooth modernos');
+assert(html.includes('id="bluetoothBtn"')&&html.includes('id="bluetoothDialog"'),'La interfaz debe exponer el modo Bluetooth');
+assert(html.includes('src="step21-bluetooth-runtime.js"'),'play.html debe cargar la mejora 11');
+assert(css.includes('.bluetooth-card')&&css.includes('.bluetooth-devices'),'Debe existir UI para sala y dispositivos Bluetooth');
+console.log('✓ Mejora 11: multijugador Bluetooth con puente Android, sala, búsqueda, conexión y canal de mensajes');
