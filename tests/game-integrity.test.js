@@ -484,3 +484,18 @@ assert(html.includes('id="bluetoothBtn"')&&html.includes('id="bluetoothDialog"')
 assert(html.includes('src="step21-bluetooth-runtime.js"'),'play.html debe cargar la mejora 11');
 assert(css.includes('.bluetooth-card')&&css.includes('.bluetooth-devices'),'Debe existir UI para sala y dispositivos Bluetooth');
 console.log('✓ Mejora 11: multijugador Bluetooth con puente Android, sala, búsqueda, conexión y canal de mensajes');
+
+
+// Mejora 12: preparación reproducible para Google Play.
+const playstorePreflight=fs.readFileSync('playstore-preflight.js','utf8');
+assert(playstorePreflight.includes("com.uam.cientodentistas"),'El preflight debe fijar el package Android oficial');
+assert(playstorePreflight.includes("versionCode 37")&&playstorePreflight.includes("versionName \\\"3.7.0\\\""),'El preflight debe validar el versionado actual');
+assert(playstorePreflight.includes('targetSdkVersion = 36'),'El preflight debe validar target SDK 36');
+const playstoreWorkflow=fs.readFileSync('.github/workflows/playstore-aab.yml','utf8');
+assert(playstoreWorkflow.includes('node playstore-preflight.js'),'El workflow Play Store debe ejecutar el preflight');
+assert(playstoreWorkflow.includes('bundleRelease'),'El workflow Play Store debe generar AAB release');
+assert(playstoreWorkflow.includes('step21-bluetooth-runtime.js'),'El AAB debe incluir Bluetooth');
+assert(playstoreWorkflow.includes('native/DentalBluetoothPlugin.java'),'El AAB debe incluir el puente Bluetooth');
+assert(playstoreWorkflow.includes("d['appId']='com.uam.cientodentistas'"),'El workflow no debe cambiar el package oficial');
+assert(fs.readFileSync('privacy.html','utf8').includes('permisos de Bluetooth'),'La política debe documentar Bluetooth');
+console.log('✓ Mejora 12: preflight Play Console, AAB release, package oficial, target SDK 36 y privacidad Bluetooth');
