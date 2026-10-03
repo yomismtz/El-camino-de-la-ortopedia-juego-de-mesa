@@ -1,3 +1,17 @@
+/* Mejora 18 — fuente única y reconciliación del progreso */
+(()=>{'use strict';
+const KEY='elCaminoDentalProgressV2',BACKUP='elCaminoDentalProgressBackupV1';
+const DEFAULT={xp:0,level:1,matches:0,wins:0,robberies:0,correct:0,wrong:0,excellent:0,good:0,attempts:0,streak:0,bestStreak:0,achievements:[],lastGame:'',updatedAt:0};
+function normalize(x){const p={...DEFAULT,...(x||{})};for(const k of ['xp','level','matches','wins','robberies','correct','wrong','excellent','good','attempts','streak','bestStreak','updatedAt'])p[k]=Math.max(0,Number(p[k])||0);p.level=Math.max(1,Math.floor(p.level)||1);p.achievements=[...new Set(Array.isArray(p.achievements)?p.achievements.filter(Boolean):[])];return p}
+function read(){try{return normalize(JSON.parse(localStorage.getItem(KEY)||'null'))}catch{return normalize(null)}}
+function save(p){p=normalize(p);p.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(p));localStorage.setItem(BACKUP,JSON.stringify(p));return p}catch{return p}}
+function merge(incoming){const a=read(),b=normalize(incoming);const p={...a};for(const k of ['xp','matches','wins','robberies','correct','wrong','excellent','good','attempts'])p[k]=Math.max(a[k],b[k]);p.streak=Math.max(a.streak,b.streak);p.bestStreak=Math.max(a.bestStreak,b.bestStreak);p.achievements=[...new Set([...a.achievements,...b.achievements])];p.lastGame=b.updatedAt>a.updatedAt?b.lastGame:a.lastGame;p.level=Math.max(1,Math.floor(Math.sqrt(Math.max(0,p.xp)/100))+1);return save(p)}
+function backup(){const p=read();try{localStorage.setItem(BACKUP,JSON.stringify(p));return true}catch{return false}}
+window.step18Progress={...window.step18Progress,read,save,merge,backup,KEY,BACKUP,normalize};
+window.step18Reconcile=merge;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)backup()});
+window.addEventListener('pagehide',backup);
+})();
 /* Mejora 3 · progresión unificada V2. */
 (()=>{'use strict';
 const KEY='elCaminoDentalProgressV2',OLD='elCaminoDentalProgressV1';
