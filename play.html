@@ -29,6 +29,7 @@
       <button id="soundBtn" class="icon-btn" aria-label="Apagar sonidos y música" title="Sonido y música activados">🔊</button>
       <button id="characterBookBtn" class="icon-btn" aria-label="Conoce a los personajes" title="Conoce a los personajes">🎭</button>
       <button id="profileBtn" class="icon-btn" aria-label="Mi progreso" title="Mi progreso">🏆</button>
+      <button id="studyBtn" class="icon-btn" aria-label="Modo estudio" title="Modo estudio">📚</button>
       <button id="tutorialBtn" class="icon-btn" aria-label="Tutorial" title="Tutorial">💡</button>
       <button id="rulesBtn" class="icon-btn" aria-label="Reglas">📖</button>
       <a class="icon-btn link-btn" href="exam.html" aria-label="Modo Examen">📝</a>
@@ -205,6 +206,16 @@
   </div>
 </dialog>
 
+<dialog id="studyDialog" class="modal">
+  <div class="modal-card study-card">
+    <div class="modal-head"><span class="category-pill">📚 Modo Estudio</span><button id="closeStudyBtn" class="tiny-btn">Cerrar</button></div>
+    <div class="study-toolbar"><select id="studyModule"><option value="all">Todas las especialidades</option><option value="ortodoncia">Ortodoncia</option><option value="endodoncia">Endodoncia</option><option value="anatomia_general">Anatomía</option><option value="anestesia_general">Anestesia</option></select><button id="studyErrorsBtn" class="tiny-btn">❌ Mis errores</button></div>
+    <div id="studyProgress" class="study-progress">Pregunta 1</div>
+    <h2 id="studyQuestion"></h2><div id="studyOptions" class="options"></div>
+    <div id="studyFeedback" class="feedback" hidden></div>
+    <div class="modal-actions"><button id="studyRepeatBtn" type="button" class="secondary-btn">🔁 Repetir</button><button id="studyNextBtn" type="button" class="btn primary">Siguiente →</button></div>
+  </div>
+</dialog>
 <dialog id="questionDialog" class="modal">
   <form method="dialog" class="modal-card question-card" id="questionForm">
     <div class="modal-head"><span id="questionCategory" class="category-pill">Pregunta</span><span id="questionNumber"></span><span class="timer-wrap">⏱ <b id="timerDisplay">30</b>s</span></div>
@@ -319,7 +330,7 @@
 <script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
 <script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
 <script src="legacy-case-grading-audit.js"></script>
-<script src="endodoncia-questions-2026.js"></script><script src="ortodoncia-questions-2026.js"></script><script src="step16-question-integrity.js"></script>
+<script src="endodoncia-questions-2026.js"></script><script src="ortodoncia-questions-2026.js"></script><script src="step16-question-integrity.js"></script><script src="step17-study-runtime.js"></script>
 <script src="app-v10.js"></script><script src="step9-characters-runtime.js"></script><script src="step10-profile-runtime.js"></script><script src="step11-characters-runtime.js"></script><script src="step12-question-audit.js"></script><script src="step13-question-catalog.js"></script>
 <script src="step6-board-runtime.js"></script><script src="step7-ai-runtime.js"></script><script src="step8-progress-runtime.js"></script>
 <script src="android-navigation.js"></script></body>
