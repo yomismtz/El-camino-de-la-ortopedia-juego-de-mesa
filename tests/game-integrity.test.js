@@ -356,3 +356,13 @@ assert.strictEqual(audit16.errors.some(x=>x.issue==='duplicate_options'),true,'D
 assert(app.includes('window.step16ValidateQuestion'),'El motor debe filtrar reactivos inválidos antes de jugar');
 assert(html.includes('src="step16-question-integrity.js"'),'play.html debe cargar el validador antes del motor');
 console.log('✓ Paso 16: validación de estructura, opciones duplicadas y filtrado runtime');
+
+const studySource=fs.readFileSync('step17-study-runtime.js','utf8');
+assert(studySource.includes('elCaminoDentalStudyErrorsV1'),'Los errores de estudio deben persistir');
+assert(studySource.includes('step17Study'),'Debe existir la API del Modo Estudio');
+assert(studySource.includes('Respuesta correcta:'),'El Modo Estudio debe mostrar la respuesta');
+assert(studySource.includes('Por qué:'),'El Modo Estudio debe mostrar explicación');
+assert(html.includes('id="studyBtn"')&&html.includes('id="studyDialog"'),'Debe existir acceso al Modo Estudio');
+assert(html.includes('id="studyErrorsBtn"'),'Debe existir el repaso de errores');
+assert(html.includes('src="step17-study-runtime.js"'),'play.html debe cargar el runtime del Modo Estudio');
+console.log('✓ Mejora 2: Modo Estudio, explicaciones y Mis errores');
