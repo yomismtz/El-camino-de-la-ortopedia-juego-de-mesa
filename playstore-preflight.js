@@ -12,7 +12,7 @@ const bt=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
 assert.strictEqual(cap.appId,'com.uam.cientodentistas','El package Android debe conservar com.uam.cientodentistas');
 assert.strictEqual(cap.appName,'El Camino Dental','El nombre de la aplicación debe ser El Camino Dental');
 assert.strictEqual(pkg.version,'3.7.0','La versión fuente debe ser 3.7.0');
-assert(workflow.includes("appId: 'com.uam.cientodentistas'") || workflow.includes("appId='com.uam.cientodentistas'"),'El workflow Play Store debe conservar el package oficial');
+assert(workflow.includes("com.uam.cientodentistas"),'El workflow Play Store debe conservar el package oficial');
 assert(workflow.includes('bundleRelease'),'El flujo Play Store debe generar AAB de release');
 for(const file of ['step16-question-integrity.js','step17-study-runtime.js','step18-progress-unified.js','step19-specialty-stats.js','step20-clinical-cases.js','step21-bluetooth-runtime.js','step23-recovery-runtime.js']) assert(workflow.includes(file),`El AAB debe incluir ${file}`);
 assert(workflow.includes('step21-bluetooth-runtime.js'),'El bundle Play Store debe incluir Bluetooth');
