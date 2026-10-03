@@ -1343,3 +1343,52 @@ window.step6GetRuleForCell=function(n){return ruleForCell(n)};
 window.step7GetState=function(){return state};
 window.step7GetAiLevel=function(){const p=state?.players?.[state?.current];return p?.isComputer?(AI_LEVELS[p.aiLevel||'medium']?.label||'Medio'):''};
 window.step9GetCharacters=function(){return CHARACTERS};
+// Mejora 13 — puente de sincronización Bluetooth autoritativo.
+window.step22Sync={
+  getSnapshot:function(){
+    return {
+      state:state?JSON.parse(JSON.stringify(state)):null,
+      pendingQuestion:pendingQuestion?JSON.parse(JSON.stringify(pendingQuestion)):null,
+      selectedAnswer:Number.isInteger(selectedAnswer)?selectedAnswer:null,
+      locked:!!state?.locked
+    };
+  },
+  applySnapshot:function(snapshot){
+    if(!snapshot?.state)return false;
+    state=snapshot.state;
+    pendingQuestion=snapshot.pendingQuestion||null;
+    selectedAnswer=Number.isInteger(snapshot.selectedAnswer)?snapshot.selectedAnswer:null;
+    if(!state)return false;
+    render();
+    if(pendingQuestion){
+      if(!questionDialog.open)showQuestion();
+      else {
+        const opts=[...document.querySelectorAll('.option')];
+        opts.forEach((o,i)=>o.classList.toggle('selected',i===selectedAnswer));
+      }
+    }else if(questionDialog?.open&&!state.robbery?.active){
+      questionDialog.close();
+    }
+    return true;
+  },
+  selectAnswer:function(index){
+    if(!pendingQuestion||!Number.isInteger(index))return false;
+    selectedAnswer=index;
+    const opts=[...document.querySelectorAll('.option')];
+    opts.forEach((o,i)=>o.classList.toggle('selected',i===index));
+    return true;
+  },
+  confirmRemoteAnswer:function(index){
+    if(!pendingQuestion||!Number.isInteger(index))return false;
+    selectedAnswer=index;
+    confirmAnswer();
+    return true;
+  },
+  rollRemote:function(){
+    if(!state||state.locked||isComputerTurn())return false;
+    rollDice(false);
+    return true;
+  },
+  endRemoteTurn:function(){ if(state&&!state.locked){endTurn();return true} return false; }
+};
+
