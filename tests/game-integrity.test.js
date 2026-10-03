@@ -366,3 +366,15 @@ assert(html.includes('id="studyBtn"')&&html.includes('id="studyDialog"'),'Debe e
 assert(html.includes('id="studyErrorsBtn"'),'Debe existir el repaso de errores');
 assert(html.includes('src="step17-study-runtime.js"'),'play.html debe cargar el runtime del Modo Estudio');
 console.log('✓ Mejora 2: Modo Estudio, explicaciones y Mis errores');
+
+const progress18=fs.readFileSync('step18-progress-unified.js','utf8');
+const p18={window:{},document:{addEventListener(){},getElementById(){return null}}};
+vm.runInNewContext(progress18,p18);
+assert.strictEqual(typeof p18.window.step18Progress.levelForXp,'function','Debe existir cálculo unificado de nivel');
+assert.strictEqual(p18.window.step18Progress.levelForXp(0),1,'0 XP debe ser nivel 1');
+assert.strictEqual(p18.window.step18Progress.levelForXp(100),2,'100 XP debe alcanzar nivel 2');
+assert.strictEqual(p18.window.step18Progress.levelForXp(400),3,'400 XP debe alcanzar nivel 3');
+assert.strictEqual(p18.window.step18Progress.xpForLevel(3),400,'La fórmula XP/nivel debe ser consistente');
+assert.strictEqual(typeof p18.window.step18Progress.awardGame,'function','Debe existir adjudicación unificada de progreso');
+assert(html.includes('src="step18-progress-unified.js"'),'play.html debe cargar la progresión unificada');
+console.log('✓ Mejora 3: XP, niveles, rachas y logros unificados');
