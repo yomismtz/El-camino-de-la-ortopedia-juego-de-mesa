@@ -186,7 +186,7 @@ jobs:
           m=Path('android/app/src/main/AndroidManifest.xml')
           ms=m.read_text()
           perms='''<uses-permission android:name="android.permission.BLUETOOTH" />\n          <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />\n          <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />\n          <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />\n          <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />\n          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />'''
-          if 'android.permission.BLUETOOTH_SCAN' not in ms: ms=ms.replace('<manifest ', '<manifest ',1); ms=ms.replace('>', '>\\n          '+perms+'\\n',1)
+          if 'android.permission.BLUETOOTH_SCAN' not in ms: ms=ms.replace('    <application', '          '+perms.replace('\\n','\\n          ')+'\\n    <application', 1)
           m.write_text(ms)
           PY
 
