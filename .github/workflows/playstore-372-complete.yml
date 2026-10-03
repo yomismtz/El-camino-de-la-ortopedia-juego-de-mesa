@@ -103,7 +103,7 @@ jobs:
           from pathlib import Path
           p=Path('capacitor.config.json')
           d=json.loads(p.read_text())
-          d['appId']='com.yomismtz.elcaminodental'
+          d['appId']='com.uam.cientodentistas'
           d['appName']='El Camino Dental'
           d['webDir']='www'
           p.write_text(json.dumps(d,ensure_ascii=False,indent=2))
@@ -253,7 +253,7 @@ jobs:
           cat > release-files/DETALLES-DE-VERSION.txt <<'EOF'
           Nombre de la versión: 3.7.6
           Código de versión: 43
-          Nombre del paquete: com.yomismtz.elcaminodental
+          Nombre del paquete: com.uam.cientodentistas
           Target SDK: 36
           ReTrace: generado por R8 para esta misma compilación
           Símbolos nativos: generados para esta misma compilación
