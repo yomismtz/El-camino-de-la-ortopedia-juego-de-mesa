@@ -355,20 +355,41 @@ function computerThinkDelay(player=currentPlayer()){
   return cfg.thinkMin+(span?secureRandomIndex(span+1):0)
 }
 function randomChoice(arr){return arr.length?arr[secureRandomIndex(arr.length)]:null}
+function aiLearningProfile(player=currentPlayer(),q=null){
+  const module=String(q?.module||q?.topic||'General');
+  player.aiMemory=player.aiMemory&&typeof player.aiMemory==='object'?player.aiMemory:{};
+  const m=player.aiMemory[module]||{attempts:0,correct:0};
+  const rate=m.attempts?m.correct/m.attempts:.5;
+  return {module,m,rate};
+}
+function aiAnswerProbability(q,player,cfg){
+  const p=aiLearningProfile(player,q),difficulty=String(q?.difficulty||'').toLowerCase();
+  let value=cfg.questionAccuracy;
+  if(difficulty.includes('extremo'))value-=.08;
+  else if(difficulty.includes('difícil')||difficulty.includes('dificil'))value-=.04;
+  else if(difficulty.includes('fácil')||difficulty.includes('facil'))value+=.03;
+  value+=(p.rate-.5)*.10;
+  return Math.max(.08,Math.min(.98,value));
+}
 function chooseComputerAnswer(q,player=currentPlayer()){
-  const cfg=aiConfig(player);
+  const cfg=aiConfig(player),profile=aiLearningProfile(player,q);
   if(q.kind==='case'){
     const excellent=q.grades?.indexOf('excellent')??-1;
     const good=q.grades?.indexOf('good')??-1;
     const incorrect=q.options.map((_,i)=>i).filter(i=>q.grades?.[i]!=='excellent'&&q.grades?.[i]!=='good');
-    const r=secureRandomFloat();
-    if(excellent>=0&&r<cfg.excellent)return excellent;
-    if(good>=0&&r<cfg.excellent+cfg.good)return good;
+    const r=secureRandomFloat(),p=aiAnswerProbability(q,player,cfg);
+    if(excellent>=0&&r<p*cfg.excellent)return excellent;
+    if(good>=0&&r<p*(cfg.excellent+cfg.good))return good;
     return randomChoice(incorrect)??([good,excellent,0].find(i=>Number.isInteger(i)&&i>=0)??0)
   }
-  if(secureRandomFloat()<cfg.questionAccuracy)return q.correct;
+  if(secureRandomFloat()<aiAnswerProbability(q,player,cfg))return q.correct;
   const wrong=q.options.map((_,i)=>i).filter(i=>i!==q.correct);
   return randomChoice(wrong)??q.correct
+}
+function recordAiAnswer(q,player,selected){
+  if(!player?.isComputer||!q)return;
+  const p=aiLearningProfile(player,q),ok=q.kind==='case'?(q.grades?.[selected]||'incorrect')!=='incorrect':selected===q.correct;
+  p.m.attempts++;if(ok)p.m.correct++;
 }
 function haptic(pattern='tap'){
   if(!hapticsEnabled||typeof navigator==='undefined'||typeof navigator.vibrate!=='function')return;
