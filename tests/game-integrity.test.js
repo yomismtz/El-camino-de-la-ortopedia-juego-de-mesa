@@ -489,7 +489,7 @@ console.log('✓ Mejora 11: multijugador Bluetooth con puente Android, sala, bú
 // Mejora 12: preparación reproducible para Google Play.
 const playstorePreflight=fs.readFileSync('playstore-preflight.js','utf8');
 assert(playstorePreflight.includes("com.uam.cientodentistas"),'El preflight debe fijar el package Android oficial');
-assert(playstorePreflight.includes("versionCode 37")&&playstorePreflight.includes("versionName \\\"3.7.0\\\""),'El preflight debe validar el versionado actual');
+assert(playstorePreflight.includes("versionCode 37")&&playstorePreflight.includes('versionName "3.7.0"'),'El preflight debe validar el versionado actual');
 assert(playstorePreflight.includes('targetSdkVersion = 36'),'El preflight debe validar target SDK 36');
 const playstoreWorkflow=fs.readFileSync('.github/workflows/playstore-aab.yml','utf8');
 assert(playstoreWorkflow.includes('node playstore-preflight.js'),'El workflow Play Store debe ejecutar el preflight');
