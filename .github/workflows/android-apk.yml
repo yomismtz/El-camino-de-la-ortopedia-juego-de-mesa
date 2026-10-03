@@ -31,6 +31,7 @@ on:
       - 'step16-question-integrity.js'
       - 'step17-study-runtime.js'
       - 'step17-study.css'
+      - 'step18-progress-unified.js'
       - 'endodoncia-audit-2026-10-02.md'
       - 'question-catalog-2026-10-02.md'
       - 'question-audit-2026-10-02.md'
@@ -96,6 +97,7 @@ jobs:
           node --check ortodoncia-questions-2026.js
           node --check step16-question-integrity.js
           node --check step17-study-runtime.js
+          node --check step18-progress-unified.js
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
           node --check teacher.js
@@ -145,7 +147,7 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js nomenclatura-etimologia-questions.js primer-parcial-questions.js styles-v10.css ui-polish.css game-premium-v93.css game-board-canvas-v98.js character-art.css android-touch-v85.css i18n.js learning-tools.js area-classifier.js accessibility.js app-v10.js step7-ai-runtime.js step8-progress-runtime.js step9-characters-runtime.js step10-profile-runtime.js step11-characters-runtime.js android-navigation.js www/
           cp step11-characters.css www/
-          cp anatomia-questions.js anestesia-dental-questions.js step6-board-runtime.js step16-question-integrity.js step17-study-runtime.js step17-study.css www/
+          cp anatomia-questions.js anestesia-dental-questions.js step6-board-runtime.js step16-question-integrity.js step17-study-runtime.js step17-study.css step18-progress-unified.js www/
           cp step12-question-audit.js question-audit-2026-10-02.md www/
           cp step13-question-catalog.js question-catalog-2026-10-02.md www/
           cp endodoncia-questions-2026.js endodoncia-audit-2026-10-02.md www/
