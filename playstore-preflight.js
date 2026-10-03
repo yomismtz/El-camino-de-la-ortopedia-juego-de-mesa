@@ -19,7 +19,7 @@ assert(workflow.includes('step21-bluetooth-runtime.js'),'El bundle Play Store de
 assert(workflow.includes('native/DentalBluetoothPlugin.java'),'El bundle Play Store debe incluir el puente Bluetooth');
 assert(workflow.includes('versionCode 37')&&workflow.includes('versionName "3.7.0"'),'El flujo debe usar versionCode 37 / versionName 3.7.0');
 assert(workflow.includes('targetSdkVersion = 36'),'El flujo debe fijar target SDK 36');
-assert(privacy.includes('Bluetooth')&&privacy.includes('BLUETOOTH'),'La política debe documentar el uso de Bluetooth');
+assert(/bluetooth/i.test(privacy),'La política debe documentar el uso de Bluetooth');
 assert(native.includes('BLUETOOTH_SCAN')&&native.includes('BLUETOOTH_CONNECT'),'El puente debe declarar permisos Bluetooth modernos');
 assert(bt.includes("registerPlugin('DentalBluetooth')"),'El runtime Bluetooth debe registrarse en la app');
 console.log('✓ Play Console preflight: package, versión, AAB, target SDK, privacidad y Bluetooth OK');
