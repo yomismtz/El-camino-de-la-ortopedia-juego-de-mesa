@@ -540,3 +540,17 @@ const workflow=fs.readFileSync('.github/workflows/android-apk.yml','utf8');
 assert(workflow.includes('apk-package-audit.py'),'El workflow debe ejecutar la auditoría de APK');
 assert(workflow.indexOf('Audit APK package resources')<workflow.indexOf('Rename APK'),'La auditoría debe ocurrir antes de publicar el artefacto');
 console.log('✓ Mejora 15: auditoría automática de recursos empaquetados en APK');
+
+
+// Mejora 16: AAB Play Store debe contener el runtime completo.
+const playWorkflow=fs.readFileSync('.github/workflows/playstore-aab.yml','utf8');
+const playPreflight=fs.readFileSync('playstore-preflight.js','utf8');
+assert(playWorkflow.includes('bundleRelease'),'Play Store debe construir AAB release');
+for(const file of ['step16-question-integrity.js','step17-study-runtime.js','step18-progress-unified.js','step19-specialty-stats.js','step20-clinical-cases.js','step21-bluetooth-runtime.js']){
+  assert(playWorkflow.includes(file),'AAB incompleto: falta '+file);
+  assert(playPreflight.includes(file),'Preflight incompleto: falta '+file);
+}
+assert(playWorkflow.includes('com.uam.cientodentistas'),'El AAB debe conservar el package oficial');
+assert(playWorkflow.includes('versionCode 37')&&playWorkflow.includes('versionName "3.7.0"'),'El AAB debe fijar la versión 3.7.0/37');
+assert(playWorkflow.includes('targetSdkVersion = 36'),'El AAB debe usar target SDK 36');
+console.log('✓ Mejora 16: AAB Play Store con runtime completo y preflight reforzado');
