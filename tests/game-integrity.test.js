@@ -515,3 +515,17 @@ assert(bt13.includes("type:'answer'"),'El cliente debe poder enviar una respuest
 assert(bt13.includes('handleSyncMessage'),'Debe existir receptor de mensajes de sincronización');
 assert(bt13.includes("state.role==='host'"),'El host debe conservar autoridad sobre la partida');
 console.log('✓ Mejora 13: sincronización autoritativa de turno, dados, preguntas, respuestas y estado por Bluetooth');
+
+
+// Mejora 14: lobby Bluetooth, capacidad y compatibilidad.
+const bt14=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+assert(bt14.includes('MAX_PEERS=5'),'El lobby Bluetooth debe admitir hasta 5 dispositivos');
+assert(bt14.includes('PROTOCOL_VERSION'),'Debe existir versión de protocolo');
+assert(bt14.includes('roomCode()'),'El anfitrión debe generar identificador de sala');
+assert(bt14.includes('state.peers'),'Debe existir lista de participantes');
+assert(bt14.includes("msg.type==='hello'"),'Debe existir handshake del lobby');
+assert(bt14.includes("msg.type==='reject'"),'Debe rechazar protocolos incompatibles');
+assert(bt14.includes('state.peers.size>=MAX_PEERS-1'),'La sala debe limitar participantes');
+assert(html.includes('id="btLobby"'),'La interfaz debe mostrar el lobby Bluetooth');
+assert(css.includes('.bluetooth-lobby')&&css.includes('.bluetooth-peer'),'El lobby debe tener presentación visual');
+console.log('✓ Mejora 14: lobby Bluetooth, sala identificada, máximo 5 dispositivos y compatibilidad de protocolo');
