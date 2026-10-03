@@ -68,7 +68,7 @@ Módulos visibles actuales:
 
 La compilación Android se genera mediante GitHub Actions con Capacitor. La versión Android fuerza orientación horizontal, mantiene la pantalla activa durante la partida, usa navegación Atrás integrada y guarda el estado cuando la aplicación pasa a segundo plano.
 
-El flujo de APK de prueba genera el artefacto **ElCaminoDental-v3.7**. El repositorio también contiene un flujo independiente para compilaciones destinadas a Play Store.
+El flujo de APK de prueba genera el artefacto **ElCaminoDental-v3.7**. El package Android oficial es **com.uam.cientodentistas** y no debe cambiarse. El repositorio también contiene un flujo de preparación de **AAB release para Google Play** con `versionCode 37`, `versionName 3.7.0` y `targetSdk 36`.
 
 ## Privacidad
 
@@ -106,3 +106,9 @@ sw.js                          Caché offline
 El flujo Android comprueba sintaxis JavaScript y elementos críticos de jugabilidad antes de construir la APK, incluidos el reglamento consultable, la lógica de rebote en la meta y el manejo seguro de pausa/reanudación.
 
 Las auditorías académicas y de contenido permanecen en el repositorio como registro de revisión y trazabilidad.
+
+## Preparación para Google Play
+
+La Mejora 12 añade un preflight reproducible mediante `playstore-preflight.js` y un flujo de AAB en `.github/workflows/playstore-aab.yml`. El artefacto generado es una compilación release AAB sin firma de publicación: antes de subirlo a Play Console debe configurarse la clave de carga y Play App Signing. No se almacenan claves privadas en el repositorio.
+
+El flujo verifica el package oficial, versionado, target SDK, referencias del bundle, Bluetooth nativo y documentación de privacidad. La ficha de Play Console, Data Safety, clasificación de contenido, público objetivo, capturas, icono, política de privacidad pública y firma siguen requiriendo revisión/configuración en Play Console.
