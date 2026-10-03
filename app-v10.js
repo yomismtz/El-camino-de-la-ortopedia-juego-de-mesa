@@ -145,6 +145,7 @@ function filterByAreas(items,areas){
 function activeQuestionBank(){
   const difficulty=state?.difficulty||'all';
   let bank=state?.module==='personalizado'?filterByAreas(allStudyQuestions,state.selectedAreas):moduleQuestionBank(state?.module);
+  if(window.step16ValidateQuestion)bank=bank.filter(window.step16ValidateQuestion);
   if(difficulty==='all')return bank;
   const filtered=bank.filter(q=>q.difficulty===difficulty);
   return filtered.length?filtered:bank
