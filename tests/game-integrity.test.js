@@ -499,3 +499,19 @@ assert(playstoreWorkflow.includes('native/DentalBluetoothPlugin.java'),'El AAB d
 assert(playstoreWorkflow.includes("d['appId']='com.uam.cientodentistas'"),'El workflow no debe cambiar el package oficial');
 assert(fs.readFileSync('privacy.html','utf8').includes('permisos de Bluetooth'),'La política debe documentar Bluetooth');
 console.log('✓ Mejora 12: preflight Play Console, AAB release, package oficial, target SDK 36 y privacidad Bluetooth');
+
+
+// Mejora 13: sincronización autoritativa de partida por Bluetooth.
+assert(app.includes('window.step22Sync'),'Debe existir puente de sincronización de partida');
+assert(app.includes('getSnapshot:function()'),'El host debe poder generar snapshots');
+assert(app.includes('applySnapshot:function(snapshot)'),'El cliente debe poder aplicar snapshots');
+assert(app.includes('confirmRemoteAnswer:function(index)'),'El host debe resolver respuestas remotas');
+assert(app.includes('rollRemote:function()'),'El host debe resolver tiradas remotas');
+const bt13=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+assert(bt13.includes('startSync()'),'Bluetooth debe iniciar sincronización al conectar');
+assert(bt13.includes("type:'state'"),'Bluetooth debe transportar snapshots de estado');
+assert(bt13.includes("type:'roll'"),'El cliente debe poder solicitar una tirada al host');
+assert(bt13.includes("type:'answer'"),'El cliente debe poder enviar una respuesta al host');
+assert(bt13.includes('handleSyncMessage'),'Debe existir receptor de mensajes de sincronización');
+assert(bt13.includes("state.role==='host'"),'El host debe conservar autoridad sobre la partida');
+console.log('✓ Mejora 13: sincronización autoritativa de turno, dados, preguntas, respuestas y estado por Bluetooth');
