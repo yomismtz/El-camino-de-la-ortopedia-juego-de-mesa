@@ -51,7 +51,7 @@ jobs:
           from pathlib import Path
           p=Path('capacitor.config.json')
           d=json.loads(p.read_text())
-          d['appId']='com.yomismtz.elcaminodental'
+          d['appId']='com.uam.cientodentistas'
           d['appName']='El Camino Dental'
           d['webDir']='www'
           p.write_text(json.dumps(d,ensure_ascii=False,indent=2))
