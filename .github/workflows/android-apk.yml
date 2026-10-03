@@ -35,6 +35,7 @@ on:
       - 'step19-specialty-stats.js'
       - 'step20-clinical-cases.js'
       - 'step21-bluetooth-runtime.js'
+      - 'step23-recovery-runtime.js'
       - 'native/**'
       - 'endodoncia-audit-2026-10-02.md'
       - 'question-catalog-2026-10-02.md'
@@ -106,6 +107,7 @@ jobs:
           node --check step19-specialty-stats.js
           node --check step20-clinical-cases.js
           node --check step21-bluetooth-runtime.js
+          node --check step23-recovery-runtime.js
           test -f native/DentalBluetoothPlugin.java
           node --check game-board-canvas-v98.js
           node --check android-navigation.js
@@ -158,7 +160,7 @@ jobs:
           cp step11-characters.css www/
           cp anatomia-questions.js anestesia-dental-questions.js step6-board-runtime.js step16-question-integrity.js step17-study-runtime.js step17-study.css step18-progress-unified.js step19-specialty-stats.js www/
           cp step12-question-audit.js question-audit-2026-10-02.md www/
-          cp step20-clinical-cases.js step21-bluetooth-runtime.js www/
+          cp step20-clinical-cases.js step21-bluetooth-runtime.js step23-recovery-runtime.js www/
           cp step13-question-catalog.js question-catalog-2026-10-02.md www/
           cp endodoncia-questions-2026.js endodoncia-audit-2026-10-02.md www/
           cp ortodoncia-questions-2026.js www/
