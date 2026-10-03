@@ -32,6 +32,7 @@
       <button id="profileBtn" class="icon-btn" aria-label="Mi progreso" title="Mi progreso">🏆</button>
       <button id="studyBtn" class="icon-btn" aria-label="Modo estudio" title="Modo estudio">📚</button>
       <button id="clinicalCasesBtn" class="icon-btn" aria-label="Casos clínicos" title="Casos clínicos">🩺</button>
+      <button id="bluetoothBtn" class="icon-btn" aria-label="Multijugador Bluetooth" title="Multijugador Bluetooth">📡</button>
       <button id="tutorialBtn" class="icon-btn" aria-label="Tutorial" title="Tutorial">💡</button>
       <button id="rulesBtn" class="icon-btn" aria-label="Reglas">📖</button>
       <a class="icon-btn link-btn" href="exam.html" aria-label="Modo Examen">📝</a>
@@ -219,6 +220,8 @@
   </div>
 </dialog>
 
+
+<dialog id="bluetoothDialog" class="modal"><div class="modal-card bluetooth-card"><div class="modal-head"><span class="category-pill">📡 Multijugador Bluetooth</span><button id="btCloseBtn" class="tiny-btn">Cerrar</button></div><h2>Jugar con otro teléfono</h2><p class="bluetooth-note">Conecta dos teléfonos Android cercanos. Para una conexión nueva, ambos deben tener Bluetooth activado y aceptar los permisos del sistema.</p><div id="btStatus" class="bluetooth-status">Bluetooth no iniciado.</div><div class="bluetooth-actions"><button id="btHostBtn" class="btn primary">🏠 Crear sala</button><button id="btScanBtn" class="btn">🔎 Buscar sala</button></div><div id="btDevices" class="bluetooth-devices"></div><small>El anfitrión mantiene la partida; la conexión Bluetooth se usa como canal de comunicación entre los teléfonos.</small></div></dialog>
 <dialog id="clinicalCasesDialog" class="modal">
   <div class="modal-card clinical-cases-card">
     <div class="modal-head"><span class="category-pill">🩺 Modo Casos Clínicos</span><button id="closeClinicalCasesBtn" class="tiny-btn">Cerrar</button></div>
@@ -352,7 +355,7 @@
 <script src="cases.js"></script><script src="cases-deck1.js"></script><script src="cases-deck2.js"></script><script src="cases-deck3.js"></script><script src="cases-deck4.js"></script><script src="cases-deck5.js"></script>
 <script src="cases-extra-deck1.js"></script><script src="cases-extra-deck2.js"></script><script src="cases-extra-deck3.js"></script><script src="cases-extra-deck4.js"></script><script src="cases-extra-deck5.js"></script>
 <script src="legacy-case-grading-audit.js"></script>
-<script src="endodoncia-questions-2026.js"></script><script src="ortodoncia-questions-2026.js"></script><script src="step16-question-integrity.js"></script><script src="step17-study-runtime.js"></script><script src="step20-clinical-cases.js"></script>
+<script src="endodoncia-questions-2026.js"></script><script src="ortodoncia-questions-2026.js"></script><script src="step16-question-integrity.js"></script><script src="step17-study-runtime.js"></script><script src="step20-clinical-cases.js"></script><script src="step21-bluetooth-runtime.js"></script>
 <script src="app-v10.js"></script><script src="step9-characters-runtime.js"></script><script src="step10-profile-runtime.js"></script><script src="step11-characters-runtime.js"></script><script src="step12-question-audit.js"></script><script src="step13-question-catalog.js"></script>
 <script src="step6-board-runtime.js"></script><script src="step7-ai-runtime.js"></script><script src="step8-progress-runtime.js"></script><script src="step18-progress-unified.js"></script><script src="step19-specialty-stats.js"></script>
 <script src="android-navigation.js"></script></body>
