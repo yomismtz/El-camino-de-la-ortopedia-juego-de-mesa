@@ -1094,3 +1094,10 @@ html,body{overscroll-behavior:none}
 .profile-progress small{color:#64778a;font-weight:800}.profile-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}.profile-stats div{padding:10px;border:1px solid #dce8ef;border-radius:12px;text-align:center;background:#f8fbfd}.profile-stats b,.profile-stats span{display:block}.profile-stats b{font-size:20px}.profile-stats span{font-size:10px;color:#65798a;font-weight:900}
 .profile-achievements,.profile-characters{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 14px}.profile-achievements span,.profile-characters span{padding:7px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid #dce8ef}.profile-achievements .earned,.profile-characters .unlocked{background:#fff8df}.profile-achievements .locked,.profile-characters .locked{opacity:.55;background:#f2f5f7}
 @media(max-width:600px){.profile-stats{grid-template-columns:repeat(3,1fr)}}
+
+
+/* Mejora 6 — casillas especiales */
+.cell.specialShield,.cell.specialBoost,.cell.specialBonus{border:2px solid rgba(255,255,255,.55);box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.cell.specialShield{background:linear-gradient(135deg,#4b78c2,#315a9e)}
+.cell.specialBoost{background:linear-gradient(135deg,#e7a62b,#d8791f)}
+.cell.specialBonus{background:linear-gradient(135deg,#6f55c9,#49358e)}
