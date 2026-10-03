@@ -529,3 +529,14 @@ assert(bt14.includes('state.peers.size>=MAX_PEERS-1'),'La sala debe limitar part
 assert(html.includes('id="btLobby"'),'La interfaz debe mostrar el lobby Bluetooth');
 assert(css.includes('.bluetooth-lobby')&&css.includes('.bluetooth-peer'),'El lobby debe tener presentación visual');
 console.log('✓ Mejora 14: lobby Bluetooth, sala identificada, máximo 5 dispositivos y compatibilidad de protocolo');
+
+
+// Mejora 15: auditoría de recursos empaquetados.
+const apkAudit=fs.readFileSync('apk-package-audit.py','utf8');
+assert(apkAudit.includes("assets/public/"),'La auditoría debe inspeccionar assets/public dentro del APK');
+assert(apkAudit.includes('play.html'),'La auditoría debe validar play.html');
+assert(apkAudit.includes('Recursos de play.html ausentes en APK'),'Debe reportar recursos web ausentes');
+const workflow=fs.readFileSync('.github/workflows/android-apk.yml','utf8');
+assert(workflow.includes('apk-package-audit.py'),'El workflow debe ejecutar la auditoría de APK');
+assert(workflow.indexOf('Audit APK package resources')<workflow.indexOf('Rename APK'),'La auditoría debe ocurrir antes de publicar el artefacto');
+console.log('✓ Mejora 15: auditoría automática de recursos empaquetados en APK');
