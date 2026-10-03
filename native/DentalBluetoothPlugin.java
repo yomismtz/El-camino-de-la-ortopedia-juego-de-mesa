@@ -32,6 +32,10 @@ public class DentalBluetoothPlugin extends Plugin {
   private final Set<BluetoothSocket> clients=ConcurrentHashMap.newKeySet();
   private final ExecutorService pool=Executors.newCachedThreadPool();
   private BroadcastReceiver receiver;
+  // Permisos Bluetooth modernos requeridos por Android 12+.
+  private static final String BT_SCAN_PERMISSION=Manifest.permission.BLUETOOTH_SCAN;
+  private static final String BT_CONNECT_PERMISSION=Manifest.permission.BLUETOOTH_CONNECT;
+  private static final String BT_ADVERTISE_PERMISSION=Manifest.permission.BLUETOOTH_ADVERTISE;
 
   @PluginMethod public void initialize(PluginCall call){
     adapter=((android.bluetooth.BluetoothManager)getContext().getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
