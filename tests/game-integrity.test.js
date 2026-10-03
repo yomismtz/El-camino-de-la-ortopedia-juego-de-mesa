@@ -422,3 +422,27 @@ assert(app.includes('setTimeout(()=>startFinalRound(),700);'),'La ronda final de
 assert(app.includes('f.score>=FINAL_ROUND_TARGET'),'Debe comprobarse la meta de 300 puntos');
 assert(app.includes('f.index+1>=FINAL_ROUND_COUNT'),'Debe terminar exactamente después de 10 preguntas');
 console.log('✓ Mejora 7: ronda final integrada y validada');
+
+
+// Mejora 8: estadísticas persistentes por especialidad.
+const specialtySource=fs.readFileSync('step19-specialty-stats.js','utf8');
+const specialtyCtx={window:{},document:{addEventListener(){},getElementById(){return null}}};
+vm.runInNewContext(specialtySource,specialtyCtx);
+assert.strictEqual(typeof specialtyCtx.window.step19SpecialtyStats.record,'function','Debe existir registro por especialidad');
+assert.strictEqual(typeof specialtyCtx.window.step19SpecialtyStats.summary,'function','Debe existir resumen por especialidad');
+const fakeStorage={};
+specialtyCtx.localStorage={getItem(k){return fakeStorage[k]||null},setItem(k,v){fakeStorage[k]=v}};
+specialtyCtx.window.step19SpecialtyStats.record('ortodoncia','correct');
+specialtyCtx.window.step19SpecialtyStats.record('ortodoncia','wrong');
+const sp=specialtyCtx.window.step19SpecialtyStats.summary();
+assert.strictEqual(sp.length,1,'Debe crear una especialidad al registrar respuestas');
+assert.strictEqual(sp[0].id,'ortodoncia','Debe conservar el identificador de especialidad');
+assert.strictEqual(sp[0].attempts,2,'Debe contabilizar intentos por especialidad');
+assert.strictEqual(sp[0].correct,1,'Debe contabilizar aciertos por especialidad');
+assert.strictEqual(sp[0].accuracy,50,'Debe calcular precisión por especialidad');
+assert(app.includes('quizStats.specialties'),'La partida debe conservar estadísticas por especialidad');
+assert(app.includes('step19SpecialtyStats?.record'),'El motor debe persistir estadísticas por especialidad');
+assert(html.includes('id="profileSpecialties"'),'El perfil debe mostrar estadísticas por especialidad');
+assert(html.includes('src="step19-specialty-stats.js"'),'play.html debe cargar la mejora 8');
+assert(css.includes('.profile-specialties')&&css.includes('.profile-specialty-bar'),'Debe existir presentación visual compacta por especialidad');
+console.log('✓ Mejora 8: estadísticas persistentes por especialidad, precisión y perfil');
