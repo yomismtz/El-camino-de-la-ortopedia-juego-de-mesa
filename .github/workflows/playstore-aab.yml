@@ -5,6 +5,14 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/playstore-aab.yml'
+      - 'playstore-preflight.js'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - 'play.html'
+      - 'app-v10.js'
+      - 'step21-bluetooth-runtime.js'
+      - 'native/**'
+      - 'privacy.html'
 
 jobs:
   build-playstore:
@@ -20,6 +28,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+
+      - name: Play Console preflight
+        run: node playstore-preflight.js
 
       - name: Validate web sources
         shell: bash
@@ -46,7 +57,7 @@ jobs:
           mkdir -p www
           cp index.html play.html privacy.html site.css teacher.html teacher.css teacher.js exam.html exam.css exam.js \
              legacy-difficulty-audit.js legacy-case-grading-audit.js manifest.webmanifest sw.js \
-             styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js accessibility.js app-v10.js android-navigation.js www/
+             styles-v10.css ui-polish.css character-art.css i18n.js learning-tools.js accessibility.js app-v10.js android-navigation.js step21-bluetooth-runtime.js www/
           cp questions*.js cases*.js nomenclatura-etimologia-questions.js fundamentos-oclusion.js fundamentos-casos.js steiner-questions.js steiner-cases.js \
              fisiologia-funcion-questions.js fisiologia-funcion-cases.js crecimiento-desarrollo-questions.js \
              crecimiento-desarrollo-cases.js habitos-parafunciones-*.js www/
@@ -60,7 +71,7 @@ jobs:
           from pathlib import Path
           p=Path('capacitor.config.json')
           d=json.loads(p.read_text())
-          d['appId']='com.yomismtz.elcaminodental'
+          d['appId']='com.uam.cientodentistas'
           d['appName']='El Camino Dental'
           d['webDir']='www'
           p.write_text(json.dumps(d,ensure_ascii=False,indent=2))
@@ -71,6 +82,26 @@ jobs:
 
       - name: Sync native plugins and web assets
         run: npx cap sync android
+
+      - name: Install native Bluetooth bridge
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/java/com/uam/cientodentistas
+          cp native/DentalBluetoothPlugin.java android/app/src/main/java/com/uam/cientodentistas/DentalBluetoothPlugin.java
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/java/com/uam/cientodentistas/MainActivity.java')
+          s=p.read_text()
+          if 'DentalBluetoothPlugin' not in s:
+              s=s.replace('import com.getcapacitor.BridgeActivity;', 'import com.getcapacitor.BridgeActivity;\\nimport com.uam.cientodentistas.DentalBluetoothPlugin;')
+              s=s.replace('public class MainActivity extends BridgeActivity {', 'public class MainActivity extends BridgeActivity {\\n  @Override public void onCreate(android.os.Bundle savedInstanceState) { super.onCreate(savedInstanceState); registerPlugin(DentalBluetoothPlugin.class); }')
+          p.write_text(s)
+          m=Path('android/app/src/main/AndroidManifest.xml')
+          ms=m.read_text()
+          perms='''<uses-permission android:name="android.permission.BLUETOOTH" />\\n<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />\\n<uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />\\n<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />\\n<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />\\n<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />'''
+          if 'android.permission.BLUETOOTH_SCAN' not in ms: ms=ms.replace('    <application', '    '+perms.replace('\\n','\\n    ')+'\\n    <application', 1)
+          m.write_text(ms)
+          PY
 
       - name: Configure Android 16, release identity and branding
         shell: bash
@@ -121,11 +152,11 @@ jobs:
           cp android/app/build/outputs/bundle/release/app-release.aab ElCaminoDental-3.7.0-playstore-unsigned.aab
           cat > playstore-build-info.txt <<'EOF'
           App: El Camino Dental
-          Permanent package: com.yomismtz.elcaminodental
+          Package: com.uam.cientodentistas
           Version name: 3.7.0
           Version code: 37
           Target SDK: 36 (Android 16)
-          Build type: release AAB, unsigned
+          Build type: release AAB, unsigned; requires Play App Signing/upload-key configuration before upload
           Capacitor Android/Core/CLI: 8.5.2
           Capacitor App plugin: 8.1.1
           EOF
