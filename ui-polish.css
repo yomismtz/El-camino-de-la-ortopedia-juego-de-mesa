@@ -1113,3 +1113,7 @@ html,body{overscroll-behavior:none}
 
 /* Mejora 11 — Multijugador Bluetooth */
 .bluetooth-card{width:min(650px,94vw)}.bluetooth-note{color:#60758a;font-size:12px;line-height:1.5}.bluetooth-status{margin:12px 0;padding:12px;border:1px solid #d7e7ee;border-radius:14px;background:#f7fbfd;color:#173d69;font-weight:800;font-size:12px}.bluetooth-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.bluetooth-devices{display:grid;gap:8px;margin:12px 0}.bluetooth-device{text-align:left}.bluetooth-card small{display:block;color:#728598;font-size:10px;line-height:1.4}@media(max-width:520px){.bluetooth-actions{grid-template-columns:1fr}.bluetooth-card{padding:14px}}
+
+
+/* Mejora 14 — lobby Bluetooth */
+.bluetooth-lobby{display:grid;gap:.45rem;margin-top:.7rem}.bluetooth-room,.bluetooth-peer{display:flex;justify-content:space-between;gap:.6rem;padding:.55rem .7rem;border-radius:.7rem;background:rgba(39,139,255,.08)}.bluetooth-peer{justify-content:flex-start;font-size:.9rem}
