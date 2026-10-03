@@ -446,3 +446,15 @@ assert(html.includes('id="profileSpecialties"'),'El perfil debe mostrar estadís
 assert(html.includes('src="step19-specialty-stats.js"'),'play.html debe cargar la mejora 8');
 assert(css.includes('.profile-specialties')&&css.includes('.profile-specialty-bar'),'Debe existir presentación visual compacta por especialidad');
 console.log('✓ Mejora 8: estadísticas persistentes por especialidad, precisión y perfil');
+
+const examJs=fs.readFileSync('exam.js','utf8');
+const examHtml=fs.readFileSync('exam.html','utf8');
+assert(examJs.includes('EXAM_MINUTES_PER_QUESTION=1'),'El examen debe tener tiempo proporcional a su extensión');
+assert(examJs.includes('function startExamTimer()'),'El modo examen debe iniciar temporizador');
+assert(examJs.includes('function stopExamTimer()'),'El modo examen debe detener temporizador');
+assert(examJs.includes('exam.timedOut=true'),'El examen debe registrar agotamiento de tiempo');
+assert(examJs.includes("percent>=70?'APROBADO':'NO APROBADO'"),'El examen debe calcular aprobación al 70%');
+assert(examJs.includes('mínimo de aprobación: 70%'),'El resultado debe mostrar el umbral de aprobación');
+assert(examHtml.includes('id="examTimer"'),'La interfaz debe mostrar el temporizador');
+assert(examHtml.includes('id="passStatus"'),'La interfaz debe mostrar el estado de aprobación');
+console.log('✓ Mejora 9: modo examen cronometrado, aprobación 70% y cierre automático por tiempo');
