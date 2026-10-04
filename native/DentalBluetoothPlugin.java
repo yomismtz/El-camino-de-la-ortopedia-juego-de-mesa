@@ -11,18 +11,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
-import com.getcapacitor.JSArray;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
+import com.getcapacitor.PermissionState;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
-@CapacitorPlugin(name="DentalBluetooth")
+@CapacitorPlugin(name="DentalBluetooth", permissions={@Permission(alias="bluetooth", strings={Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE})})
 public class DentalBluetoothPlugin extends Plugin {
   private static final String SERVICE_NAME="El Camino Dental";
   private static final UUID SERVICE_UUID=UUID.fromString("6b8f2a7e-1c4d-4e8f-9a31-2c7d5b6e1042");
@@ -40,7 +43,19 @@ public class DentalBluetoothPlugin extends Plugin {
   @PluginMethod public void initialize(PluginCall call){
     adapter=((android.bluetooth.BluetoothManager)getContext().getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
     if(adapter==null){call.reject("Bluetooth no disponible");return;}
-    JSObject r=new JSObject();r.put("available",true);r.put("enabled",adapter.isEnabled());call.resolve(r);
+    if(android.os.Build.VERSION.SDK_INT>=31 && getPermissionState("bluetooth")!=PermissionState.GRANTED){
+      requestPermissionForAlias("bluetooth",call,"bluetoothPermissionCallback");
+      return;
+    }
+    resolveInitialized(call);
+  }
+  @PermissionCallback
+  private void bluetoothPermissionCallback(PluginCall call){
+    if(android.os.Build.VERSION.SDK_INT<31 || getPermissionState("bluetooth")==PermissionState.GRANTED) resolveInitialized(call);
+    else call.reject("Se requieren permisos de Bluetooth para continuar");
+  }
+  private void resolveInitialized(PluginCall call){
+    JSObject r=new JSObject();r.put("available",adapter!=null);r.put("enabled",adapter!=null&&adapter.isEnabled());r.put("permissionRequired",false);call.resolve(r);
   }
   @PluginMethod public void isEnabled(PluginCall call){
     if(adapter==null) initializeAdapter();
@@ -50,7 +65,10 @@ public class DentalBluetoothPlugin extends Plugin {
   private boolean ready(PluginCall call){
     if(adapter==null) initializeAdapter();
     if(adapter==null){call.reject("Bluetooth no disponible");return false;}
-    if(android.os.Build.VERSION.SDK_INT>=31 && getContext().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED){call.reject("Permiso Bluetooth requerido");return false;}
+    if(android.os.Build.VERSION.SDK_INT>=31 && getPermissionState("bluetooth")!=PermissionState.GRANTED){
+      requestPermissionForAlias("bluetooth",call,"bluetoothPermissionCallback");
+      return false;
+    }
     return true;
   }
   @PluginMethod public void startHost(PluginCall call){
@@ -101,7 +119,7 @@ public class DentalBluetoothPlugin extends Plugin {
   }
   @PluginMethod public void disconnect(PluginCall call){closeSocket(socket);socket=null;call.resolve();}
   private void listen(BluetoothSocket s){pool.execute(()->{try{BufferedReader r=new BufferedReader(new InputStreamReader(s.getInputStream(),StandardCharsets.UTF_8));String line;while((line=r.readLine())!=null){JSObject o=new JSObject();o.put("message",line);o.put("deviceId",s.getRemoteDevice().getAddress());notifyListeners("message",o);} }catch(Exception ignored){}finally{clients.remove(s);notifyConnected(s.getRemoteDevice(),false);closeSocket(s);}});}
-  private void notifyConnected(BluetoothDevice d,boolean host){JSObject o=new JSObject();o.put("deviceId",d.getAddress());o.put("name",d.getName()==null?"Dispositivo":d.getName());o.put("connected",true);o.put("host",host);notifyListeners("connection",o);}
+  private void notifyConnected(BluetoothDevice d,boolean connected){JSObject o=new JSObject();o.put("deviceId",d.getAddress());o.put("name",d.getName()==null?"Dispositivo":d.getName());o.put("connected",connected);notifyListeners("connection",o);}
   private JSObject obj(String... kv){JSObject o=new JSObject();for(int i=0;i+1<kv.length;i+=2)o.put(kv[i],kv[i+1]);return o;}
   private void closeServer(){try{if(server!=null)server.close();}catch(Exception ignored){}server=null;}
   private void closeSocket(BluetoothSocket s){try{if(s!=null)s.close();}catch(Exception ignored){}}
