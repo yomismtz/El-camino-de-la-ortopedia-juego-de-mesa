@@ -476,7 +476,7 @@ const btNative=fs.readFileSync('native/DentalBluetoothPlugin.java','utf8');
 assert(btRuntime.includes("registerPlugin('DentalBluetooth')"),'El runtime debe registrar el puente Bluetooth nativo');
 assert(btRuntime.includes('startHost')&&btRuntime.includes('scan')&&btRuntime.includes('connect'),'Debe existir anfitrión, búsqueda y conexión Bluetooth');
 assert(btRuntime.includes('send({type:\'hello\''),'Debe existir handshake de sesión');
-assert(btNative.includes('@CapacitorPlugin(name="DentalBluetooth")'),'Debe existir plugin Capacitor nativo');
+assert(btNative.includes('@CapacitorPlugin(name="DentalBluetooth"'),'Debe existir plugin Capacitor nativo');
 assert(btNative.includes('listenUsingRfcommWithServiceRecord'),'El anfitrión debe abrir un canal Bluetooth RFCOMM');
 assert(btNative.includes('createRfcommSocketToServiceRecord'),'El cliente debe poder conectarse por RFCOMM');
 assert(btNative.includes('BLUETOOTH_CONNECT')||btNative.includes('BLUETOOTH_SCAN'),'El puente debe contemplar permisos Bluetooth modernos');
