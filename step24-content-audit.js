@@ -81,11 +81,12 @@ function classify(q){
 }
 function inspect(){
  const banks=BANKS.map(([id,g,label])=>{const items=readBank(g);return{id,g,label,count:items.length,valid:items.filter(validQuestion).length,invalid:items.filter(q=>!validQuestion(q)).length}});
- const loaded=BANKS.flatMap(([,g])=>readBank(g));
- const ids=loaded.map(q=>String(q?.id??'')).filter(Boolean), seen=new Map(), duplicates=[];
- ids.forEach((id,i)=>{if(seen.has(id))duplicates.push(id);else seen.set(id,i)});
+ const rawLoaded=BANKS.flatMap(([,g])=>readBank(g));
+ const byId=new Map(), duplicates=[], aliases=[];
+ rawLoaded.forEach(q=>{const id=String(q?.id??'');if(!id)return;if(byId.has(id)){if(byId.get(id)!==q)duplicates.push(id);else aliases.push(id)}else byId.set(id,q)});
+ const loaded=[...byId.values()];
  const coverage=TARGET.map(([id,name])=>{const items=loaded.filter(q=>classify(q)===id);return{id,name,count:items.length,target:100,gap:Math.max(0,100-items.length),over:Math.max(0,items.length-100)}});
- return {version:2,targetCategories:44,targetQuestions:4400,loaded:loaded.length,valid:loaded.filter(validQuestion).length,invalid:loaded.length-loaded.filter(validQuestion).length,uniqueIds:seen.size,duplicateIds:[...new Set(duplicates)],banks,coverage,complete:loaded.length>=4400&&coverage.every(x=>x.count>=100)&&duplicates.length===0&&loaded.every(validQuestion)};
+ return {version:2,targetCategories:44,targetQuestions:4400,rawLoaded:rawLoaded.length,loaded:loaded.length,valid:loaded.filter(validQuestion).length,invalid:loaded.length-loaded.filter(validQuestion).length,uniqueIds:byId.size,referenceAliases:[...new Set(aliases)],duplicateIds:[...new Set(duplicates)],banks,coverage,complete:loaded.length>=4400&&coverage.every(x=>x.count>=100)&&duplicates.length===0&&loaded.every(validQuestion)};
 }
 window.step24ContentAudit={inspect,validQuestion,classify,TARGET,BANKS};
 })();
