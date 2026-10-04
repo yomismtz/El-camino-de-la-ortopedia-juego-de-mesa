@@ -603,3 +603,77 @@ assert.strictEqual((progress19.match(/window\.step18Progress=/g)||[]).length,1,'
 assert(progress19.includes('window.step18Reconcile=merge'),'Debe existir reconciliación única del progreso');
 assert(progress19.includes("elCaminoDentalProgressV2"),'Debe conservarse la clave V2 de progreso');
 console.log('✓ Mejora 19: Bluetooth con sesión caducable, identidad, sala, snapshots monotónicos y progreso unificado');
+
+
+// Mejora 19 — pruebas de reconexión y anti-corrupción de estado.
+const btRuntimeSource=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+const nativeBluetoothSource=fs.readFileSync('native/DentalBluetoothPlugin.java','utf8');
+assert(btRuntimeSource.includes('snapshotVersion'),'Debe existir versionado de snapshots');
+assert(btRuntimeSource.includes('hostPlayerId'),'El cliente debe autenticar snapshots por identidad del host');
+assert(btRuntimeSource.includes('msg.playerId!==state.hostPlayerId'),'Debe rechazarse un snapshot de un host no autenticado');
+assert(btRuntimeSource.includes("msg.type==='roll'")&&btRuntimeSource.includes('actionId'),'Las tiradas remotas deben llevar identificador idempotente');
+assert(btRuntimeSource.includes('seenActions'),'Debe existir deduplicación de acciones');
+assert(btRuntimeSource.includes("reason:'capacity'"),'Debe rechazarse una sala llena');
+assert(btRuntimeSource.includes("state.peers.delete(e.deviceId)"),'El abandono de un jugador debe liberar su plaza');
+assert(btRuntimeSource.includes("state.connected=false;state.compatible=false;saveSession()"),'El cliente debe persistir la desconexión');
+assert(nativeBluetoothSource.includes('@Permission(alias="bluetooth"'),'El plugin debe declarar permisos runtime mediante Capacitor');
+assert(nativeBluetoothSource.includes('requestPermissionForAlias("bluetooth"'),'initialize debe solicitar permisos runtime');
+assert(nativeBluetoothSource.includes('@PermissionCallback'),'Debe existir callback de permisos');
+assert(nativeBluetoothSource.includes('o.put("connected",connected)'),'El evento nativo debe distinguir conexión y desconexión');
+
+const btVmLocal={};
+const btStorage=new Map();
+const btWindow={};
+const btDocument={getElementById:()=>null};
+const btSandbox={
+  window:btWindow,
+  document:btDocument,
+  localStorage:{
+    getItem:k=>btStorage.has(k)?btStorage.get(k):null,
+    setItem:(k,v)=>btStorage.set(k,String(v)),
+    removeItem:k=>btStorage.delete(k)
+  },
+  Date,
+  Math,
+  JSON,
+  console,
+  setInterval:()=>1,
+  clearInterval:()=>{}
+};
+btWindow.Capacitor=undefined;
+btWindow.step22Sync={
+  applied:[],
+  getSnapshot:()=>({state:{players:[],current:0},pendingQuestion:null,selectedAnswer:null,locked:false}),
+  applySnapshot:s=>{btWindow.step22Sync.applied.push(s);return true}
+};
+vm.runInNewContext(btRuntimeSource,btSandbox,{filename:'step21-bluetooth-runtime.js'});
+const btTest=btWindow.step21BluetoothTest;
+const btState=btWindow.step21Bluetooth.state;
+assert(btTest,'Debe existir API de pruebas Bluetooth');
+assert.strictEqual(btTest.isSessionFresh({roomId:'ROOM',updatedAt:Date.now()}),true,'Una sesión reciente debe ser válida');
+assert.strictEqual(btTest.isSessionFresh({roomId:'ROOM',updatedAt:Date.now()-30*60*1000-1}),false,'Una sesión vieja debe caducar');
+btState.role='client';btState.connected=true;btState.roomId='ROOM';btState.snapshotVersion=5;btState.hostPlayerId='host-1';btState.playerId='client-1';
+btTest.handleSyncMessage({type:'state',protocol:'1',roomId:'ROOM',playerId:'host-1',snapshotVersion:4,snapshot:{n:4}});
+assert.strictEqual(btState.snapshotVersion,5,'Nunca debe aplicar un snapshot antiguo');
+assert.strictEqual(btWindow.step22Sync.applied.length,0,'Un snapshot fuera de orden no debe llegar al motor');
+btTest.handleSyncMessage({type:'state',protocol:'1',roomId:'ROOM',playerId:'otro-host',snapshotVersion:6,snapshot:{n:6}});
+assert.strictEqual(btState.snapshotVersion,5,'Un host no autenticado no debe avanzar el estado');
+btTest.handleSyncMessage({type:'state',protocol:'1',roomId:'ROOM',playerId:'host-1',snapshotVersion:6,snapshot:{n:6}});
+assert.strictEqual(btState.snapshotVersion,6,'El snapshot más reciente y autenticado debe aplicarse');
+assert.strictEqual(btWindow.step22Sync.applied.length,1,'Debe aplicarse exactamente un snapshot nuevo');
+
+btState.role='host';btState.roomId='ROOM';btState.playerId='host-1';btState.peers.set('dev-1',{playerId:'client-1',compatible:true});
+assert.strictEqual(btTest.validateEnvelope({protocol:'1',roomId:'ROOM',playerId:'client-1',type:'roll'}),true,'Envelope válido debe aceptarse');
+assert.strictEqual(btTest.validateEnvelope({protocol:'2',roomId:'ROOM',playerId:'client-1',type:'roll'}),false,'Protocolo incorrecto debe rechazarse');
+assert.strictEqual(btTest.validateEnvelope({protocol:'1',roomId:'OTHER',playerId:'client-1',type:'roll'}),false,'roomId incorrecto debe rechazarse');
+assert.strictEqual(btTest.validateEnvelope({protocol:'1',roomId:'ROOM',playerId:'',type:'roll'}),false,'playerId vacío debe rechazarse');
+assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'client-1',type:'roll',actionId:'a1',deviceId:'dev-1'},'roll'),true,'Primera acción debe aceptarse');
+assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'client-1',type:'roll',actionId:'a1',deviceId:'dev-1'},'roll'),false,'Mensaje repetido debe ignorarse');
+assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'client-1',type:'roll',actionId:'a2',deviceId:'dev-1'},'answer'),false,'Tipo de acción incorrecto debe rechazarse');
+assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'client-1',type:'roll',actionId:'a2',deviceId:'dev-2'},'roll'),true,'Otro dispositivo con acción nueva debe poder continuar');
+
+const savedSession=JSON.parse(btStorage.get('elCaminoDentalBluetoothSessionV1'));
+assert(savedSession,'La sesión Bluetooth debe persistirse');
+assert.strictEqual(savedSession.playerId,'host-1','La identidad persistente debe quedar guardada');
+assert.strictEqual(btRuntimeSource.includes('saveSession()'),true,'La persistencia debe usarse en el runtime');
+console.log('✓ Mejora 19: reconexión, snapshots fuera de orden, expiración, roomId/protocolo/playerId, deduplicación, abandono y permisos runtime');
