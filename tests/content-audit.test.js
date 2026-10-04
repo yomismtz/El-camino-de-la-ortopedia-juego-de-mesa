@@ -22,7 +22,7 @@ const r=ctx.window.step24ContentAudit.inspect();
 assert.strictEqual(r.targetCategories,44);
 assert.strictEqual(r.targetQuestions,4400);
 assert.strictEqual(r.invalid,0,'No debe haber reactivos inválidos en los bancos auditados');
-assert.strictEqual(r.duplicateIds.length,0,'No debe haber IDs duplicados entre bancos');
+if(r.duplicateIds.length) console.log('DUPLICATE_IDS',JSON.stringify(r.duplicateIds.slice(0,30)));\nassert.strictEqual(r.duplicateIds.length,0,'No debe haber IDs duplicados entre bancos');
 assert.strictEqual(r.loaded,1340,'La línea base actual debe ser 1,340 reactivos reales cargados');
 assert(r.coverage.every(x=>x.count<=100), 'Ninguna categoría debe sobredeclararse por encima de 100');
 console.log('✓ Mejora 20 QA: 44 categorías, objetivo 4,400, línea base real 1,340, sin IDs duplicados ni reactivos inválidos');
