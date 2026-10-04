@@ -580,3 +580,26 @@ assert(bt21.includes('lastSnapshot'), 'Bluetooth debe conservar snapshot de part
 assert((bt21.match(/function stop\(/g)||[]).length===1, 'Debe existir un único stop Bluetooth');
 assert(playStore18.includes('step23-recovery-runtime.js'), 'AAB debe incluir recuperación');
 console.log('✓ Mejora 18: progreso unificado + reconexión Bluetooth validados');
+
+
+/* Mejora 19 — Bluetooth: reconexión, identidad, sala y snapshots monotónicos. */
+const bt=fs.readFileSync('step21-bluetooth-runtime.js','utf8');
+assert(bt.includes("PROTOCOL_VERSION='1'"),'Bluetooth debe fijar versión de protocolo');
+assert(bt.includes("MAX_PEERS=5"),'Bluetooth debe limitar la sala a 5');
+assert(bt.includes("SESSION_MAX_AGE=30*60*1000"),'La sesión Bluetooth debe caducar para evitar reconectar partidas obsoletas');
+assert(bt.includes("elCaminoDentalPlayerIdV1"),'Cada instalación debe conservar una identidad estable para reconexión');
+assert(bt.includes("snapshotVersion"),'La sincronización Bluetooth debe versionar snapshots');
+assert(bt.includes("incoming<state.snapshotVersion"),'El cliente debe ignorar snapshots atrasados');
+assert(bt.includes("msg.roomId!==state.roomId"),'Un estado de otra sala no debe aplicarse');
+assert(bt.includes("reason:'room'"),'El host debe rechazar una reconexión a una sala distinta');
+assert(bt.includes("reason:'protocol'"),'El host debe rechazar protocolo incompatible');
+assert(bt.includes("resume:true"),'La reconexión debe solicitar recuperación de partida');
+assert(bt.includes("lastSnapshot"),'La sesión debe conservar el último estado de partida');
+assert(bt.includes("lastPeerId"),'La sesión debe conservar el último dispositivo conectado');
+assert(bt.includes("Bluetooth desconectado. La partida queda guardada para reconexión."),'La desconexión debe conservar la partida');
+assert(!((bt.match(/async function stop\(\)/g)||[]).length>1),'No debe existir una segunda función stop Bluetooth');
+const progress19=fs.readFileSync('step18-progress-unified.js','utf8');
+assert.strictEqual((progress19.match(/window\.step18Progress=/g)||[]).length,1,'El progreso debe tener una única fuente window.step18Progress');
+assert(progress19.includes('window.step18Reconcile=merge'),'Debe existir reconciliación única del progreso');
+assert(progress19.includes("elCaminoDentalProgressV2"),'Debe conservarse la clave V2 de progreso');
+console.log('✓ Mejora 19: Bluetooth con sesión caducable, identidad, sala, snapshots monotónicos y progreso unificado');
