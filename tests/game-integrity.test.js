@@ -674,6 +674,7 @@ assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'cli
 
 const savedSession=JSON.parse(btStorage.get('elCaminoDentalBluetoothSessionV1'));
 assert(savedSession,'La sesión Bluetooth debe persistirse');
-assert.strictEqual(savedSession.playerId,'host-1','La identidad persistente debe quedar guardada');
+assert.strictEqual(savedSession.playerId,btState.playerId,'La identidad persistente debe quedar guardada');
+assert.strictEqual(btStorage.get('elCaminoDentalPlayerIdV1'),btState.playerId,'La identidad debe existir en el almacenamiento persistente');
 assert.strictEqual(btRuntimeSource.includes('saveSession()'),true,'La persistencia debe usarse en el runtime');
 console.log('✓ Mejora 19: reconexión, snapshots fuera de orden, expiración, roomId/protocolo/playerId, deduplicación, abandono y permisos runtime');
