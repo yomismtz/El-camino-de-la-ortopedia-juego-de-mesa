@@ -589,7 +589,7 @@ assert(bt.includes("MAX_PEERS=5"),'Bluetooth debe limitar la sala a 5');
 assert(bt.includes("SESSION_MAX_AGE=30*60*1000"),'La sesión Bluetooth debe caducar para evitar reconectar partidas obsoletas');
 assert(bt.includes("elCaminoDentalPlayerIdV1"),'Cada instalación debe conservar una identidad estable para reconexión');
 assert(bt.includes("snapshotVersion"),'La sincronización Bluetooth debe versionar snapshots');
-assert(bt.includes("incoming<state.snapshotVersion"),'El cliente debe ignorar snapshots atrasados');
+assert(bt.includes('incoming<=state.snapshotVersion'),'El cliente debe ignorar snapshots atrasados o repetidos');
 assert(bt.includes("msg.roomId!==state.roomId"),'Un estado de otra sala no debe aplicarse');
 assert(bt.includes("reason:'room'"),'El host debe rechazar una reconexión a una sala distinta');
 assert(bt.includes("reason:'protocol'"),'El host debe rechazar protocolo incompatible');
