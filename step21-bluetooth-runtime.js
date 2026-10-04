@@ -56,7 +56,7 @@ function handleSyncMessage(msg){if(!msg||typeof msg!=='object')return;
 function close(){stop();const d=document.getElementById('bluetoothDialog');if(d?.open)d.close()}
 const apiPublic={open,host,scan,connect,send,close,stop,state,MAX_PEERS,PROTOCOL_VERSION,BT_SESSION_KEY,SESSION_MAX_AGE,loadSession,saveSession,isSessionFresh,validateEnvelope,acceptAction,publishSnapshot};
 window.step21Bluetooth=apiPublic;
-window.step21BluetoothTest={isSessionFresh,validateEnvelope,acceptAction,saveSession,loadSession};
+window.step21BluetoothTest={isSessionFresh,validateEnvelope,acceptAction,saveSession,loadSession,handleSyncMessage,publishSnapshot};
 document.getElementById('bluetoothBtn')?.addEventListener('click',open);
 document.getElementById('btHostBtn')?.addEventListener('click',host);
 document.getElementById('btScanBtn')?.addEventListener('click',scan);
