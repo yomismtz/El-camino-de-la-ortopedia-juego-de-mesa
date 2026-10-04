@@ -39,7 +39,7 @@ function validateEnvelope(msg){return !!(msg&&typeof msg==='object'&&msg.protoco
 function acceptAction(msg,type){if(!validateEnvelope(msg)||msg.type!==type)return false;const deviceId=msg.deviceId||'unknown';const key=deviceId+':'+String(msg.actionId||'');if(!msg.actionId||state.seenActions.has(key))return false;state.seenActions.set(key,now());pruneActions();return true}
 function handleSyncMessage(msg){if(!msg||typeof msg!=='object')return;
  if(msg.type==='hello'){if(msg.protocol!==PROTOCOL_VERSION){send({type:'reject',reason:'protocol',playerId:state.playerId});return}
-  if(!msg.roomId||msg.roomId!==state.roomId){send({type:'reject',reason:'room',playerId:state.playerId});return}
+  if(msg.roomId&&msg.roomId!==state.roomId){send({type:'reject',reason:'room',playerId:state.playerId});return}
   if(msg.playerId===state.playerId){send({type:'reject',reason:'identity',playerId:state.playerId});return}
   if(state.role==='host'){let peer=state.peers.get(msg.deviceId);if(!peer){if(state.peers.size>=MAX_PEERS-1){send({type:'reject',reason:'capacity',playerId:state.playerId});return}peer={name:msg.name||'Jugador',compatible:true,playerId:msg.playerId};state.peers.set(msg.deviceId,peer)}else{peer.compatible=true;peer.name=msg.name||peer.name;peer.playerId=msg.playerId}renderLobby();send({type:'room',roomId:state.roomId,capacity:MAX_PEERS,protocol:PROTOCOL_VERSION,playerId:state.playerId});publishSnapshot(true)}
   else{state.compatible=true;state.roomId=msg.roomId;saveSession();status('🟢 Compatible. Sala lista.')}return}
