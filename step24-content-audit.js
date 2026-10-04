@@ -23,7 +23,7 @@ const BANKS=[
  ['general','QUESTIONS','Banco general'],['primer_parcial','PRIMER_PARCIAL_QUESTIONS','Primer parcial'],
  ['nomenclatura_etimologia','NOMENCLATURA_ETIMOLOGIA_QUESTIONS','Nomenclatura y etimología'],
  ['ortodoncia','ORTODONCIA_QUESTIONS','Ortodoncia'],['endodoncia','ENDODONCIA_QUESTIONS','Endodoncia'],
- ['anatomia_dental','ANATOMIA_QUESTIONS','Anatomía'],['anestesia_dental','ANESTESIA_DENTAL_QUESTIONS','Anestesia dental'],['oclusion','FUNDAMENTOS_OCLUSION','Fundamentos de oclusión'],
+ ['anatomia_dental','ANATOMIA_QUESTIONS','Anatomía'],['odontologia_preventiva','ODONTOLOGIA_PREVENTIVA_QUESTIONS','Odontología preventiva'],['anestesia_dental','ANESTESIA_DENTAL_QUESTIONS','Anestesia dental'],['oclusion','FUNDAMENTOS_OCLUSION','Fundamentos de oclusión'],
  ['cefalometria','STEINER_QUESTIONS','Cefalometría de Steiner'],
  ['fisiologia_oral','FISIOLOGIA_FUNCION_QUESTIONS','Fisiología y función'],
  ['crecimiento_desarrollo','CRECIMIENTO_DESARROLLO_QUESTIONS','Crecimiento y desarrollo'],
