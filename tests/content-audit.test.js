@@ -8,7 +8,7 @@ const files=[
  'primer-parcial-questions.js','nomenclatura-etimologia-questions.js','ortodoncia-questions-2026.js',
  'endodoncia-questions-2026.js','anatomia-questions.js','anestesia-dental-questions.js',
  'fundamentos-oclusion.js','steiner-questions.js','fisiologia-funcion-questions.js',
- 'crecimiento-desarrollo-questions.js','habitos-parafunciones-questions-1.js',
+ 'crecimiento-desarrollo-questions.js','odontologia-preventiva-questions-2026.js','habitos-parafunciones-questions-1.js',
  'habitos-parafunciones-questions-2.js','habitos-parafunciones-questions-3.js',
  'habitos-parafunciones-questions-4.js','habitos-parafunciones-questions-5.js',
  'expansion-questions-2026.js'
@@ -24,7 +24,7 @@ assert.strictEqual(r.targetQuestions,4400);
 assert.strictEqual(r.invalid,0,'No debe haber reactivos inválidos en los bancos auditados');
 if(r.duplicateIds.length) console.log('DUPLICATE_IDS',JSON.stringify(r.duplicateIds.slice(0,30)));
 assert.strictEqual(r.duplicateIds.length,0,'No debe haber IDs duplicados entre bancos');
-assert.strictEqual(r.loaded,1340,'La línea base actual debe ser 1,340 reactivos reales cargados');
+assert.strictEqual(r.loaded,1440,'La línea base actual debe ser 1,440 reactivos reales cargados tras el primer banco de Mejora 20');
 assert(r.coverage.every(x=>x.count>=0), 'La cobertura por categoría debe ser determinista');
-console.log('✓ Mejora 20 QA: 44 categorías, objetivo 4,400, línea base real 1,340, sin IDs duplicados ni reactivos inválidos');
+console.log('✓ Mejora 20 QA: 44 categorías, objetivo 4,400, línea base real 1,440, sin IDs duplicados ni reactivos inválidos');
 console.log(JSON.stringify({loaded:r.loaded,valid:r.valid,missing:4400-r.loaded,categories:r.coverage},null,2));
