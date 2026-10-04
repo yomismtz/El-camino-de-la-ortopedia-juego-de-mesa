@@ -649,6 +649,7 @@ btWindow.step22Sync={
 vm.runInNewContext(btRuntimeSource,btSandbox,{filename:'step21-bluetooth-runtime.js'});
 const btTest=btWindow.step21BluetoothTest;
 const btState=btWindow.step21Bluetooth.state;
+const persistentPlayerId=btState.playerId;
 assert(btTest,'Debe existir API de pruebas Bluetooth');
 assert.strictEqual(btTest.isSessionFresh({roomId:'ROOM',updatedAt:Date.now()}),true,'Una sesión reciente debe ser válida');
 assert.strictEqual(btTest.isSessionFresh({roomId:'ROOM',updatedAt:Date.now()-30*60*1000-1}),false,'Una sesión vieja debe caducar');
@@ -675,6 +676,6 @@ assert.strictEqual(btTest.acceptAction({protocol:'1',roomId:'ROOM',playerId:'cli
 const savedSession=JSON.parse(btStorage.get('elCaminoDentalBluetoothSessionV1'));
 assert(savedSession,'La sesión Bluetooth debe persistirse');
 assert.strictEqual(savedSession.playerId,'client-1','La identidad persistente debe quedar guardada');
-assert.strictEqual(btStorage.get('elCaminoDentalPlayerIdV1'),btState.playerId,'La identidad debe existir en el almacenamiento persistente');
+assert.strictEqual(btStorage.get('elCaminoDentalPlayerIdV1'),persistentPlayerId,'La identidad debe existir en el almacenamiento persistente');
 assert.strictEqual(btRuntimeSource.includes('saveSession()'),true,'La persistencia debe usarse en el runtime');
 console.log('✓ Mejora 19: reconexión, snapshots fuera de orden, expiración, roomId/protocolo/playerId, deduplicación, abandono y permisos runtime');
