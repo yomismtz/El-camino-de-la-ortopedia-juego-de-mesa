@@ -1,3 +1,4 @@
+# Release rebuild trigger 2026-10-03
 name: Build Play Store AAB
 on:
   workflow_dispatch:
