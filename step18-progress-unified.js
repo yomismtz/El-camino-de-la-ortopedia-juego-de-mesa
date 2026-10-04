@@ -9,8 +9,8 @@ function merge(incoming){const a=read(),b=normalize(incoming);const p={...a};for
 function backup(){const p=read();try{localStorage.setItem(BACKUP,JSON.stringify(p));return true}catch{return false}}
 window.step18Progress={...window.step18Progress,read,save,merge,backup,KEY,BACKUP,normalize};
 window.step18Reconcile=merge;
-document.addEventListener('visibilitychange',()=>{if(document.hidden)backup()});
-window.addEventListener('pagehide',backup);
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function') document.addEventListener('visibilitychange',()=>{if(document.hidden)backup()});
+if(typeof window!=='undefined'&&typeof window.addEventListener==='function') window.addEventListener('pagehide',backup);
 })();
 /* Mejora 3 · progresión unificada V2. */
 (()=>{'use strict';
@@ -49,5 +49,5 @@ function renderProfile(p=read()){
 }
 window.step18Progress={read,save,awardGame,levelForXp,xpForLevel,nextLevelXp,renderProfile};
 window.step8AwardProgress=awardGame;
-document.addEventListener('DOMContentLoaded',()=>{const d=document.getElementById('winnerDialog');if(d)new MutationObserver(()=>{if(d.open)setTimeout(awardGame,80)}).observe(d,{attributes:true,attributeFilter:['open']})});
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function') document.addEventListener('DOMContentLoaded',()=>{const d=document.getElementById('winnerDialog');if(d)new MutationObserver(()=>{if(d.open)setTimeout(awardGame,80)}).observe(d,{attributes:true,attributeFilter:['open']})});
 })();
